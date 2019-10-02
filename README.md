@@ -1,9 +1,14 @@
-This README.md file would give brief information about the progress of the Catan project developed by group 3C.
+This is the branch where the code is developed and tested before merged with the master branch. More information to be added soon.
 
-Team Member:
+To Do
 
-Hakan Sivuk
-Rafi Çoktalaş
-Yusuf Nevzat Şengün
-Talha Şen
-Cevat Aykan Sevinç
+Hakan Sivuk:
+
+Rafi Çoktalaş:
+
+Yusuf Nevzat Şengün:
+
+Talha Şen:
+
+Cevat Aykan Sevinc:
+* Make stylish README.md file!
