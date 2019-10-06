@@ -2,7 +2,7 @@
 
 ## **Project Description**
 
-*Insert awesome description, here would be updated after the meeting with the TA.*
+*Catan is a 2-4 PvP strategy game where each player builds up their villages to earn points in order to defeat others by exceeding the point limit.*
 
 ## **Team**
 
