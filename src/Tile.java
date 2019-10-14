@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Tile{
 
 	// Attributes
@@ -6,6 +8,7 @@ public class Tile{
 	private boolean isStartPoint;
 	private int diceNumber;
 	private int resource;
+	private ArrayList<Tile> startPoints; // List of tiles that are start points of hexagons that includes this tile
 
 
 	// Constructor
@@ -15,10 +18,15 @@ public class Tile{
 		this.isStartPoint = false;
 		this.diceNumber = -1;
 		this.resource = -1;
+		this.startPoints = new ArrayList<Tile>();
 	}
 
 
 	// Getter and setter methods
+
+
+	// isGameTile methods
+
 	public boolean isItGameTile(){
 		return this.isGameTile;
 	}
@@ -27,13 +35,23 @@ public class Tile{
 		this.isGameTile = true;
 	}
 
+
+	// structure methods
+
 	public Structure getStructure(){
 		return this.structure;
+	}
+
+	public boolean isEmpty(){
+		return this.structure == null;
 	}
 
 	public void setStructure(Structure structure){
 		this.structure = structure;
 	}
+
+
+	// isStartPoint methods
 
 	public boolean isItStartPoint(){
 		return this.isStartPoint;
@@ -43,6 +61,12 @@ public class Tile{
 		this.isStartPoint = true;
 	}
 
+	public void addStartPoint(Tile tile){
+		startPoints.add(tile);
+	}
+
+	// diceNumber methods
+
 	public int getDiceNumber(){
 		return this.diceNumber;
 	}
@@ -51,6 +75,8 @@ public class Tile{
 		this.diceNumber = diceNumber;
 	}
 
+	// resource methods
+
 	public int getResource(){
 		return this.resource;
 	}
@@ -58,5 +84,6 @@ public class Tile{
 	public void setResource(int resource){
 		this.resource = resource;
 	}
+	
 
 }
