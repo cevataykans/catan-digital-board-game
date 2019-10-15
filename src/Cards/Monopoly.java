@@ -2,6 +2,12 @@ package Cards;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * The Monopoly class that represents the special card "Monopoly" in catan gameboard.
+ * @author Talha Şen
+ * @version 15.10.2019
+ * Class is created and functions are implemented. Open to further implementation.
+ */
 public class Monopoly extends Card
 {
     // Attributes
@@ -15,7 +21,10 @@ public class Monopoly extends Card
         setImage(image);
     }
 
-    // Methods
+    // Functions
+    /**
+     * Plays the "Monopoly" card that will allow player to steal all of any one resource of player's choice from all other players.
+     */
     public void playCard() {
         if ( isTurn) {
             int theResource = GameEngine.requestResource();

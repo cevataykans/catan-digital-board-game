@@ -2,6 +2,12 @@ package Cards;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * The YearOfPlenty class that represents the special card "YearOfPlenty" in catan gameboard.
+ * @author Talha Şen
+ * @version 15.10.2019
+ * Class is created and functions are implemented. Open to further implementation.
+ */
 public class YearOfPlenty extends Card
 {
     // Attributes
@@ -14,7 +20,10 @@ public class YearOfPlenty extends Card
         setImage(image);
     }
 
-    // Methods
+    // Functions
+    /**
+     * Plays the "Monopoly" card that will allow player to gain 2 resources of their choice.
+     */
     public void playCard() {
         if ( isTurn) {
             int firstResource = GameEngine.requestResource();

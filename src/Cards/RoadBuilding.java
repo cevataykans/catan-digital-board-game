@@ -2,6 +2,12 @@ package Cards;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * The RoadBuilding class that represents the special card "RoadBuilding" in catan gameboard.
+ * @author Talha Şen
+ * @version 15.10.2019
+ * Class is created and functions are implemented. Open to further implementation.
+ */
 public class RoadBuilding extends Card
 {
     // Attributes
@@ -14,10 +20,10 @@ public class RoadBuilding extends Card
         setImage(image);
     }
 
-    // Methods
-    // Note: buildRoad function takes a boolean, which determines if it is called by normally or by a special card.
-    // If it is true, then the buildRoad function builds the road to the location chosen by the player without asking
-    // for the resources.
+    // Functions
+    /**
+     * Plays the "RoadBuilding" card that will allow player to build 2 roads freely to any available space of theirs
+     */
     public void playCard() {
         if ( isTurn) {
             GameEngine.buildRoad(true);
