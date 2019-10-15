@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import Cards.*;
 
 /**
  * The player class that represents the player in catan gameboard.
@@ -8,6 +9,12 @@ import java.util.ArrayList;
  * Class is created and functions are implemented. Open to further implementation.
  * To be implemented: structure, card data collection, buy special card, buying structures, making cards playable,
  * buying special cards, playing special cards.
+ * Log 16.10.2019 (Talha)
+ * --------------
+ * Removed setLongestRoad(), setLongestRoad(int), setLargestArmy() and setLargestArmy(int).
+ * Added incrementLongestRoad(), incrementLargestArmy(), checkLongestRoad(int), checkLargestArmy(int) and increaseScore(int).
+ * Added documentation.
+ * --------------
  */
 public class Player
 {
@@ -18,7 +25,7 @@ public class Player
 
 	// Player Attributes
 	private String name;
-	private Color color; // needs to be discuessed for finalization;
+	private Color color; // needs to be discussed for finalization;
 
 	private int[] resources = { 0, 0, 4, 6, 0}; // pre construct for initial resources, not final!
 	private int totResources;
@@ -225,39 +232,54 @@ public class Player
 	}
 
 	/**
-	 * Sets the hasLongestRoad attribute to true and its road length.
-	 * @param roadLength is the length of the road that is >= 5
+	 * Increments the player's longest road count by 1 when player builds a road.
 	 */
-	public void setLongestRoad( int roadLength )
+	public void incrementLongestRoad() { roadLength++; }
+
+	/**
+	 * Increments the player's largest army count by 1 when player plays the "Knight" special card.
+	 */
+	public void incrementLargestArmy() { armyCount++; }
+
+	/**
+	 * Checks if the player has more roads than the current "Longest Road" card holder. If they do, they get the
+	 * "Longest Road" card.
+	 * @param currentLongest is the current longest road count of a player.
+	 * @return roadLength when the player achieves the longest road count after building a road.
+	 * @return currentLongest when player either equals or falls below the current longest road holder.
+	 */
+	public int checkLongestRoad(int currentLongest)
 	{
-		this.roadLength = roadLength;
-		this.hasLongestRoad = true;
+		if ( roadLength > currentLongest) {
+			hasLongestRoad = true;
+			return roadLength;
+		}
+		return currentLongest;
 	}
 
 	/**
-	 * Sets the hasLongestRoad attribute of the player false.
+	 * Checks if the player has more "Knight" cards played than the current "Largest Army" card holder. If they do, they get the
+	 * "Largest Army" card.
+	 * @param currentLargest is the current longest road count of a player.
+	 * @return armyCount when the player achieves the largest army count after playing the Knight card.
+	 * @return currentLargest when player either equals or falls below the current largest army holder.
 	 */
-	public void setLongestRoad()
+	public int checkLargestArmy(int currentLargest)
 	{
-		this.hasLongestRoad = false;
+		if ( armyCount > currentLargest) {
+			hasLargestArmy = true;
+			return armyCount;
+		}
+		return currentLargest;
 	}
 
 	/**
-	 * Sets the has largest army attribute of the player to true and its army count.
-	 * @param armyCount is the count of the army that is >= 3.
+	 * Increases the score of the player by the given amount.
+	 * @param scoreAmount is the amount of score that will be added to the player.
 	 */
-	public void setLargestArmy( int armyCount)
+	public void increaseScore(int scoreAmount)
 	{
-		this.armyCount = armyCount;
-		this.hasLargestArmy = true;
-	}
-
-	/**
-	 * Sets the hasLargestArmy attribute of the player to false.
-	 */
-	public void setLargestArmy()
-	{
-		this.hasLargestArmy = false;
+		score += scoreAmount;
 	}
 
 	/*

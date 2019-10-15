@@ -2,6 +2,12 @@ package Cards;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * The VictoryPoint class that represents the special card "VictoryPoint" in catan gameboard.
+ * @author Talha Şen
+ * @version 15.10.2019
+ * Class is created and functions are implemented. Open to further implementation.
+ */
 public class VictoryPoint extends Card
 {
     // Attributes
@@ -14,7 +20,10 @@ public class VictoryPoint extends Card
         setImage(image);
     }
 
-    // Methods
+    // Functions
+    /**
+     * Plays the "VictoryPoint" card that will increase the player's point(s) by 1.
+     */
     public void playCard() {
         if ( isTurn) {
             GameEngine.getCurrentPlayer().increaseScore(1);

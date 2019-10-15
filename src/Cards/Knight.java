@@ -2,6 +2,12 @@ package Cards;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * The Knight class that represents the special card "Knight" in catan gameboard.
+ * @author Talha Şen
+ * @version 15.10.2019
+ * Class is created and functions are implemented. Open to further implementation.
+ */
 public class Knight extends Card
 {
     // Attributes
@@ -15,9 +21,13 @@ public class Knight extends Card
         setImage(image);
     }
 
+    // Functions
+    /**
+     * Plays the "Knight" card that will change the thief's position and make the player steal a card from someone else.
+     */
     public void playCard() {
         if ( isTurn) {
-            GameEngine.getCurrentPlayer().increaseKnights();
+            GameEngine.getCurrentPlayer().increaseLargestArmy();
             int thiefDestination = GameEngine.requestNumber();
             GameEngine.moveThief(thiefDestination);
             Player targetedPlayer = GameEngine.requestPlayer();
