@@ -26,7 +26,7 @@ public class VictoryPoint extends Card
      */
     public void playCard() {
         if ( isTurn) {
-            GameEngine.getCurrentPlayer().increaseScore(1);
+            GameController.getCurrentPlayer().increaseScore(1);
         }
     }
 }
