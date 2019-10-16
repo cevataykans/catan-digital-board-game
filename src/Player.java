@@ -9,12 +9,15 @@ import Cards.*;
  * Class is created and functions are implemented. Open to further implementation.
  * To be implemented: structure, card data collection, buy special card, buying structures, making cards playable,
  * buying special cards, playing special cards.
- * Log 16.10.2019 (Talha)
+ * Log 15.10.2019 (Talha)
  * --------------
  * Removed setLongestRoad(), setLongestRoad(int), setLargestArmy() and setLargestArmy(int).
  * Added incrementLongestRoad(), incrementLargestArmy(), checkLongestRoad(int), checkLargestArmy(int) and increaseScore(int).
  * Added documentation.
  * --------------
+ * Log 16.10.2019 (Talha)
+ * Implemented buyDevelopmentCard() function.
+ * Added getters and setters to name and color attributes.
  */
 public class Player
 {
@@ -30,7 +33,7 @@ public class Player
 	private int[] resources = { 0, 0, 4, 6, 0}; // pre construct for initial resources, not final!
 	private int totResources;
 
-	private Structure[] structures; // needs to be discuessed for finalization;
+	private GameStructure[] structures; // needs to be discuessed for finalization;
 	private ArrayList<Card> cards; // trouble! I suggest arrayList!
 
 	// Player Attributes related to score and board
@@ -47,7 +50,7 @@ public class Player
 		this.color = color;
 		this.totResources = 10; // pre construct for initial resources, not final!
 		this.cards = new ArrayList<Card>();
-		this.structures = new Structure[ TOT_STRUCTURES];
+		this.structures = new GameStructure[ TOT_STRUCTURES];
 
 		this.score = 0;
 		this.hasLargestArmy = false;
@@ -111,9 +114,34 @@ public class Player
 	 * @param resources
 	 * @param card
 	 */
-	public void buySpecialCard( int[] resources, Card card)
+	public void buyDevelopmentCard( int[] resources, Card card)
 	{
-		// to be implemented when card class is finished.
+		int randomCard = (int) (Math.random() * 5) + 1;
+
+		switch (randomCard) {
+			case 1:
+				card = new Knight();
+				break;
+			case 2:
+				card = new VictoryPoint();
+				break;
+			case 3:
+				card = new Monopoly();
+				break;
+			case 4:
+				card = new RoadBuilding();
+				break;
+			case 5:
+				card = new YearOfPlenty();
+				break;
+			default:
+				card = new Knight();
+		}
+
+		for ( int i = 0; i < resources.length; i++)
+		{
+			resources[i] -= card.getRequirements()[i];
+		}
 	}
 
 	/**
@@ -155,10 +183,10 @@ public class Player
 	 * Builds a road for the player with the cost withdrawn from resources.
 	 * @param resources is the amount of resources paid for road structure.
 	 */
-	public void buydRoad( int[] resources)
+	public void buyRoad( int[] resources)
 	{
 		this.payForStructure( resources);
-		}
+
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 	}
 
@@ -302,5 +330,37 @@ public class Player
 			this.resources[ i] -= resources[ i];
 			this.totResources -= resources[ i];
 		}
+	}
+
+	/**
+	 * Gets the player's name.
+	 * @return player's name.
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Sets the player name to the given name.
+	 * @param name The name that will be set as player's name.
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	/**
+	 * Gets the player's color.
+	 * @return player's color.
+	 */
+	public Color getColor() {
+		return color;
+	}
+
+	/**
+	 * Sets the player color to the given color.
+	 * @param color The color that will be set as player's color.
+	 */
+	public void setColor(Color color) {
+		this.color = color;
 	}
 }
