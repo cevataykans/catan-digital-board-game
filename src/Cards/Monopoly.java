@@ -27,12 +27,12 @@ public class Monopoly extends Card
      */
     public void playCard() {
         if ( isTurn) {
-            int theResource = GameEngine.requestResource();
+            int theResource = GameController.requestResource();
             for (int i = 0; i < 4; i++) {
-                if (GameEngine.getPlayer(i) != GameEngine.currentPlayer()) {
-                    for (int p = 0; p < GameEngine.getPlayer(i).getResources()[theResource]; p++) {
-                        GameEngine.getCurrentPlayer().addResource(theResource);
-                        GameEngine.getPlayer(p).removeResource(theResource);
+                if (GameController.getPlayer(i) != GameController.currentPlayer()) {
+                    for (int p = 0; p < GameController.getPlayer(i).getResources()[theResource]; p++) {
+                        GameController.getCurrentPlayer().addResource(theResource);
+                        GameController.getPlayer(p).removeResource(theResource);
                     }
                 }
             }

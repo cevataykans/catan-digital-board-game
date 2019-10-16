@@ -26,8 +26,8 @@ public class RoadBuilding extends Card
      */
     public void playCard() {
         if ( isTurn) {
-            GameEngine.buildRoad(true);
-            GameEngine.buildRoad(true);
+            GameController.buildRoad(true);
+            GameController.buildRoad(true);
         }
     }
 }

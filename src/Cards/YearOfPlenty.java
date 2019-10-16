@@ -26,10 +26,10 @@ public class YearOfPlenty extends Card
      */
     public void playCard() {
         if ( isTurn) {
-            int firstResource = GameEngine.requestResource();
-            int secondResource = GameEngine.requestResource();
-            GameEngine.getCurrentPlayer().addResource(firstResource);
-            GameEngine.getCurrentPlayer().addResource(secondResource);
+            int firstResource = GameController.requestResource();
+            int secondResource = GameController.requestResource();
+            GameController.getCurrentPlayer().addResource(firstResource);
+            GameController.getCurrentPlayer().addResource(secondResource);
         }
     }
 }
