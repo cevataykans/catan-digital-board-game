@@ -110,38 +110,13 @@ public class Player
 	}
 
 	/**
-	 *
-	 * @param resources
-	 * @param card
+	 * Buys a development card from the bank and the card is chosen randomly.
+	 * @param resources is the required resources player needs to give to buy a development card.
+	 * @param card is the development card player buys.
 	 */
 	public void buyDevelopmentCard( int[] resources, Card card)
 	{
-		int randomCard = (int) (Math.random() * 5) + 1;
-
-		switch (randomCard) {
-			case 1:
-				card = new Knight();
-				break;
-			case 2:
-				card = new VictoryPoint();
-				break;
-			case 3:
-				card = new Monopoly();
-				break;
-			case 4:
-				card = new RoadBuilding();
-				break;
-			case 5:
-				card = new YearOfPlenty();
-				break;
-			default:
-				card = new Knight();
-		}
-
-		for ( int i = 0; i < resources.length; i++)
-		{
-			resources[i] -= card.getRequirements()[i];
-		}
+		cards.add(card);
 	}
 
 	/**

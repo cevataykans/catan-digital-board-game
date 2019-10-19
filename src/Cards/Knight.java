@@ -29,7 +29,7 @@ public class Knight extends Card
         if ( isTurn) {
             GameController.getCurrentPlayer().increaseLargestArmy();
             int thiefDestination = GameController.requestNumber();
-            GameController.moveThief(thiefDestination);
+            GameController.moveRobber(thiefDestination);
             Player targetedPlayer = GameController.requestPlayer();
             GameController.stealResource(targetedPlayer);
         }
