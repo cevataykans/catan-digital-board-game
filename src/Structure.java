@@ -15,13 +15,14 @@ public abstract class Structure {
 	protected Player owner;
 	protected int x;
 	protected int y;
+	Type type;
+
+	enum Type{
+		ROAD, SETTLEMENT, CITY;
+	}
 
 	protected Structure( Player owner ) {
 		this.owner = owner;
-	}
-
-	public int getType(){
-		return this.victoryPoints;
 	}
 
 	public Player getOwner(){
@@ -34,6 +35,10 @@ public abstract class Structure {
 
 	public int getY(){
 		return y;
+	}
+
+	public Type getType(){
+		return type;
 	}
 
 }

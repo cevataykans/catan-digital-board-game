@@ -9,7 +9,8 @@ public class City extends Structure {
 		this.y = y;
 
 		this.information = "City info"; // It will be written
-		
+
+		this.type = Type.CITY;
 	}
 
 	
