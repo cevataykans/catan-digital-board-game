@@ -359,17 +359,17 @@ public class GameBoard {
      */
     public void setStructure(Player player, int x, int y, int type){
         if(type == 0){
-            Structure newRoad = new Road("Road", player, x, y);
+            Structure newRoad = new Road( player, x, y );
             board[y][x].setStructure(newRoad);
             player.addStructure(newRoad);
         }
         else if(type == 1){
-            Structure newSettlement = new Settlement("Settlement", player, x, y);
+            Structure newSettlement = new Settlement( player, x, y );
             board[y][x].setStructure(newSettlement);
             player.addStructure(newSettlement);
         }
         else{
-            Structure newCity = new City("City", player, x, y);
+            Structure newCity = new City( player, x, y );
             board[y][x].setStructure(newCity);
             for(int i = 0 ; i < player.getStructures().size(); i++){
                 if(player.getStructures().get(i).getX() == x && player.getStructures().get(i).getY() == y){
