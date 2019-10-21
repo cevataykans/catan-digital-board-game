@@ -18,6 +18,10 @@ import Cards.*;
  * Log 16.10.2019 (Talha)
  * Implemented buyDevelopmentCard() function.
  * Added getters and setters to name and color attributes.
+ * --------------
+ * Log 20.10.2019 (Hakan)
+ * Implemented buyDevelopmentCard() function.
+ * Added getters and setters to name and color attributes.
  */
 public class Player
 {
@@ -33,7 +37,7 @@ public class Player
 	private int[] resources = { 0, 0, 4, 6, 0}; // pre construct for initial resources, not final!
 	private int totResources;
 
-	private GameStructure[] structures; // needs to be discuessed for finalization;
+	private ArrayList<Structure> structures; // needs to be discuessed for finalization;
 	private ArrayList<Card> cards; // trouble! I suggest arrayList!
 
 	// Player Attributes related to score and board
@@ -50,7 +54,7 @@ public class Player
 		this.color = color;
 		this.totResources = 10; // pre construct for initial resources, not final!
 		this.cards = new ArrayList<Card>();
-		this.structures = new GameStructure[ TOT_STRUCTURES];
+		this.structures = new ArrayList<Structure>();
 
 		this.score = 0;
 		this.hasLargestArmy = false;
@@ -151,7 +155,7 @@ public class Player
 		this.payForStructure( resources);
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
-		this.score += 2;
+		this.score += Structure.VICTORY_POINTS_FOR_SETTLEMENT;
 	}
 
 	/**
@@ -163,6 +167,8 @@ public class Player
 		this.payForStructure( resources);
 
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
+
+		this.score += Structure.VICTORY_POINTS_FOR_ROAD;
 	}
 
 	/**
@@ -174,7 +180,7 @@ public class Player
 		this.payForStructure( resources);
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
-		this.score += 2;
+		this.score += Structure.VICTORY_POINTS_FOR_CITY;
 	}
 
 	/**
@@ -305,6 +311,22 @@ public class Player
 			this.resources[ i] -= resources[ i];
 			this.totResources -= resources[ i];
 		}
+	}
+
+	/**
+	 * Gets the player's structures.
+	 * @return player's structures as ArrayList.
+	 */
+	public ArrayList<Structure> getStructures(){
+		return this.structures;
+	}
+
+	/**
+	 * Add given structure to the structures ArrayList
+	 * @param structure Given structure that is wanted to add.
+	 */
+	public void addStructure(Structure structure){
+		this.structures.add(structure);
 	}
 
 	/**
