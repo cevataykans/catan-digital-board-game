@@ -9,7 +9,8 @@ public class Settlement extends Structure {
 		this.y = y;
 		
 		this.information = "Settlement info"; // It will be written
-		
+
+		this.type = Type.SETTLEMENT;
 	}
 
 	

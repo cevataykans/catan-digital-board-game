@@ -168,19 +168,12 @@ public class GameEngine
         getCurrentPlayer().buyDevelopmentCard(devCard.getRequirements(), devCards.pop());
     }
 
-    /**
-     * @param hexagonNumber is the new hexagon into which the robber moves.
-     */
-    public void moveRobber(int hexagonNumber)
-    {
-        this.robber = hexagonNumber;
-    }
 
     /**
      * This method is to allow a Player to build a road.
      * @param roadBuildingCard is the flag to indicate if the user is allowed to build the road free.
      */
-    public void buildRoad(boolean roadBuildingCard)
+    public void buildRoad(boolean roadBuildingCard, int x, int y)
     {
         if( roadBuildingCard ) {
             this.getCurrentPlayer().buyRoad( new int[]{0, 0, 0, 0, 0} );
@@ -189,22 +182,80 @@ public class GameEngine
             this.getCurrentPlayer().buyRoad( Structure.REQUIREMENTS_FOR_ROAD );
         }
 
+        if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == 0 ) { // I assumed gameStatus = 1
+            board.setStructure(this.getCurrentPlayer(), x, y, 0);
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -1 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -2 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -3 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -4 ){
+            //TODO
+        }
+        else{
+            //TODO
+        }
+
     }
 
     /**
      * This method is to allow a Player to build a statement.
      */
-    public void buildSettlement()
+    public void buildSettlement(int x, int y)
     {
         this.getCurrentPlayer().buySettlement( Structure.REQUIREMENTS_FOR_SETTLEMENT );
+
+        if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == 1 ) { // I assumed gameStatus = 1
+            board.setStructure(this.getCurrentPlayer(), x, y, 1);
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -1 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -2 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -3 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -4 ){
+            //TODO
+        }
+        else{
+            //TODO
+        }
+
     }
 
     /**
      * This method is to allow a Player to build a city.
      */
-    public void buildCity()
+    public void buildCity(int x, int y)
     {
         this.getCurrentPlayer().buyCity( Structure.REQUIREMENTS_FOR_CITY );
+
+        if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == 2 ) { // I assumed gameStatus = 1
+            board.setStructure(this.getCurrentPlayer(), x, y, 2);
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -1 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -2 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -3 ){
+            //TODO
+        }
+        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -4 ){
+            //TODO
+        }
+        else{
+            //TODO
+        }
     }
 
 }
