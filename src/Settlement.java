@@ -1,7 +1,7 @@
 
 public class Settlement extends Structure {
 
-	protected Settlement(String name, Player owner) {
+	protected Settlement(String name, Player owner, int x, int y) {
 		super(name, owner);
 		this.pointValue = 1;
 		
@@ -11,7 +11,10 @@ public class Settlement extends Structure {
 		this.requirements[3] = 1;
 		this.requirements[4] = 0;
 
-		this.information = "";
+		this.x = x;
+		this.y = y;
+		
+		this.information = "Settlement info"; // It will be written
 		
 	}
 

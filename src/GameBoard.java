@@ -5,9 +5,20 @@ import java.util.Collections;
  * Gameboard class that is used to represent the board of Catan game.
  * @author Yusuf Nevzat Şengün
  * @version 16.10.2019
+ * --------------
+ * Log 20.10.2019 (Hakan)
+ * Implemented collectResources, longestRoadOfPlayer methods
+ * Added robberX and robberY attributes and theirs getter,setter methods
+ * Small mistakes were fixed
  */
 
 public class GameBoard {
+
+    class Node{
+        public Player player;
+        public Tile startPoint;
+        public int amount;
+    }
 
     //constants
     final private int FIELDPEREDGE = 3;
@@ -18,6 +29,9 @@ public class GameBoard {
     private Tile[][] board;
     private ArrayList<Integer> diceNumbers;
     private ArrayList<Integer> resources;
+    private ArrayList<Node>[] resourceDistributionList;
+    private int robberX;
+    private int robberY;
 
     //constructor
     public GameBoard(){
@@ -29,6 +43,12 @@ public class GameBoard {
         }
         diceNumbers = new ArrayList<>();
         resources = new ArrayList<>();
+        resourceDistributionList = new ArrayList[11];
+        for(int i = 0; i < 11; i++){
+            resourceDistributionList[i] = new ArrayList<>();
+        }
+        robberX = -1;
+        robberY = -1;
     }
 
     /**
@@ -118,6 +138,9 @@ public class GameBoard {
             }
             else{ // if dice is 7 then this hexagon will be desert
                 resource = 5;
+                robber = true;
+                robberX = x;
+                robberY = y;
             }
             fillHexagon( x, y, dice, resource);
         }
@@ -142,6 +165,9 @@ public class GameBoard {
             }
             else{ // if dice is 7 then this hexagon will be desert
                 resource = 5;
+                robber = true;
+                robberX = x;
+                robberY = y;
             }
             fillHexagon( x, y, dice, resource);
         }
@@ -171,21 +197,23 @@ public class GameBoard {
         int startX = x;
         int startY = y;
 
-        for( int i = 0 ; i < 11 ; i++ ){
+        for( int i = 0 ; i < 12 ; i++ ){
             if( x == startX && y == startY ){
-                board[x][y].setDiceNumber(dice);
-                board[x][y].setGameTile();
-                board[x][y].setResource(resource);
-                board[x][y].addStartPoint(board[startX][startY]);
-                board[x][y].setStartPoint();
+                board[y][x].setDiceNumber(dice);
+                board[y][x].setGameTile();
+                board[y][x].setResource(resource);
+                board[y][x].addStartPoint(board[startX][startY]);
+                board[y][x].setStartPoint();
             }
             else {
-                board[x][y].setGameTile();
-                board[x][y].addStartPoint(board[startX][startY]);
+                board[y][x].setGameTile();
+                board[y][x].addStartPoint(board[startX][startY]);
             }
 
-            x += changeNext[i][0];
-            y += changeNext[i][1];
+            if(i < 11){
+                x += changeNext[i][0];
+                y += changeNext[i][1];
+            }
         }
     }
 
@@ -196,7 +224,7 @@ public class GameBoard {
      * @return return if (x,y) is gametile
      */
     public boolean isGameTile( int x, int y){
-        return board[x][y].isItGameTile();
+        return board[xy][x].isItGameTile();
     }
 
     /**
@@ -330,6 +358,187 @@ public class GameBoard {
      *             2 = city
      */
     public void setStructure(Player player, int x, int y, int type){
-        board[x][y].setStructure( new Structure( type, player));
+        if(type == 0){
+            Structure newRoad = new Road("Road", player, x, y);
+            board[y][x].setStructure(newRoad);
+            player.addStructure(newRoad);
+        }
+        else if(type == 1){
+            Structure newSettlement = new Settlement("Settlement", player, x, y);
+            board[y][x].setStructure(newSettlement);
+            player.addStructure(newSettlement);
+        }
+        else{
+            Structure newCity = new City("City", player, x, y);
+            board[y][x].setStructure(newCity);
+            for(int i = 0 ; i < player.getStructures().size(); i++){
+                if(player.getStructures().get(i).getX() == x && player.getStructures().get(i).getY() == y){
+                    player.getStructures().remove(i);
+                    player.addStructure(newCity);
+                    break;
+                }
+            }
+        }
+        if(type != 0){
+            ArrayList<Tile> startPoints = board[y][x].getStartPoints();
+            for(int i = 0; i < startPoints.size() ; i++){
+                Tile startPoint = startPoints.get(i);
+                int diceNumber = startPoint.getDiceNumber();
+                boolean done = false;
+                for(int j = 0; j < resourceDistributionList[diceNumber - 2].size() ; j++){
+                    if(resourceDistributionList[diceNumber - 2].get(j).player == player){
+                        resourceDistributionList[diceNumber - 2].get(j).amount++;
+                        done = true;
+                    }
+                }
+                Node newNode = new Node();
+                newNode.player = player;
+                newNode.startPoint = startPoint;
+                newNode.amount = 1;
+                resourceDistributionList[diceNumber - 2].add(newNode);
+            }
+        }
+    }
+
+    /**
+     * Returns x coordinate of robber.
+     * @return robberX
+     */
+    public int getRobberX(){
+        return robberX;
+    }
+
+    /**
+     * Returns y coordinate of robber.
+     * @return robberY
+     */
+    public int getRobberY(){
+        return robberY;
+    }
+
+    /**
+     * Change location of the robber.
+     * @param x x-coordinate
+     * @param y y-coordinate
+     */
+    public void changeRobber(int x, int y){
+        board[robberY][robberX].setRobber(false);
+        board[y][x].setRobber(true);
+        robberX = x;
+        robberY = y;
+    }
+
+    /**
+     * Collect resources for each player before the game starts.
+     */
+    public void collectResources(){
+        for(int i = 2; i < 13 ; i++){
+            collectResources(i);
+        }
+    }
+
+    /**
+     * Collect resources for each player that belongs to hexagons related to given dice number.
+     * @param int diceNumber is given dice number
+     */
+    public void collectResources(int diceNumber){
+        int len = resourceDistributionList[diceNumber - 2].size();
+        for(int i = 0 ; i < len; i++){
+            Node node = resourceDistributionList[diceNumber - 2].get(i);
+            if(!node.startPoint.isThereRobber())
+                node.player.collectMaterial(node.startPoint.getResource(), node.amount);
+        }
+    }
+
+    /**
+     * Return length of the longest road of the player.
+     * @param player current player
+     * @return  length of the longest road of the player
+     */
+    public int longestRoadOfPlayer(Player player){
+        int [][] possibleNeighbors = {
+            {1,0}, {1,1}, {1,-1}
+        };
+        ArrayList<Integer> distances = new ArrayList<>();
+        for(int i = 0 ; i < player.getStructures().size() ; i++){
+            if(player.getStructures().get(i).getType() == 0){
+                int [][] markedRoads = new int[HEIGHT][WIDTH];
+                int roadX = player.getStructures().get(i).getX();
+                int roadY = player.getStructures().get(i).getY();
+                int j = 0;
+                while(!board[roadY + possibleNeighbors[j][1]][roadX + possibleNeighbors[j][0]].isItGameTile())
+                    j++;
+                Structure cornerStructure = board[roadY + possibleNeighbors[j][1]][roadX + possibleNeighbors[j][0]].getStructure();
+                if(cornerStructure == null || cornerStructure.getOwner() == player){
+                    int startX = roadX - possibleNeighbors[j][0];
+                    int startY = roadY - possibleNeighbors[j][1];
+                    int targetX = roadX + possibleNeighbors[j][0];
+                    int targetY = roadY + possibleNeighbors[j][1];
+                    System.out.println("Road: " + roadX + ", " + roadY);
+                    System.out.println("Beginning: " + startX + ", " + startY);
+                    markedRoads[roadY][roadX] = 1;
+                    int distance = checkLongestRoadFromThatEdge(player, targetX, targetY, markedRoads);
+                    markedRoads[roadY][roadX] = 0;
+                    distances.add(distance);
+                }
+
+                cornerStructure = board[roadY - possibleNeighbors[j][1]][roadX - possibleNeighbors[j][0]].getStructure();
+                if(cornerStructure == null || cornerStructure.getOwner() == player){
+                    int startX = roadX + possibleNeighbors[j][0];
+                    int startY = roadY + possibleNeighbors[j][1];
+                    int targetX = roadX - possibleNeighbors[j][0];
+                    int targetY = roadY - possibleNeighbors[j][1];
+                    System.out.println("Road: " + roadX + ", " + roadY);
+                    System.out.println("Beginning: " + startX + ", " + startY);
+                    markedRoads[roadY][roadX] = 1;
+                    int distance = checkLongestRoadFromThatEdge(player, targetX, targetY, markedRoads);
+                    markedRoads[roadY][roadX] = 0;
+                    distances.add(distance);
+                }
+            }
+        }
+
+        return Collections.max(distances);
+    }
+
+    /**
+     * Private helper method for recursion
+     */
+    private int checkLongestRoadFromThatEdge(Player player, int x, int y, int[][] markedRoads){
+        System.out.println("X: " + x + " Y: " + y);
+        int[][] possibleNeighbors = {
+            {2,0}, {-2,0}, {-2,-2}, {-2,2}, {2,-2}, {2,2}
+        };
+
+        ArrayList<Integer> distances = new ArrayList<>();
+
+        boolean neighbor = false;
+        for(int i = 0 ; i < 6 ; i++){
+            int targetX = x + possibleNeighbors[i][0];
+            int targetY = y + possibleNeighbors[i][1];
+            if( targetY >= 0 && targetY < HEIGHT && targetX >= 0 && targetX < WIDTH && board[targetY][targetX].isItGameTile()){
+                Structure targetStructure = board[targetY][targetX].getStructure();
+                int roadX = x + possibleNeighbors[i][0] / 2;
+                int roadY = y + possibleNeighbors[i][1] / 2;
+                Structure road = board[roadY][roadX].getStructure();
+                if(road != null && road.getOwner() == player && markedRoads[roadY][roadX] == 0){
+                    neighbor = true;
+                    if(targetStructure == null || targetStructure.getOwner() == player){
+                        markedRoads[roadY][roadX] = 1;
+                        int distance = checkLongestRoadFromThatEdge(player, targetX, targetY, markedRoads);
+                        markedRoads[roadY][roadX] = 0;
+                        distances.add(distance);
+                        
+                    }
+                    else{
+                        System.out.println("oops " + targetX + ", " + targetY);
+                        distances.add(1);
+                    } 
+                }               
+            }
+        }
+        if(neighbor)
+            return Collections.max(distances) + 1;
+        return 1;
     }
 }
