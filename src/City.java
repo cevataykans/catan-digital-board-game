@@ -1,15 +1,9 @@
 
 public class City extends Structure {
 
-	protected City(String name, Player owner, int x, int y) {
-		super(name, owner);
-		this.pointValue = 2;
-		
-		this.requirements[0] = 0;
-		this.requirements[1] = 0;
-		this.requirements[2] = 2;
-		this.requirements[3] = 0;
-		this.requirements[4] = 3;
+	protected City( Player owner, int x, int y) {
+		super(owner);
+		this.victoryPoints = VICTORY_POINTS_FOR_CITY;
 
 		this.x = x;
 		this.y = y;

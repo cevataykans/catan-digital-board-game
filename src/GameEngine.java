@@ -168,24 +168,43 @@ public class GameEngine
         getCurrentPlayer().buyDevelopmentCard(devCard.getRequirements(), devCards.pop());
     }
 
+    /**
+     * @param hexagonNumber is the new hexagon into which the robber moves.
+     */
     public void moveRobber(int hexagonNumber)
     {
-        // To be implemented.
+        this.robber = hexagonNumber;
     }
 
+    /**
+     * This method is to allow a Player to build a road.
+     * @param roadBuildingCard is the flag to indicate if the user is allowed to build the road free.
+     */
     public void buildRoad(boolean roadBuildingCard)
     {
-        // To be implemented.
+        if( roadBuildingCard ) {
+            this.getCurrentPlayer().buyRoad( new int[]{0, 0, 0, 0, 0} );
+        }
+        else {
+            this.getCurrentPlayer().buyRoad( Structure.REQUIREMENTS_FOR_ROAD );
+        }
+
     }
 
+    /**
+     * This method is to allow a Player to build a statement.
+     */
     public void buildSettlement()
     {
-        // To be implemented.
+        this.getCurrentPlayer().buySettlement( Structure.REQUIREMENTS_FOR_SETTLEMENT );
     }
 
+    /**
+     * This method is to allow a Player to build a city.
+     */
     public void buildCity()
     {
-        // To be implemented.
+        this.getCurrentPlayer().buyCity( Structure.REQUIREMENTS_FOR_CITY );
     }
 
 }
