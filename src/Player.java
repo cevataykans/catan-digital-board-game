@@ -155,7 +155,7 @@ public class Player
 		this.payForStructure( resources);
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
-		this.score += 2;
+		this.score += Structure.VICTORY_POINTS_FOR_SETTLEMENT;
 	}
 
 	/**
@@ -167,6 +167,8 @@ public class Player
 		this.payForStructure( resources);
 
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
+
+		this.score += Structure.VICTORY_POINTS_FOR_ROAD;
 	}
 
 	/**
@@ -178,7 +180,7 @@ public class Player
 		this.payForStructure( resources);
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
-		this.score += 2;
+		this.score += Structure.VICTORY_POINTS_FOR_CITY;
 	}
 
 	/**
