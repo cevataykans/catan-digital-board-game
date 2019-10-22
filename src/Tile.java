@@ -5,6 +5,9 @@ import java.util.ArrayList;
  * @author Hakan Sivuk
  * @version 14.10.2019
  * Class is created and functions are implemented. Open to further implementation.
+ * --------------
+ * Log 20.10.2019 (Hakan)
+ * Implemented buyDevelopmentCard() function.
  */
 
 public class Tile{
@@ -16,6 +19,7 @@ public class Tile{
 	private int diceNumber;
 	private int resource;
 	private ArrayList<Tile> startPoints; // List of tiles that are start points of hexagons that includes this tile
+	private boolean robber;
 
 
 	// Constructor
@@ -26,6 +30,7 @@ public class Tile{
 		this.diceNumber = -1;
 		this.resource = -1;
 		this.startPoints = new ArrayList<Tile>();
+		this.robber = false;
 	}
 
 
@@ -95,6 +100,14 @@ public class Tile{
 	}
 
 	/**
+	 * Returns start points of hexagons that include this tile
+	 * @return startPoints array
+	 */
+	public ArrayList<Tile> getStartPoints(){
+		return startPoints;
+	}
+
+	/**
 	 * Adds start point to the tile.
 	 * @param tile that is wanted to add.
 	 */
@@ -136,6 +149,21 @@ public class Tile{
 	 */
 	public void setResource(int resource){
 		this.resource = resource;
+	}
+
+	/**
+	 * Sets robber to true
+	 */
+	public void setRobber(boolean robber){
+		this.robber = robber;
+	}
+
+	/**
+	 * Returns whether there is a robber
+	 * @return robber boolean
+	 */
+	public boolean isThereRobber(){
+		return this.robber;
 	}
 
 }

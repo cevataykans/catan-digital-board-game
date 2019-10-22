@@ -1,19 +1,16 @@
 
 public class Road extends Structure {
 
-	protected Road(String name, Player owner) {
-		super(name, owner);
-		this.pointValue = 0;
-		
-		this.requirements[0] = 1;
-		this.requirements[0] = 0;
-		this.requirements[0] = 0;
-		this.requirements[0] = 1;
-		this.requirements[0] = 0;
+	protected Road(Player owner, int x, int y) {
+		super(owner);
+		this.victoryPoints = VICTORY_POINTS_FOR_ROAD;
 
-		this.information = "";
-		
+		this.x = x;
+		this.y = y;
+
+		this.information = "Road info"; // It will be written
+
+		this.type = Type.ROAD;
 	}
 
-	
 }

@@ -1,6 +1,5 @@
 import java.awt.Color;
 import java.util.ArrayList;
-import Cards.*;
 
 /**
  * The player class that represents the player in catan gameboard.
@@ -18,6 +17,10 @@ import Cards.*;
  * Log 16.10.2019 (Talha)
  * Implemented buyDevelopmentCard() function.
  * Added getters and setters to name and color attributes.
+ * --------------
+ * Log 20.10.2019 (Hakan)
+ * Implemented buyDevelopmentCard() function.
+ * Added getters and setters to name and color attributes.
  */
 public class Player
 {
@@ -33,7 +36,7 @@ public class Player
 	private int[] resources = { 0, 0, 4, 6, 0}; // pre construct for initial resources, not final!
 	private int totResources;
 
-	private GameStructure[] structures; // needs to be discuessed for finalization;
+	private ArrayList<Structure> structures; // needs to be discuessed for finalization;
 	private ArrayList<Card> cards; // trouble! I suggest arrayList!
 
 	// Player Attributes related to score and board
@@ -50,7 +53,7 @@ public class Player
 		this.color = color;
 		this.totResources = 10; // pre construct for initial resources, not final!
 		this.cards = new ArrayList<Card>();
-		this.structures = new GameStructure[ TOT_STRUCTURES];
+		this.structures = new ArrayList<Structure>();
 
 		this.score = 0;
 		this.hasLargestArmy = false;
@@ -87,8 +90,20 @@ public class Player
 	 */
 	public void collectMaterial( int material, int amount)
 	{
-		this.resources[ material] += amount;
-		this.totResources += amount;
+		resources[ material] += amount;
+		totResources += amount;
+	}
+
+	/**
+	 * Takes from the player the amount of material stated by the material constant.
+	 * @param material is one of the index of resource array:
+	 *                 Materials.LUMBER, Materials.WOOL, Materials.GRAIN, Materials.BRICK, Materials.ORE.
+	 * @param amount is the number of materials to discard from this player.
+	 */
+	public void discardMaterial( int material, int amount)
+	{
+		resources[material] -= amount;
+		totResources -= amount;
 	}
 
 	/**
@@ -110,38 +125,18 @@ public class Player
 	}
 
 	/**
-	 *
-	 * @param resources
-	 * @param card
+	 * Buys a development card from the bank and the card is chosen randomly.
+	 * @param requirements is the required resources player needs to give to buy a development card.
+	 * @param card is the development card player buys.
 	 */
-	public void buyDevelopmentCard( int[] resources, Card card)
+	public void buyDevelopmentCard( int[] requirements, Card card)
 	{
-		int randomCard = (int) (Math.random() * 5) + 1;
-
-		switch (randomCard) {
-			case 1:
-				card = new Knight();
-				break;
-			case 2:
-				card = new VictoryPoint();
-				break;
-			case 3:
-				card = new Monopoly();
-				break;
-			case 4:
-				card = new RoadBuilding();
-				break;
-			case 5:
-				card = new YearOfPlenty();
-				break;
-			default:
-				card = new Knight();
-		}
-
-		for ( int i = 0; i < resources.length; i++)
-		{
-			resources[i] -= card.getRequirements()[i];
-		}
+		resources[0] -= requirements[0];
+		resources[1] -= requirements[1];
+		resources[2] -= requirements[2];
+		resources[3] -= requirements[3];
+		resources[4] -= requirements[4];
+		cards.add(card);
 	}
 
 	/**
@@ -176,7 +171,7 @@ public class Player
 		this.payForStructure( resources);
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
-		this.score += 2;
+		this.score += Structure.VICTORY_POINTS_FOR_SETTLEMENT;
 	}
 
 	/**
@@ -188,6 +183,8 @@ public class Player
 		this.payForStructure( resources);
 
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
+
+		this.score += Structure.VICTORY_POINTS_FOR_ROAD;
 	}
 
 	/**
@@ -199,7 +196,7 @@ public class Player
 		this.payForStructure( resources);
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
-		this.score += 2;
+		this.score += Structure.VICTORY_POINTS_FOR_CITY;
 	}
 
 	/**
@@ -225,13 +222,15 @@ public class Player
 	}
 
 	/**
+	 * ------------------DEPRECATED---------------------------
 	 * Player plays the special card stated by the card index.
 	 * @param cardIndex is the index of the special card to play.
-	 */
+
 	public void playSpecialCard( int cardIndex)
 	{
 		//cards.remove( cardIndex).play(); to be implemented after card class is implemented.
 	}
+	  */
 
 	/**
 	 * Gets the largest army count of the player if the player has the largest army title.
@@ -333,6 +332,22 @@ public class Player
 	}
 
 	/**
+	 * Gets the player's structures.
+	 * @return player's structures as ArrayList.
+	 */
+	public ArrayList<Structure> getStructures(){
+		return this.structures;
+	}
+
+	/**
+	 * Add given structure to the structures ArrayList
+	 * @param structure Given structure that is wanted to add.
+	 */
+	public void addStructure(Structure structure){
+		this.structures.add(structure);
+	}
+
+	/**
 	 * Gets the player's name.
 	 * @return player's name.
 	 */
@@ -362,5 +377,13 @@ public class Player
 	 */
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+	public int[] getResources() {
+		return resources;
+	}
+
+	public void setResources(int[] resources) {
+		this.resources = resources;
 	}
 }

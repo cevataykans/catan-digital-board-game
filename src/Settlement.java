@@ -1,18 +1,16 @@
 
 public class Settlement extends Structure {
 
-	protected Settlement(String name, Player owner) {
-		super(name, owner);
-		this.pointValue = 1;
-		
-		this.requirements[0] = 1;
-		this.requirements[0] = 1;
-		this.requirements[0] = 1;
-		this.requirements[0] = 1;
-		this.requirements[0] = 0;
+	protected Settlement(Player owner, int x, int y) {
+		super(owner);
+		this.victoryPoints = VICTORY_POINTS_FOR_SETTLEMENT;
 
-		this.information = "";
+		this.x = x;
+		this.y = y;
 		
+		this.information = "Settlement info"; // It will be written
+
+		this.type = Type.SETTLEMENT;
 	}
 
 	
