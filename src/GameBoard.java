@@ -14,7 +14,7 @@ import java.util.Collections;
 
 public class GameBoard {
 
-    class Node{
+    class DistributionNode{
         public Player player;
         public Tile startPoint;
         public int amount;
@@ -29,7 +29,7 @@ public class GameBoard {
     private Tile[][] board;
     private ArrayList<Integer> diceNumbers;
     private ArrayList<Integer> resources;
-    private ArrayList<Node>[] resourceDistributionList;
+    private ArrayList<DistributionNode>[] resourceDistributionList;
     private int robberX;
     private int robberY;
 
@@ -129,6 +129,7 @@ public class GameBoard {
 
         int dice, resource;
         for( int i = 1 ; i <= iterationNum ; x -= 4, y += 2, i++ ){
+            boolean robber = false;
             dice = diceNumbers.get(diceNumbers.size() - 1);
             diceNumbers.remove(diceNumbers.size()-1);
 
@@ -142,7 +143,7 @@ public class GameBoard {
                 robberX = x;
                 robberY = y;
             }
-            fillHexagon( x, y, dice, resource);
+            fillHexagon( x, y, dice, resource, robber);
         }
     }
 
@@ -157,6 +158,7 @@ public class GameBoard {
 
         int dice, resource;
         for( int i = 1 ; i <= iterationNum ; x += 4, y += 2, i++ ){
+            boolean robber = false;
             dice = diceNumbers.get(diceNumbers.size() - 1);
             diceNumbers.remove(diceNumbers.size()-1);
             if( dice != 7 ) {
@@ -169,7 +171,7 @@ public class GameBoard {
                 robberX = x;
                 robberY = y;
             }
-            fillHexagon( x, y, dice, resource);
+            fillHexagon( x, y, dice, resource, robber);
         }
     }
 
@@ -182,7 +184,7 @@ public class GameBoard {
      * @param dice determined dice number for this hexagon
      * @param resource determined resource for this hexagon
      */
-    private void fillHexagon( int x, int y, int dice, int resource){
+    private void fillHexagon( int x, int y, int dice, int resource, boolean robber){
         // keeps the distance from the last tile as x, y
         int[][] changeNext = {
                 {-1,1}, {-1,1},
@@ -204,6 +206,7 @@ public class GameBoard {
                 board[y][x].setResource(resource);
                 board[y][x].addStartPoint(board[startX][startY]);
                 board[y][x].setStartPoint();
+                board[y][x].setRobber(robber);
             }
             else {
                 board[y][x].setGameTile();
@@ -224,7 +227,7 @@ public class GameBoard {
      * @return return if (x,y) is gametile
      */
     public boolean isGameTile( int x, int y){
-        return board[xy][x].isItGameTile();
+        return board[y][x].isItGameTile();
     }
 
     /**
@@ -255,7 +258,7 @@ public class GameBoard {
             if( board[x][y].getStructure() == null ){
                 return isValidForCity(player, x, y, gameStatus); // return 1, -2 or -3
             }
-            else if( isThereStructure(player, x , y) && board[x][y].getStructure().getPointValue() == 1){ //point value for settlement is 1, but it can be controlled by another way in the future
+            else if( isThereStructure(player, x , y) && board[x][y].getStructure().getType() == Structure.Type.SETTLEMENT){ //point value for settlement is 1, but it can be controlled by another way in the future
                 return 2;
             }
             else
@@ -391,7 +394,7 @@ public class GameBoard {
                         done = true;
                     }
                 }
-                Node newNode = new Node();
+                DistributionNode newNode = new DistributionNode();
                 newNode.player = player;
                 newNode.startPoint = startPoint;
                 newNode.amount = 1;
@@ -444,7 +447,7 @@ public class GameBoard {
     public void collectResources(int diceNumber){
         int len = resourceDistributionList[diceNumber - 2].size();
         for(int i = 0 ; i < len; i++){
-            Node node = resourceDistributionList[diceNumber - 2].get(i);
+            DistributionNode node = resourceDistributionList[diceNumber - 2].get(i);
             if(!node.startPoint.isThereRobber())
                 node.player.collectMaterial(node.startPoint.getResource(), node.amount);
         }
@@ -461,7 +464,7 @@ public class GameBoard {
         };
         ArrayList<Integer> distances = new ArrayList<>();
         for(int i = 0 ; i < player.getStructures().size() ; i++){
-            if(player.getStructures().get(i).getType() == 0){
+            if(player.getStructures().get(i).getType() == Structure.Type.ROAD){
                 int [][] markedRoads = new int[HEIGHT][WIDTH];
                 int roadX = player.getStructures().get(i).getX();
                 int roadY = player.getStructures().get(i).getY();
