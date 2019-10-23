@@ -139,7 +139,7 @@ public class GameBoard {
             }
             else{ // if dice is 7 then this hexagon will be desert
                 resource = 5;
-                //robber = true;
+                robber = true;
                 robberX = x;
                 robberY = y;
             }
@@ -167,7 +167,7 @@ public class GameBoard {
             }
             else{ // if dice is 7 then this hexagon will be desert
                 resource = 5;
-                //robber = true;
+                robber = true;
                 robberX = x;
                 robberY = y;
             }
