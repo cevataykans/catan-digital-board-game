@@ -7,7 +7,10 @@ import java.util.ArrayList;
  * Class is created and functions are implemented. Open to further implementation.
  * --------------
  * Log 20.10.2019 (Hakan)
- * Implemented buyDevelopmentCard() function.
+ * Implemented robber attributes and methods
+ * --------------
+ * Log 23.10.2019 (Hakan)
+ * Implemented port attributes and methods
  */
 
 public class Tile{
@@ -20,6 +23,7 @@ public class Tile{
 	private int resource;
 	private ArrayList<Tile> startPoints; // List of tiles that are start points of hexagons that includes this tile
 	private boolean robber;
+	private Port.PortType port; // enum
 
 
 	// Constructor
@@ -31,6 +35,7 @@ public class Tile{
 		this.resource = -1;
 		this.startPoints = new ArrayList<Tile>();
 		this.robber = false;
+		this.port = null;
 	}
 
 
@@ -164,6 +169,10 @@ public class Tile{
 	 */
 	public boolean isThereRobber(){
 		return this.robber;
+	}
+
+	public void setPort(Port.PortType port){
+		this.port = port;
 	}
 
 }
