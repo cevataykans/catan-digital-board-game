@@ -139,7 +139,7 @@ public class GameBoard {
             }
             else{ // if dice is 7 then this hexagon will be desert
                 resource = 5;
-                robber = true;
+                //robber = true;
                 robberX = x;
                 robberY = y;
             }
@@ -167,7 +167,7 @@ public class GameBoard {
             }
             else{ // if dice is 7 then this hexagon will be desert
                 resource = 5;
-                robber = true;
+                //robber = true;
                 robberX = x;
                 robberY = y;
             }
@@ -348,6 +348,7 @@ public class GameBoard {
             return -3;
         else if( connectionError == true )
             return -2;
+        return -1;
     }
 
     /**
@@ -360,13 +361,13 @@ public class GameBoard {
      *             1 = settlement
      *             2 = city
      */
-    public void setStructure(Player player, int x, int y, int type){
-        if(type == 0){
+    public void setStructure(Player player, int x, int y, Structure.Type type){
+        if(type == Structure.Type.ROAD){
             Structure newRoad = new Road( player, x, y );
             board[y][x].setStructure(newRoad);
             player.addStructure(newRoad);
         }
-        else if(type == 1){
+        else if(type == Structure.Type.SETTLEMENT){
             Structure newSettlement = new Settlement( player, x, y );
             board[y][x].setStructure(newSettlement);
             player.addStructure(newSettlement);
@@ -382,7 +383,7 @@ public class GameBoard {
                 }
             }
         }
-        if(type != 0){
+        if(type != Structure.Type.ROAD){
             ArrayList<Tile> startPoints = board[y][x].getStartPoints();
             for(int i = 0; i < startPoints.size() ; i++){
                 Tile startPoint = startPoints.get(i);
@@ -425,6 +426,7 @@ public class GameBoard {
      * @param y y-coordinate
      */
     public void changeRobber(int x, int y){
+        // SET ROBBER POSITION TO THE STARTING POINT.
         board[robberY][robberX].setRobber(false);
         board[y][x].setRobber(true);
         robberX = x;
@@ -442,7 +444,7 @@ public class GameBoard {
 
     /**
      * Collect resources for each player that belongs to hexagons related to given dice number.
-     * @param int diceNumber is given dice number
+     * @param diceNumber is given dice number
      */
     public void collectResources(int diceNumber){
         int len = resourceDistributionList[diceNumber - 2].size();
