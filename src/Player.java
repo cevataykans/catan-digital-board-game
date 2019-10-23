@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.util.ArrayList;
+import Cards.*;
 
 /**
  * The player class that represents the player in catan gameboard.
@@ -90,20 +91,8 @@ public class Player
 	 */
 	public void collectMaterial( int material, int amount)
 	{
-		resources[ material] += amount;
-		totResources += amount;
-	}
-
-	/**
-	 * Takes from the player the amount of material stated by the material constant.
-	 * @param material is one of the index of resource array:
-	 *                 Materials.LUMBER, Materials.WOOL, Materials.GRAIN, Materials.BRICK, Materials.ORE.
-	 * @param amount is the number of materials to discard from this player.
-	 */
-	public void discardMaterial( int material, int amount)
-	{
-		resources[material] -= amount;
-		totResources -= amount;
+		this.resources[ material] += amount;
+		this.totResources += amount;
 	}
 
 	/**
@@ -126,16 +115,11 @@ public class Player
 
 	/**
 	 * Buys a development card from the bank and the card is chosen randomly.
-	 * @param requirements is the required resources player needs to give to buy a development card.
+	 * @param resources is the required resources player needs to give to buy a development card.
 	 * @param card is the development card player buys.
 	 */
-	public void buyDevelopmentCard( int[] requirements, Card card)
+	public void buyDevelopmentCard( int[] resources, Card card)
 	{
-		resources[0] -= requirements[0];
-		resources[1] -= requirements[1];
-		resources[2] -= requirements[2];
-		resources[3] -= requirements[3];
-		resources[4] -= requirements[4];
 		cards.add(card);
 	}
 
@@ -222,15 +206,13 @@ public class Player
 	}
 
 	/**
-	 * ------------------DEPRECATED---------------------------
 	 * Player plays the special card stated by the card index.
 	 * @param cardIndex is the index of the special card to play.
-
+	 */
 	public void playSpecialCard( int cardIndex)
 	{
 		//cards.remove( cardIndex).play(); to be implemented after card class is implemented.
 	}
-	  */
 
 	/**
 	 * Gets the largest army count of the player if the player has the largest army title.
@@ -377,13 +359,5 @@ public class Player
 	 */
 	public void setColor(Color color) {
 		this.color = color;
-	}
-
-	public int[] getResources() {
-		return resources;
-	}
-
-	public void setResources(int[] resources) {
-		this.resources = resources;
 	}
 }

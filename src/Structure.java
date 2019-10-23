@@ -18,7 +18,7 @@ public abstract class Structure {
 	Type type;
 
 	enum Type{
-		ROAD, SETTLEMENT, CITY
+		ROAD, SETTLEMENT, CITY;
 	}
 
 	protected Structure( Player owner ) {

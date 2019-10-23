@@ -1,3 +1,5 @@
+package Cards;
+
 import java.awt.image.BufferedImage;
 
 /**
@@ -6,15 +8,9 @@ import java.awt.image.BufferedImage;
  * @version 15.10.2019
  * Class is created and functions are implemented. Open to further implementation.
  */
-public class Card
+public abstract class Card
 {
-    // Card Types
-    enum CardType {
-        KNIGHT, MONOPOLY, ROADBUILDING, VICTORYPOINT, YEAROFPLENTY
-    }
-
     // Attributes
-    CardType type;
     String name;
     int[] requirements;
     String information;
@@ -22,36 +18,10 @@ public class Card
     boolean isPlayable;
 
     // Constructor
-    public Card(CardType type)
+    public Card( String name, String information)
     {
-        if ( type == CardType.KNIGHT)
-        {
-            name = "Knight";
-            information = "This special card allows you to change the position of the thief and steal" +
-                    " a card from a neighbouring player.";
-        }
-        else if ( type == CardType.MONOPOLY)
-        {
-            name = "Monopoly";
-            information = "\"This special card allows you to steal ALL of any one resource of your" +
-                    " choice from all other players.";
-        }
-        else if ( type == CardType.ROADBUILDING)
-        {
-            name = "Road Building";
-            information = "This special card allows you to build 2 roads freely.";
-        }
-        else if ( type == CardType.VICTORYPOINT)
-        {
-            name = "Victory Point";
-            information = "This special card increases your score by 1 point.";
-        }
-        else if ( type == CardType.YEAROFPLENTY)
-        {
-            name = "Year of Plenty";
-            information = "This special card allows you to gain 2 resources of your choice from the bank";
-        }
-        this.type = type;
+        this.name = name;
+        this.information = information;
         requirements = new int[5];
         requirements[0] = 0;
         requirements[1] = 1;
@@ -62,22 +32,7 @@ public class Card
     }
 
     // Functions
-    /**
-     * Gets the card's type.
-     * @return card's type.
-     */
-    public CardType getType() {
-        return type;
-    }
-
-    /**
-     * Sets the card type to the given type.
-     * @param type The name that will be set as card's type.
-     */
-    public void setType(CardType type) {
-        this.type = type;
-    }
-
+    abstract void playCard();
 
     /**
      * Gets the card's name.
