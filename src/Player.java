@@ -19,8 +19,10 @@ import java.util.ArrayList;
  * Added getters and setters to name and color attributes.
  * --------------
  * Log 20.10.2019 (Hakan)
- * Implemented buyDevelopmentCard() function.
- * Added getters and setters to name and color attributes.
+ * Implemented addStructure() and getStructure() methods.
+ * --------------
+ * Log 25.10.2019 (Hakan)
+ * Implemented ports attributes and addPort(), getPorts() methods
  */
 public class Player
 {
@@ -38,6 +40,7 @@ public class Player
 
 	private ArrayList<Structure> structures; // needs to be discuessed for finalization;
 	private ArrayList<Card> cards; // trouble! I suggest arrayList!
+	private ArrayList<Port> ports;
 
 	// Player Attributes related to score and board
 	private int score;
@@ -54,6 +57,7 @@ public class Player
 		this.totResources = 10; // pre construct for initial resources, not final!
 		this.cards = new ArrayList<Card>();
 		this.structures = new ArrayList<Structure>();
+		this.port = new ArrayList<Port>();
 
 		this.score = 0;
 		this.hasLargestArmy = false;
@@ -385,5 +389,26 @@ public class Player
 
 	public void setResources(int[] resources) {
 		this.resources = resources;
+	}
+	
+	/**
+	 * Add a new port to the player's ports ArrayList
+	 * @param port is the portType wanted to add
+	 */
+	public void addPort(Port.PortType port){
+		ports.add(new Port(port));
+	}
+
+	/**
+	 * Return player's port list
+	 * @return ports which is player's port list
+	 */
+	public boolean hasPort(Port.PortType port){
+		boolean result = false;
+		for(int i = 0 ; i < ports.size() ; i++){
+			if(ports.get(i).getPortType() == port)
+				result = true;
+		}
+		return result;
 	}
 }

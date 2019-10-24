@@ -321,4 +321,51 @@ public class GameController
         }
     }
 
+    /**
+     * This method checks whether the player has this particular port
+     * @param portType is the type of port wanted to check
+     * @return true if the current player has this particular port, false otherwise
+     */
+    public boolean selectPort(PortType portType){
+	    return getCurrentPlayer().hasPort(portType);
+    }
+
+    /**
+     * This method makes wanted trade by using port
+     * @param portType is the type of port wanted to check
+     * @param discardedMaterial is the material wanted to be given by the player
+     * @param collectedMaterial is the material wanted to be taken by the player
+     */
+    public void usePort(PortType portType, int discardedMaterial, int collectedMaterial){
+        if(portType == Port.PortType.THREE_TO_ONE){
+            player.discardMaterial(discardedMaterial, 3);
+            player.collectMaterial(collectedMaterial, 1);
+        }
+
+        else if(portType == Port.PortType.TWO_TO_ONE_LUMBER){
+            player.discardMaterial(Material.LUMBER, 2);
+            player.collectMaterial(collectedMaterial, 1);
+        }
+
+        else if(portType == Port.PortType.TWO_TO_ONE_WOOL){
+            player.discardMaterial(Material.WOOL, 2);
+            player.collectMaterial(collectedMaterial, 1);
+        }
+
+        else if(portType == Port.PortType.TWO_TO_ONE_GRAIN){
+            player.discardMaterial(Material.GRAIN, 2);
+            player.collectMaterial(collectedMaterial, 1);
+        }
+        else if(portType == Port.PortType.TWO_TO_ONE_BRICK){
+            player.discardMaterial(Material.BRICK, 2);
+            player.collectMaterial(collectedMaterial, 1);
+        }
+
+        else if(portType == Port.PortType.TWO_TO_ONE_ORE){
+            player.discardMaterial(Material.ORE, 2);
+            player.collectMaterial(collectedMaterial, 1);
+        }
+    }
+
+
 }
