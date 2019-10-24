@@ -57,7 +57,7 @@ public class Player
 		this.totResources = 10; // pre construct for initial resources, not final!
 		this.cards = new ArrayList<Card>();
 		this.structures = new ArrayList<Structure>();
-		this.port = new ArrayList<Port>();
+		this.ports = new ArrayList<Port>();
 
 		this.score = 0;
 		this.hasLargestArmy = false;
