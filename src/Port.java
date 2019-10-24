@@ -5,9 +5,9 @@
  * Class is created and functions are implemented.
  */
 
-public class PORT{
+public class Port{
 
-	enum PortTYPE{
+	enum PortType{
 	    THREE_TO_ONE, TWO_TO_ONE_LUMBER, TWO_TO_ONE_WOOL, TWO_TO_ONE_GRAIN, TWO_TO_ONE_BRICK, TWO_TO_ONE_ORE
     }
 
