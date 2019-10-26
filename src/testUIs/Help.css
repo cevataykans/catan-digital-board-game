@@ -1,0 +1,15 @@
+Label {
+    -fx-font-family: MinionPro-Bold;
+}
+
+Text {
+    -fx-font-family: MinionPro-Bold;
+}
+
+#goBack {
+    -fx-opacity: 0.5;
+}
+
+#goBack:hover {
+    -fx-opacity: 1;
+}

@@ -14,12 +14,12 @@ public class Card
     }
 
     // Attributes
-    CardType type;
-    String name;
-    int[] requirements;
-    String information;
-    BufferedImage image;
-    boolean isPlayable;
+    private CardType type;
+    private String name;
+    private int[] requirements;
+    private String information;
+    private BufferedImage image;
+    private boolean isPlayable;
 
     // Constructor
     public Card(CardType type)

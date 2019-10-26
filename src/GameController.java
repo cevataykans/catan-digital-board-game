@@ -23,12 +23,12 @@ public class GameController
     private final int TOTAL_DEV_CARDS = 25;
 
     // Attributes
-    GameBoard board;
-    Player[] players;
-    int turnNumber;
-    int robber;
+    private GameBoard board;
+    private Player[] players;
+    private int turnNumber;
+    private int robber;
 
-    Stack<Card> devCards;
+    private Stack<Card> devCards;
 
 	// Constructor
     public GameController()
@@ -162,7 +162,7 @@ public class GameController
     public void addDevelopmentCard()
     {
         Card placeholderCard = new Card(Card.CardType.KNIGHT);
-        if ( getCurrentPlayer().hasEnoughResources(placeholderCard.requirements)) {
+        if ( getCurrentPlayer().hasEnoughResources(placeholderCard.getRequirements())) {
             getCurrentPlayer().buyDevelopmentCard(placeholderCard.getRequirements(), devCards.pop());
         }
     }
