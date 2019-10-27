@@ -3,6 +3,7 @@ import java.util.Collections;
 
 /**
  * Gameboard class that is used to represent the board of Catan game.
+ * (Horizontal line is X, vertical line is Y)
  * @author Yusuf Nevzat Şengün
  * @version 16.10.2019
  * --------------
@@ -30,8 +31,7 @@ public class GameBoard {
     private ArrayList<Integer> diceNumbers;
     private ArrayList<Integer> resources;
     private ArrayList<DistributionNode>[] resourceDistributionList;
-    private int robberX;
-    private int robberY;
+    private Tile robber;
 
     //constructor
     public GameBoard(){
@@ -47,8 +47,7 @@ public class GameBoard {
         for(int i = 0; i < 11; i++){
             resourceDistributionList[i] = new ArrayList<>();
         }
-        robberX = -1;
-        robberY = -1;
+        robber = null;
     }
 
     /**
@@ -129,7 +128,6 @@ public class GameBoard {
 
         int dice, resource;
         for( int i = 1 ; i <= iterationNum ; x -= 4, y += 2, i++ ){
-            boolean robber = false;
             dice = diceNumbers.get(diceNumbers.size() - 1);
             diceNumbers.remove(diceNumbers.size()-1);
 
@@ -139,11 +137,9 @@ public class GameBoard {
             }
             else{ // if dice is 7 then this hexagon will be desert
                 resource = 5;
-                robber = true;
-                robberX = x;
-                robberY = y;
+                robber = board[y][x];
             }
-            fillHexagon( x, y, dice, resource, robber);
+            fillHexagon( x, y, dice, resource);
         }
     }
 
@@ -158,7 +154,6 @@ public class GameBoard {
 
         int dice, resource;
         for( int i = 1 ; i <= iterationNum ; x += 4, y += 2, i++ ){
-            boolean robber = false;
             dice = diceNumbers.get(diceNumbers.size() - 1);
             diceNumbers.remove(diceNumbers.size()-1);
             if( dice != 7 ) {
@@ -167,11 +162,9 @@ public class GameBoard {
             }
             else{ // if dice is 7 then this hexagon will be desert
                 resource = 5;
-                robber = true;
-                robberX = x;
-                robberY = y;
+                robber = board[y][x];
             }
-            fillHexagon( x, y, dice, resource, robber);
+            fillHexagon( x, y, dice, resource);
         }
     }
 
@@ -184,7 +177,7 @@ public class GameBoard {
      * @param dice determined dice number for this hexagon
      * @param resource determined resource for this hexagon
      */
-    private void fillHexagon( int x, int y, int dice, int resource, boolean robber){
+    private void fillHexagon( int x, int y, int dice, int resource){
         // keeps the distance from the last tile as x, y
         int[][] changeNext = {
                 {-1,1}, {-1,1},
@@ -204,19 +197,38 @@ public class GameBoard {
                 board[y][x].setDiceNumber(dice);
                 board[y][x].setGameTile();
                 board[y][x].setResource(resource);
-                board[y][x].addStartPoint(board[startX][startY]);
+                board[y][x].addStartPoint(board[startY][startX]);
                 board[y][x].setStartPoint();
-                board[y][x].setRobber(robber);
             }
             else {
                 board[y][x].setGameTile();
-                board[y][x].addStartPoint(board[startX][startY]);
+                board[y][x].addStartPoint(board[startY][startX]);
             }
 
             if(i < 11){
                 x += changeNext[i][0];
                 y += changeNext[i][1];
             }
+        }
+
+        fillInsideWithStartPoint( startX, startY);
+    }
+
+    /**
+     * fill inside of the given hexagon with their starting point by using bfs
+     * @param x start point of the hexagon
+     * @param y start point of the hexagon
+     */
+    private void fillInsideWithStartPoint( int x, int y){
+        int[][] tiles = { // (x,y)
+                {-1,2},{0,1},{0,2},{0,3},{1,1},{1,2},{1,3},{2,1},{2,2},{2,3},{3,2}
+        };
+
+        for( int i = 0 ; i < 11 ; i++){
+            int targetX = x + tiles[i][0];
+            int targetY = y + tiles[i][1];
+
+            board[targetY][targetX].addStartPoint(board[y][x]);
         }
     }
 
@@ -249,16 +261,16 @@ public class GameBoard {
      */
     public int checkStructure( Player player, int x, int y, int gameStatus){
         if( x % 2 == 1 ){ // road
-            if( board[x][y].getStructure() == null )
+            if( board[y][x].getStructure() == null )
                 return isValidForRoad(player,x,y); // return 0 or -1
             else
                 return -4;
         }
         else{ // settlement or city
-            if( board[x][y].getStructure() == null ){
+            if( board[y][x].getStructure() == null ){
                 return isValidForCity(player, x, y, gameStatus); // return 1, -2 or -3
             }
-            else if( isThereStructure(player, x , y) && board[x][y].getStructure().getType() == Structure.Type.SETTLEMENT){ //point value for settlement is 1, but it can be controlled by another way in the future
+            else if( isThereStructure(player, x , y) && board[y][x].getStructure().getType() == Structure.Type.SETTLEMENT){ //point value for settlement is 1, but it can be controlled by another way in the future
                 return 2;
             }
             else
@@ -275,7 +287,7 @@ public class GameBoard {
      *          -1 = there is no connection for road to build
      */
     private int isValidForRoad( Player player, int x, int y){
-        int[][] possibleNeighbors = {
+        int[][] possibleNeighbors = { // (x,y)
                 {-2,-1}, {-2,1}, {2,-1}, {2,1}, {0,-2}, {0,2}, // possible road neighbors
                 {-1,0}, {1,0}, {-1,-1}, {1,1}, {-1,1}, {1, -1} // possible settlement/city neighbors
         };
@@ -301,7 +313,18 @@ public class GameBoard {
      */
     private boolean isThereStructure( Player player, int x, int y){
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && isGameTile(x, y) &&
-                board[x][y].getStructure() != null && board[x][y].getStructure().getOwner() == player;
+                board[y][x].getStructure() != null && board[y][x].getStructure().getOwner() == player;
+    }
+
+    /**
+     * checks if there is a structure in (x,y), it can be road, city or settlement
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return returns true if it is possible
+     */
+    private boolean isThereStructure( int x, int y){
+        return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && isGameTile(x, y) &&
+                board[y][x].getStructure() != null;
     }
 
     /**
@@ -315,11 +338,11 @@ public class GameBoard {
      *          -3 = there is a building near
      */
     private int isValidForCity( Player player, int x, int y, int gameStatus){
-        int[][] possibleRoadNeighbors = {
-                {-2,-1}, {-2,1}, {2,-1}, {2,1}, {0,-2}, {0,2}
+        int[][] possibleRoadNeighbors = { // (x,y)
+                {-1,0}, {1,0}, {-1,-1}, {-1,1}, {1,-1}, {1,1}
         };
-        int[][] possibleBuildingNeighbors = {
-                {-1,0}, {1,0}, {-1,-1}, {1,1}, {-1,1}, {1, -1}
+        int[][] possibleBuildingNeighbors = { // (x,y)
+                {-2,0}, {2,0}, {-2,-2}, {-2,2}, {2,-2}, {2,2}
         };
         boolean buildingError = false;
         boolean connectionError = true;
@@ -336,17 +359,17 @@ public class GameBoard {
             int targetX = x + possibleBuildingNeighbors[i][0];
             int targetY = y + possibleBuildingNeighbors[i][1];
 
-            if( isThereStructure(player, targetX, targetY) )
+            if( isThereStructure( targetX, targetY) )
                 buildingError = true;
         }
 
-        if( gameStatus == 0 && buildingError == false )
+        if( gameStatus == 0 && !buildingError)
             return 1;
-        else if( gameStatus == 1 && buildingError == false && connectionError == false )
+        else if( gameStatus == 1 && !buildingError && !connectionError)
             return 1;
-        else if( buildingError == true )
+        else if(buildingError)
             return -3;
-        else if( connectionError == true )
+        else if(connectionError)
             return -2;
         return -1;
     }
@@ -405,32 +428,24 @@ public class GameBoard {
     }
 
     /**
-     * Returns x coordinate of robber.
-     * @return robberX
+     * Returns robber.
+     * @return robber
      */
-    public int getRobberX(){
-        return robberX;
-    }
-
-    /**
-     * Returns y coordinate of robber.
-     * @return robberY
-     */
-    public int getRobberY(){
-        return robberY;
+    public Tile getRobber(){
+        return robber;
     }
 
     /**
      * Change location of the robber.
-     * @param x x-coordinate
-     * @param y y-coordinate
+     * @param r new robber tile
      */
-    public void changeRobber(int x, int y){
-        // SET ROBBER POSITION TO THE STARTING POINT.
-        board[robberY][robberX].setRobber(false);
-        board[y][x].setRobber(true);
-        robberX = x;
-        robberY = y;
+    public void changeRobber( Tile r ){
+        robber = r;
+    }
+
+    public void changeRobber( int x, int y){
+        Tile start = board[y][x].getStartPoints().get(0);
+
     }
 
     /**
@@ -450,7 +465,7 @@ public class GameBoard {
         int len = resourceDistributionList[diceNumber - 2].size();
         for(int i = 0 ; i < len; i++){
             DistributionNode node = resourceDistributionList[diceNumber - 2].get(i);
-            if(!node.startPoint.isThereRobber())
+            if(node.startPoint != robber)
                 node.player.collectMaterial(node.startPoint.getResource(), node.amount);
         }
     }
