@@ -22,7 +22,6 @@ public class Tile{
 	private int diceNumber;
 	private int resource;
 	private ArrayList<Tile> startPoints; // List of tiles that are start points of hexagons that includes this tile
-	private boolean robber;
 	private Port.PortType port; // enum
 
 
@@ -34,7 +33,6 @@ public class Tile{
 		this.diceNumber = -1;
 		this.resource = -1;
 		this.startPoints = new ArrayList<Tile>();
-		this.robber = false;
 		this.port = null;
 	}
 
@@ -150,29 +148,22 @@ public class Tile{
 
 	/**
 	 * Sets resource to the given resource.
-	 * @param resourceToCheck that is wanted to set to the resource.
+	 * @param resource that is wanted to set to the resource.
 	 */
 	public void setResource(int resource){
 		this.resource = resource;
 	}
 
-	/**
-	 * Sets robber to true
-	 */
-	public void setRobber(boolean robber){
-		this.robber = robber;
-	}
-
-	/**
-	 * Returns whether there is a robber
-	 * @return robber boolean
-	 */
-	public boolean isThereRobber(){
-		return this.robber;
-	}
-
 	public void setPort(Port.PortType port){
 		this.port = port;
+	}
+
+	/**
+	 * returns port
+	 * @return port
+	 */
+	public Port.PortType getPort(){
+		return this.port;
 	}
 
 }
