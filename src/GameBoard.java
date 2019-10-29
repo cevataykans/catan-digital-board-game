@@ -30,6 +30,7 @@ public class GameBoard {
     private Tile[][] board;
     private ArrayList<Integer> diceNumbers;
     private ArrayList<Integer> resources;
+    private ArrayList<Port.PortType> ports;
     private ArrayList<DistributionNode>[] resourceDistributionList;
     private Tile robber;
 
@@ -43,6 +44,7 @@ public class GameBoard {
         }
         diceNumbers = new ArrayList<>();
         resources = new ArrayList<>();
+        ports = new ArrayList<>();
         resourceDistributionList = new ArrayList[11];
         for(int i = 0; i < 11; i++){
             resourceDistributionList[i] = new ArrayList<>();
@@ -57,7 +59,33 @@ public class GameBoard {
     public void configurate(){
         addDiceNumbers();
         addResources();
+        setPorts();
         setUpGameBoard();
+    }
+
+    /**
+     * distrubutes ports to exact positions randomly
+     */
+    private void setPorts(){
+        int[][] positions={ // (x,y,x,y)
+                {10,0,12,0},{4,4,6,2},{0,10,2,8},{0,14,2,16},{6,18,8,18},{14,18,16,18},{20,16,22,14},{20,8,22,10},{16,2,18,4}
+        };
+        int[] portTypes={4,1,1,1,1,1};
+
+        int ii = 0;
+        for( Port.PortType pt : Port.PortType.values() ){
+            for( int j = 0 ; j < portTypes[ii] ; j++ ){
+                ports.add(pt);
+            }
+            ii++;
+        }
+
+        Collections.shuffle(ports);
+
+        for( int i = 0 ; i < ports.size() ; i++ ){
+            board[positions[i][1]][positions[i][0]].setPort(ports.get(i));
+            board[positions[i][3]][positions[i][2]].setPort(ports.get(i));
+        }
     }
 
     /**
@@ -394,6 +422,10 @@ public class GameBoard {
             Structure newSettlement = new Settlement( player, x, y );
             board[y][x].setStructure(newSettlement);
             player.addStructure(newSettlement);
+
+            if(board[y][x].getPort() != null){
+                player.addPort(board[y][x].getPort());
+            }
         }
         else{
             Structure newCity = new City( player, x, y );
