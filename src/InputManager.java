@@ -34,8 +34,16 @@ public class InputManager extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+        try {
+            final Font font = Font.loadFont(new FileInputStream(new File("C:\\Users\\USER\\Desktop\\Project_Catan\\CS319-3C-CA\\src\\fonts\\MinionPro-Bold.otf")), 40);
+        }
+        catch (FileNotFoundException e)
+        {
+            System.out.println(e);
+        }
+
         Parent root = FXMLLoader.load(getClass().getResource("/testUIs/Test1.fxml"));
-        initializeIntro1(root, primaryStage);
+        initializeMainMenu(root, primaryStage);
         primaryStage.setTitle("CATAN");
         primaryStage.show();
     }
@@ -126,6 +134,16 @@ public class InputManager extends Application {
         Button exitButton = (Button) scene.lookup("#exitButton");
 
         Parent finalRoot = root;
+        playButton.setOnMouseClicked(event -> {
+            try {
+                initializePlayerSelection(finalRoot, primaryStage);
+            }
+            catch (IOException e)
+            {
+                System.out.println(e);
+            }
+        });
+
         helpButton.setOnMouseClicked(event -> {
             try {
                 initializeHelp(finalRoot, primaryStage);
@@ -148,13 +166,27 @@ public class InputManager extends Application {
         Scene scene = new Scene(root, Color.BLACK);
         scene.getStylesheets().add(getClass().getResource("/testUIs/Help.css").toExternalForm());
 
-        try {
-            final Font font = Font.loadFont(new FileInputStream(new File("C:\\Users\\USER\\Desktop\\Project_Catan\\CS319-3C-CA\\src\\fonts\\MinionPro-Bold.otf")), 40);
-        }
-        catch (FileNotFoundException e)
+        ImageView goBack = (ImageView) scene.lookup("#goBack");
+        Parent finalRoot = root;
+        goBack.setOnMouseClicked(event ->
         {
-            System.out.println(e);
-        }
+            try {
+                initializeMainMenu(finalRoot, primaryStage);
+            }
+            catch (IOException e)
+            {
+                System.out.println(e);
+            }
+        });
+
+        primaryStage.setScene(scene);
+    }
+
+    private void initializePlayerSelection(Parent root, Stage primaryStage) throws IOException
+    {
+        root = FXMLLoader.load(getClass().getResource("/testUIs/PlayerSelection.fxml"));
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/testUIs/PlayerSelection.css").toExternalForm());
 
         ImageView goBack = (ImageView) scene.lookup("#goBack");
         Parent finalRoot = root;

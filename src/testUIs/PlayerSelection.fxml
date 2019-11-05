@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" fx:id="player1Color" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="anchor" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <Label layoutX="210.5" prefHeight="40.0" prefWidth="179.0" text="Player Selection" textAlignment="CENTER" textFill="#7200cc" AnchorPane.topAnchor="3.98">
+      <font>
+        <Font size="25.0" />
+      </font>
+    </Label>
+    <Button fx:id="startButton" layoutX="260.0" layoutY="354.0" mnemonicParsing="false" prefWidth="80.0" text="Start" />
+    <TextField fx:id="player1Name" layoutX="22.0" layoutY="54.0" prefWidth="109.0" promptText="Player 1" />
+    <TextField fx:id="player2Name" layoutX="174.0" layoutY="54.0" prefWidth="109.0" promptText="Player 2" />
+    <TextField fx:id="player3Name" layoutX="325.0" layoutY="54.0" prefWidth="109.0" promptText="Player 3" />
+    <TextField fx:id="player4Name" layoutX="477.0" layoutY="54.0" prefWidth="109.0" promptText="Player 4" />
+    <Region fx:id="player1Color" layoutX="22.0" layoutY="91.0" prefHeight="252.0" prefWidth="109.0" />
+    <Region fx:id="player2Color" layoutX="174.0" layoutY="91.0" prefHeight="252.0" prefWidth="109.0" />
+    <Region fx:id="player3Color" layoutX="325.0" layoutY="91.0" prefHeight="252.0" prefWidth="109.0" />
+    <Region fx:id="player4Color" layoutX="477.0" layoutY="91.0" prefHeight="252.0" prefWidth="109.0" />
+    <ImageView fx:id="goBack" fitHeight="40.00006103515625" fitWidth="54.11772865351836" layoutX="39.0" layoutY="347.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/goBackToMain.png" />
+      </image>
+    </ImageView>
+  </children>
+</AnchorPane>

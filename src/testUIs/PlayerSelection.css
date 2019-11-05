@@ -2,13 +2,6 @@
     -fx-background-image: url("/images/dark-red.jpg");
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover, auto;
-}
-
-Label {
-    -fx-font-family: MinionPro-Bold;
-}
-
-Text {
     -fx-font-family: MinionPro-Bold;
 }
 
@@ -18,4 +11,20 @@ Text {
 
 #goBack:hover {
     -fx-opacity: 1;
+}
+
+#player1Color {
+    -fx-background-color: #00007f;
+}
+
+#player2Color {
+    -fx-background-color: white;
+}
+
+#player3Color {
+    -fx-background-color: darkorange;
+}
+
+#player4Color {
+    -fx-background-color: #573500;
 }
