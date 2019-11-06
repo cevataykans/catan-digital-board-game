@@ -19,6 +19,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class GameController
 {
+    private String[] testNames = { "Cevat", "Talha", "Hakan", "Rafi"};
+
     // Constants
     private final int TOTAL_DEV_CARDS = 25;
 
@@ -27,8 +29,11 @@ public class GameController
     private Player[] players;
     private int turnNumber;
     private int robber;
+    private int gameStatus = 0;
+    private boolean playersFirstPass = false;
+    private int playerIndex = 0;
 
-    private Stack<Card> devCards;
+    private Stack<Card> devCards = new Stack<Card>();
 
 	// Constructor
     public GameController()
@@ -60,7 +65,7 @@ public class GameController
             {
                 card = new Card(Card.CardType.VICTORYPOINT);
             }
-            devCards.push(card);
+            devCards.push( card);
         }
         Collections.shuffle(devCards);
     }
@@ -74,9 +79,8 @@ public class GameController
         board.configurate();
         for ( int i = 0; i < 4; i++)
         {
-            players[i] = new Player("Placeholder name", Color.BLACK);
+            players[i] = new Player( this.testNames[ i], Color.BLACK);
         }
-        turnNumber = 1;
         robber = 0 /* Gameboard needs to have a method that returns the robber hexagon */;
     }
 
@@ -92,9 +96,12 @@ public class GameController
      * Sets the player list to the given players list.
      * @param players is the new player list.
      */
-    public void setPlayers(Player[] players) {
+    public void setPlayers(Player[] players)
+    {
+
         this.players = players;
     }
+
 
     /**
      * Returns a specific player given in the player index.
@@ -112,7 +119,7 @@ public class GameController
      */
     public Player getCurrentPlayer()
     {
-        return players[turnNumber % 4];
+        return players[ this.playerIndex];
     }
 
     /**
@@ -225,7 +232,7 @@ public class GameController
         }
         else if ( card.getType() == Card.CardType.YEAROFPLENTY)
         {
-            //int material[2] = Materials.LUMBER; // PLACEHOLDER! THIS MATERIAL SHOULD BE SELECTED FROM USER IN UI!
+            //int material[2] = logic.Materials.LUMBER; // PLACEHOLDER! THIS MATERIAL SHOULD BE SELECTED FROM USER IN UI!
             //getCurrentPlayer().collectMaterial(material[0], 1); // Give a free specified resource to the player.
             //getCurrentPlayer().collectMaterial(material[1], 1); // Give a free specified resource to the player.
         }
@@ -233,11 +240,12 @@ public class GameController
 
 
     /**
-     * This method is to allow a Player to build a road.
+     * This method is to allow a logic.Player to build a road.
      * @param roadBuildingCard is the flag to indicate if the user is allowed to build the road free.
      */
     public void buildRoad(boolean roadBuildingCard, int x, int y)
     {
+
         if( roadBuildingCard ) {
             this.getCurrentPlayer().buyRoad( new int[]{0, 0, 0, 0, 0} );
         }
@@ -245,80 +253,32 @@ public class GameController
             this.getCurrentPlayer().buyRoad( Structure.REQUIREMENTS_FOR_ROAD );
         }
 
-        if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == 0 ) { // I assumed gameStatus = 1
-            board.setStructure(this.getCurrentPlayer(), x, y, Structure.Type.ROAD);
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -1 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -2 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -3 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -4 ){
-            //TODO
-        }
-        else{
-            //TODO
-        }
+        this.board.setStructure(this.getCurrentPlayer(), x, y, Structure.Type.ROAD);
 
     }
 
     /**
-     * This method is to allow a Player to build a statement.
+     * This method is to allow a logic.Player to build a statement.
      */
     public void buildSettlement(int x, int y)
     {
         this.getCurrentPlayer().buySettlement( Structure.REQUIREMENTS_FOR_SETTLEMENT );
 
-        if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == 1 ) { // I assumed gameStatus = 1
-            board.setStructure(this.getCurrentPlayer(), x, y, Structure.Type.SETTLEMENT);
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -1 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -2 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -3 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -4 ){
-            //TODO
-        }
-        else{
-            //TODO
-        }
+        this.board.setStructure(this.getCurrentPlayer(), x, y, Structure.Type.SETTLEMENT);
+
 
     }
 
     /**
-     * This method is to allow a Player to build a city.
+     * This method is to allow a logic.Player to build a city.
      */
     public void buildCity(int x, int y)
     {
         this.getCurrentPlayer().buyCity( Structure.REQUIREMENTS_FOR_CITY );
 
-        if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == 2 ) { // I assumed gameStatus = 1
-            board.setStructure(this.getCurrentPlayer(), x, y, Structure.Type.CITY);
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -1 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -2 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -3 ){
-            //TODO
-        }
-        else if( board.checkStructure(this.getCurrentPlayer(), x, y, 1 ) == -4 ){
-            //TODO
-        }
-        else{
-            //TODO
-        }
+        this.board.setStructure(this.getCurrentPlayer(), x, y, Structure.Type.CITY);
+
+
     }
 
     /**
@@ -366,6 +326,31 @@ public class GameController
             player.discardMaterial(Materials.ORE, 2);
             player.collectMaterial(collectedMaterial, 1);
         }
+    }
+
+
+    public Tile[][] getGameBoard()
+    {
+        return this.board.getBoard();
+    }
+
+    public int checkStructure( int x, int y)
+    {
+        return this.board.checkStructure( this.getCurrentPlayer(), x, y, this.gameStatus);
+    }
+
+    public void endTurn()
+    {
+        if ( !this.playersFirstPass)
+        {
+            this.playerIndex++;
+        }
+    }
+
+
+    private void switchToGamePlay()
+    {
+        return;
     }
 
 

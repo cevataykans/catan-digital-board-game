@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <ProgressIndicator cache="false" disable="false" prefHeight="44.80999755859375" prefWidth="45.0" progress="0.0" style="" AnchorPane.leftAnchor="24.0" AnchorPane.topAnchor="14.0" />
+    <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="playerInfo" text="Player 1(0 Pts)" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="46.0">
+      <font>
+        <Font size="10.0" fx:id="x1" />
+      </font>
+    </Text>
+    <ProgressIndicator cache="false" disable="false" prefHeight="92.0" prefWidth="105.0" progress="0.0" style="" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="8.0" />
+    <Text scaleX="1.1471588119944958" scaleY="0.9999979018892531" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="playerInfo" text="Player 4(0 Pts)" AnchorPane.bottomAnchor="14.24" AnchorPane.leftAnchor="14.0" />
+    <ProgressIndicator cache="false" disable="false" layoutX="24.0" layoutY="76.0" prefHeight="44.80999755859375" prefWidth="45.0" progress="0.0" style="" />
+    <Text font="$x1" layoutX="15.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="playerInfo" text="Player 2(0 Pts)" />
+    <ProgressIndicator cache="false" disable="false" layoutX="24.0" layoutY="139.0" prefHeight="44.80999755859375" prefWidth="45.0" progress="0.0" style="" />
+    <Text font="$x1" layoutX="15.0" layoutY="182.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="playerInfo" text="Player 3(0 Pts)" />
+  </children>
+</AnchorPane>

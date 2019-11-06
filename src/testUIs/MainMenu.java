@@ -17,7 +17,7 @@ public class MainMenu extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        Parent root = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../UI/MainMenu.fxml"));
 
         Scene scene = new Scene(root, 700, 400);
         scene.getStylesheets().add(MainMenu.class.getResource("MainMenu.css").toExternalForm());

@@ -13,6 +13,13 @@
     -fx-opacity: 1;
 }
 
+.playerColor {
+    -fx-border-style: dashed;
+    -fx-border-radius: 3px;
+    -fx-border-color: black;
+    -fx-border-width: 5px;
+}
+
 #player1Color {
     -fx-background-color: #00007f;
 }
@@ -27,4 +34,8 @@
 
 #player4Color {
     -fx-background-color: #573500;
+}
+
+.text-field {
+    -fx-text-alignment: center;
 }

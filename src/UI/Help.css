@@ -1,9 +1,3 @@
-.anchor {
-    -fx-background-image: url("/images/dark-red.jpg");
-    -fx-background-repeat: no-repeat;
-    -fx-background-size: cover, auto;
-}
-
 Label {
     -fx-font-family: MinionPro-Bold;
 }
