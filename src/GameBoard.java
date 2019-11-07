@@ -271,6 +271,25 @@ public class GameBoard {
     }
 
     /**
+     * return if this tile is inside tile but not gametile
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return the result
+     */
+    public boolean isInsideTile( int x, int y){
+        return board[y][x].getStartPoints().size() != 0 && !board[y][x].isItGameTile();
+    }
+
+    /**
+     * return gameBoard for UI
+     * @return gameboard
+     */
+    public Tile[][] getBoard()
+    {
+        return this.board;
+    }
+
+    /**
      * (x,y) TILE NEED TO BE GAMETILE, IF NOT THEN DO NOT USE THIS METHOD !!
      *
      * this method shows a structure that can be build in (x,y) by current player if it is not possible then returns an error
@@ -477,7 +496,6 @@ public class GameBoard {
 
     public void changeRobber( int x, int y){
         Tile start = board[y][x].getStartPoints().get(0);
-
     }
 
     /**
