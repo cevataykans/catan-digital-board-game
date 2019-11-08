@@ -3,6 +3,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Stack;
+import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -21,6 +22,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * Implemented some functions.
  * -----------------------
  */
+
+// todo must yapisi eklenecek(suan yapilmasi gereken bisey varsa onu belirten eg. cardlari kullandiktan sonra ya da basta settlement kurmak...)
+// todo port olayina henuz bakip dusunmedim burdaki implementedd haline goz atmam lazim
+// todo trade
+
 public class Game
 {
     // Constants
@@ -33,12 +39,34 @@ public class Game
     private int playerCount;
     private int gameStatus;
     private int currentDice;
+    private int longestRoad;
+    private Player longestRoadPlayer;
+
+    /*
+        todo read this section
+
+        logic e yeni ekleyecegimiz bir must yapisi olacak
+        bu bize kullanicinin yapmasi gereken bisey var mi onu soylicek ve onun disinda bisey yapmasina izin vermeyecek
+        mesela oyun basladiginda kullanici bir koy ve bir yol kurmali ya da bi development card oynandigin
+        bu card yol kartiysa must a iki tane yol kur komutu atilacak vb.
+
+        integer atmak disinda fikriniz varsa onu da yapabiliriz. (enum olabilir mesela ama butun gameboard methoslari int dondugu icin uyumlu oluyordu her seyi enuma donusturebiliriz belki)
+
+        0=road
+        1=settlement
+        2=city
+        3=choose inside tile (to change robber position) (inside tile altigenlerin ici gameboardda bu tilelar configure asamasinda bulunuyo)
+        4=(suan ilk asamada aklima gelen bunlar varsa baska seyler siz eklersiniz)
+     */
+    private Queue<Integer> must;
 
     private Stack<Card> devCards;
 
     // Constructors
     public Game( ArrayList<Player> players )
     {
+        longestRoadPlayer = null;
+        longestRoad = 5; // minumum requierement to get this card
         gameStatus = 0; // setup mode
         this.players = players;
         playerCount = players.size();
@@ -80,6 +108,11 @@ public class Game
             board.collectResources();
             gameStatus = 1;
         }
+        //todo birisi oyunu kazandimi kontrolu
+    }
+
+    public int getLongestRoad(){
+        return longestRoad;
     }
 
     public int getCurrentDice(){
@@ -98,17 +131,17 @@ public class Game
         return ret;
     }
 
-    // ?????? 7
+    /**
+     * collect resources after dice has been rolled or moves robber
+     */
     public void collectResources(){
         if( currentDice == 7 ){
-            ////// todo
+            ////// todo robber
         }
         else {
             board.collectResources(currentDice);
         }
     }
-
-
 
     /**
      * Returns the player list.
@@ -173,19 +206,29 @@ public class Game
     }
 
     /**
-     * todo
-     * Adds a development card taken out from the stack to the current player.
+     * checks is the current user can buy a develpment card
+     * @return true if there is enough resources
      */
-    public void addDevelopmentCard() // ?????
-    {
-        Card placeholderCard = new Card(Card.CardType.KNIGHT);
-        if ( getCurrentPlayer().hasEnoughResources(placeholderCard.getRequirements())) {
-            getCurrentPlayer().buyDevelopmentCard(placeholderCard.getRequirements(), devCards.pop());
-        }
+    public boolean checkDevelopmentCard(){
+        Player cp = getCurrentPlayer();
+        return cp.hasEnoughResources( Card.REQUIREMENTS_FOR_CARD );
     }
 
     /**
-     * todo
+     * Adds a development card taken out from the stack to the current player.
+     */
+    public void addDevelopmentCard()
+    {
+        Player cp = getCurrentPlayer();
+
+        Card tmp = devCards.peek();
+        devCards.pop();
+
+        cp.buyDevelopmentCard( Card.REQUIREMENTS_FOR_CARD , tmp);
+    }
+
+    /**
+     * todo karlarin sonucunda yapilmasi gereken seyler mustlara doldurulacak
      * Plays a development card specified from the current player. The effect of the card will take place depending on
      * the type.
      * @param card is the development card that will be played with its effect.
@@ -217,13 +260,6 @@ public class Game
         }
         else if ( card.getType() == Card.CardType.ROADBUILDING)
         {
-            int freeRequirements[] = new int[5];
-            // Make the road requirement free.
-            freeRequirements[0] = 0;
-            freeRequirements[1] = 0;
-            freeRequirements[2] = 0;
-            freeRequirements[3] = 0;
-            freeRequirements[4] = 0;
             int total = 0;
             // Do the free road building 2 valid times. If user clicks invalid location, ask for a new location by
             // repeating the loop.
@@ -232,7 +268,7 @@ public class Game
                 int y = 0; // PLACEHOLDER! THIS SHOULD BE THE ROAD TILE PLAYER CHOOSES IN UI!
                 if (board.checkStructure(getCurrentPlayer(), x, y, 1) == 0) {
                     board.setStructure(getCurrentPlayer(), x, y, Structure.Type.ROAD);
-                    getCurrentPlayer().buyRoad(freeRequirements);
+                    getCurrentPlayer().buyRoad();
                     total++;
                 }
             }
@@ -276,22 +312,19 @@ public class Game
                 return structureStatus;
 
             else if( structureStatus == 0 ){ // road can be built in terms of gameboard
-                int r[] = { 5, 5, 5, 5, 5 }; // ?????????????
-                if( cp.hasEnoughResources( r) )
+                if( cp.hasEnoughResources( Structure.REQUIREMENTS_FOR_ROAD ) )
                     return structureStatus;
                 else
                     return -5; // error because of resource
             }
             else if( structureStatus == 1 ){ // settlement can be built in terms of gameboard
-                int r[] = { 5, 5, 5, 5, 5 }; // ?????????????
-                if( cp.hasEnoughResources( r) )
+                if( cp.hasEnoughResources( Structure.REQUIREMENTS_FOR_SETTLEMENT ) )
                     return structureStatus;
                 else
                     return -6; // error because of resource
             }
             else if( structureStatus == 2 ){ // city can be built in terms of gameboard
-                int r[] = { 5, 5, 5, 5, 5 }; // ?????????????
-                if( cp.hasEnoughResources( r) )
+                if( cp.hasEnoughResources( Structure.REQUIREMENTS_FOR_CITY ) )
                     return structureStatus;
                 else
                     return -7; // error because of resource
@@ -319,6 +352,7 @@ public class Game
         if( type == Structure.Type.ROAD ){
             board.setStructure( cp, x ,y, type );
             cp.buyRoad();
+            updateLongestRoad(cp);
         }
         else if( type == Structure.Type.CITY ){
             board.setStructure( cp, x ,y, type );
@@ -327,6 +361,31 @@ public class Game
         else if( type == Structure.Type.SETTLEMENT ){
             board.setStructure( cp, x ,y, type );
             cp.buySettlement();
+            updateLongestRoad();
+        }
+    }
+
+    /**
+     * updates longest road by looking all players
+     */
+    private void updateLongestRoad(){
+        for( int i = 0 ; i < playerCount ; i++ ){
+            updateLongestRoad(players.get(i));
+        }
+    }
+
+    /**
+     * updates longest road by looking at the specified player
+     * @param player
+     */
+    private void updateLongestRoad( Player player ){
+        int tmp = board.longestRoadOfPlayer(player);
+        player.setRoadLength(tmp);
+        if( tmp > longestRoad ){
+            longestRoad = tmp;
+            // todo eski longesti sil score olayi icin
+            longestRoadPlayer = player;
+            player.checkLongestRoad(longestRoad);
         }
     }
 

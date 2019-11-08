@@ -170,9 +170,9 @@ public class Player
 	 * Builds a road for the player with the cost withdrawn from resources.
 	 * @param resources is the amount of resources paid for settlement structure.
 	 */
-	public void buySettlement( int[] resources)
+	public void buySettlement()
 	{
-		this.payForStructure( resources);
+		this.payForStructure( Structure.REQUIREMENTS_FOR_SETTLEMENT );
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
 		this.score += Structure.VICTORY_POINTS_FOR_SETTLEMENT;
@@ -182,9 +182,9 @@ public class Player
 	 * Builds a road for the player with the cost withdrawn from resources.
 	 * @param resources is the amount of resources paid for road structure.
 	 */
-	public void buyRoad( int[] resources)
+	public void buyRoad()
 	{
-		this.payForStructure( resources);
+		this.payForStructure( Structure.REQUIREMENTS_FOR_ROAD );
 
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
@@ -195,9 +195,9 @@ public class Player
 	 * Builds a city for the player with the cost withdrawn from resources.
 	 * @param resources is the amount of resources paid for city structure.
 	 */
-	public void buyCity( int[] resources)
+	public void buyCity()
 	{
-		this.payForStructure( resources);
+		this.payForStructure( Structure.REQUIREMENTS_FOR_CITY );
 		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
 		this.score += Structure.VICTORY_POINTS_FOR_CITY;
@@ -263,9 +263,9 @@ public class Player
 	}
 
 	/**
-	 * Increments the player's longest road count by 1 when player builds a road.
+	 * sets the player's longest road
 	 */
-	public void incrementLongestRoad() { roadLength++; }
+	public void setRoadLength( int roadLength ) { this.roadLength = roadLength; }
 
 	/**
 	 * Increments the player's largest army count by 1 when player plays the "Knight" special card.

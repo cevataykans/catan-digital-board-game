@@ -13,6 +13,9 @@ public class Card
         KNIGHT, MONOPOLY, ROADBUILDING, VICTORYPOINT, YEAROFPLENTY
     }
 
+    //constants
+    public static final int[] REQUIREMENTS_FOR_CARD = {7,7,7,7,7}; // todo resuirement values
+
     // Attributes
     private CardType type;
     private String name;
