@@ -120,3 +120,9 @@
     -fx-border-color: #7b7b7b;
     -fx-font-size: 15px;
 }
+
+#statusText {
+    -fx-background-color: transparent;
+    -fx-font-family: MinionPro-Bold;
+    -fx-font-size: 12px;
+}

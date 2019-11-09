@@ -48,10 +48,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GameController extends Application {
 
     // Properties
+    private AnchorPane gameBox;
     private Game game; // game added here for function access
-    private Label statusBar; // this and the below three added for pop up dislyaing for info
-    private Popup myPopUp;
-    private Stage stage;
+    private Label statusText; // this and the below three added for pop up displaying for info
 
     public static void main(String[] args) {
         launch(args);
@@ -66,7 +65,7 @@ public class GameController extends Application {
         {
             System.out.println(e);
         }
-
+        System.out.println(Color.WHITE);
         Parent root = FXMLLoader.load(getClass().getResource("/UI/Test1.fxml"));
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setFullScreen(true);
@@ -75,8 +74,6 @@ public class GameController extends Application {
         primaryStage.setTitle("CATAN");
         initializeGame(root, primaryStage);
         primaryStage.show();
-
-        stage = primaryStage; // I added here to display pop ups for info
     }
 
     private void initializeIntro1(Parent root, Stage primaryStage) throws IOException
@@ -331,41 +328,28 @@ public class GameController extends Application {
         players.add(new Player("Talha", Color.ORANGE));
         players.add(new Player("Talha", Color.WHITE));
         players.add(new Player("Talha", Color.BROWN));
-        this.game = new Game(players);
-        AnchorPane gameBox = (AnchorPane) scene.lookup("#gameBox");
-        setupGameBoard(game, gameBox);
+        game = new Game(players);
+        gameBox = (AnchorPane) scene.lookup("#gameBox");
+        setupGameBoard();
 
         //**************************************************************************************************************
         // Configure game Board functions
 
-        gameBox.setOnMouseClicked( new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
+        gameBox.setOnMouseClicked(mouseEvent -> {
 
-                int x = processX( mouseEvent.getX() );
-                int y = processY( mouseEvent.getY() );
+            int x = processX( mouseEvent.getX() );
+            int y = processY( mouseEvent.getY() );
 
-                System.out.print( "X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY());
-                System.out.println( " X' is: " + x + " | Y' is: " + y );
+            System.out.print( "X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY());
+            System.out.println( " X' is: " + x + " | Y' is: " + y );
 
-                createDialog( game.checkTile( x, y ), x, y );
-            }
-        } );
+            createDialog( game.checkTile( x, y ), x, y );
+        });
 
-        this.statusBar = new Label( "Hello World!");
-        this.myPopUp = new Popup();
-        this.myPopUp.getContent().add( this.statusBar);
+        statusText = (Label) scene.lookup("#statusBar");
 
         Button endTurnButton = (Button) scene.lookup( "#endTurn");
-        endTurnButton.setOnMouseReleased(
-                new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-
-                        System.out.println( "You wanna finish your turn huh :)");
-                        game.endTurn();
-                    }
-                }
+        endTurnButton.setOnMouseReleased(mouseEvent -> game.endTurn()
         );
 
         //**************************************************************************************************************
@@ -384,17 +368,15 @@ public class GameController extends Application {
         ImageView die1Result = (ImageView) scene.lookup("#die1Result");
         ImageView die2Result = (ImageView) scene.lookup("#die2Result");
 
-        setupDiceRoll(diceRollAvailable, die1Result, die2Result, game);
+        setupDiceRoll(diceRollAvailable, die1Result, die2Result);
 
         primaryStage.setScene(scene);
     }
 
     /**
      * Sets up the game board, its hexagons, numbers and their positions
-     * @param game is the game model that will give the game board so that ui can draw it.
-     * @param gameBox is the layout that will contain the game board.
      */
-    private void setupGameBoard(Game game, AnchorPane gameBox) {
+    private void setupGameBoard() {
         // Initialize the controller
         game.configureGame();
         Tile[][] board = game.getBoard();
@@ -405,11 +387,11 @@ public class GameController extends Application {
             for (int j = 0; j < board[i].length; j++)
             {
                 /*
-                 *      0-index = LUMBER
-                 *      1-index = WOOL
-                 *      2-index = GRAIN
-                 *      3-index = BRICK
-                 *      4-index = ORE
+                 *      0-index = saman
+                 *      1-index = odun
+                 *      2-index = mermer
+                 *      3-index = kaya
+                 *      4-index = koyun
                  *      çöl -> will be assigned automatically when dice is 7
                  */
                 if ( board[ i][ j].isItStartPoint() )
@@ -454,7 +436,6 @@ public class GameController extends Application {
                         imgPath = "/images/desert2.png";
                     }
                     hexagon = new ImageView(new Image(imgPath));
-                    System.out.println( hexagon.getFitWidth() + "   " + hexagon.getFitHeight() );
                     hexagon.setX((j - 2) * 30 + 30);
                     hexagon.setY(i * 30 + 15);
                     gameBox.getChildren().add(hexagon);
@@ -541,9 +522,8 @@ public class GameController extends Application {
                 });
                 animation.play();
                 animation2.play();
-               /* Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
+                Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
                 Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-                System.out.println( rectanglePosition.getCenterX() + " " + playAreaPosition.getCenterX());
                 if ( playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY()) ||
                         playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                         playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
@@ -555,7 +535,7 @@ public class GameController extends Application {
                 {
                     temp.setTranslateX(0);
                     temp.setTranslateY(0);
-                } */
+                } 
             });
             rects.add(temp);
         }
@@ -573,9 +553,8 @@ public class GameController extends Application {
      *                          be rolled.
      * @param die1Result is the first die result.
      * @param die2Result is the second die result.
-     * @param game is the game model that will give the dice roll result to the controller.
      */
-    private void setupDiceRoll(ImageView diceRollAvailable, ImageView die1Result, ImageView die2Result, Game game)
+    private void setupDiceRoll(ImageView diceRollAvailable, ImageView die1Result, ImageView die2Result)
     {
         diceRollAvailable.setOnMouseClicked(event ->
         {
@@ -593,17 +572,14 @@ public class GameController extends Application {
                         return null;
                     }
                 };
-                sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                    @Override
-                    public void handle(WorkerStateEvent event) {
-                        diceRollAvailable.setVisible(false);
-                        FadeIn die1Anim = new FadeIn(die1Result);
-                        FadeIn die2Anim = new FadeIn(die2Result);
-                        die1Anim.play();
-                        die2Anim.play();
-                        die1Result.setVisible(true);
-                        die2Result.setVisible(true);
-                    }
+                sleeper.setOnSucceeded(event2 -> {
+                    diceRollAvailable.setVisible(false);
+                    FadeIn die1Anim = new FadeIn(die1Result);
+                    FadeIn die2Anim = new FadeIn(die2Result);
+                    die1Anim.play();
+                    die2Anim.play();
+                    die1Result.setVisible(true);
+                    die2Result.setVisible(true);
                 });
                 new Thread(sleeper).start();
             });
@@ -683,7 +659,6 @@ public class GameController extends Application {
             // Handle the intended user action could have a dedicated function for it!
             informResult( alert, resultCode, x, y);
         }
-        System.out.println();
     }
 
     /**
@@ -695,30 +670,29 @@ public class GameController extends Application {
     {
         if ( resultCode == -1 )
         {
-            this.statusBar.setText( "There is no connection for road to build for player:" +
-                    this.game.getCurrentPlayer().getName() );
+            statusText.setText( "There is no connection for road to build for player:" +
+                    game.getCurrentPlayer().getName() );
         }
         else if ( resultCode == -2 )
         {
-            this.statusBar.setText( "There is no connection for city to build for player:" +
-                    this.game.getCurrentPlayer().getName() );
+            statusText.setText( "There is no connection for city to build for player:" +
+                    game.getCurrentPlayer().getName() );
         }
         else if ( resultCode == -3 )
         {
-            this.statusBar.setText( "There is a building near for player:" +
-                    this.game.getCurrentPlayer().getName() );
+            statusText.setText( "There is a building near for player:" +
+                    game.getCurrentPlayer().getName() );
         }
         else if ( resultCode == -4 )
         {
-            this.statusBar.setText( "This spot is occupied by other players for player: " +
-                    this.game.getCurrentPlayer().getName() );
+            statusText.setText( "This spot is occupied by other players for player: " +
+                    game.getCurrentPlayer().getName() );
         }
         else
         {
-            this.statusBar.setText( "Inform Error function could not detect the error??");
+            statusText.setText( "Inform Error function could not detect the error??");
         }
 
-        this.myPopUp.show( this.stage); // We need a sttaus label ! pop up is not good
     }
 
     /**
@@ -758,7 +732,12 @@ public class GameController extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
             System.out.println( "Building Setlement...");
-            this.game.setTile( x, y, Structure.Type.SETTLEMENT);
+            game.setTile( x, y, Structure.Type.SETTLEMENT);
+            System.out.println("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
+            ImageView structure = new ImageView("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
+            structure.setX( x * 30 + 15);
+            structure.setY( y * 30);
+            gameBox.getChildren().add(structure);
         }
     }
 
@@ -776,7 +755,16 @@ public class GameController extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
             System.out.println( "Building road...");
-            this.game.setTile( x, y, Structure.Type.ROAD);
+            game.setTile( x, y, Structure.Type.ROAD);
+            ImageView structure = new ImageView("/images/road" + game.getCurrentPlayer().getColor() + ".png");
+            structure.setX( x * 30);
+            structure.setY( y * 30);
+            System.out.println(x % 6);
+            if ( x % 6 == 5)
+            {
+                structure.setRotate(structure.getRotate() + 90);
+            }
+            gameBox.getChildren().add(structure);
         }
     }
 
@@ -794,7 +782,11 @@ public class GameController extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
             System.out.println( "Upgrading to city");
-            this.game.setTile( x, y, Structure.Type.CITY);
+            game.setTile( x, y, Structure.Type.CITY);
+            ImageView structure = new ImageView("/images/city" + game.getCurrentPlayer().getColor() + ".png");
+            structure.setX( x * 30 + 15);
+            structure.setY( y * 30);
+            gameBox.getChildren().add(structure);
         }
     }
 
