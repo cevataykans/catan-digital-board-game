@@ -8,13 +8,12 @@ import java.awt.image.BufferedImage;
  */
 public class Card
 {
+    public static final int[] REQUIREMENTS_FOR_CARD = {1, 0, 0, 1, 1};
+
     // Card Types
     enum CardType {
         KNIGHT, MONOPOLY, ROADBUILDING, VICTORYPOINT, YEAROFPLENTY
     }
-
-    //constants
-    public static final int[] REQUIREMENTS_FOR_CARD = {7,7,7,7,7}; // todo resuirement values
 
     // Attributes
     private CardType type;

@@ -1,9 +1,5 @@
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
-import java.util.Stack;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -78,6 +74,8 @@ public class Game
         playerCount = players.size();
         board = new GameBoard();
         turnNumber = 0;
+        devCards = new Stack<>();
+        must = new LinkedList<>();
         for( int i = 0; i < TOTAL_DEV_CARDS; i++)
         {
             Card card;

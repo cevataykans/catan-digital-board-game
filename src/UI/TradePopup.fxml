@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="280.0" prefWidth="293.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <Label layoutX="114.0" layoutY="65.0" text="Offering:" />
+    <Label layoutX="115.0" layoutY="152.0" text="Wanted:" />
+    <Button layoutX="114.0" layoutY="245.0" mnemonicParsing="false" text="Trade" />
+    <Label layoutX="39.0" layoutY="14.0" text="Offerer" underline="true" />
+    <Label layoutX="201.0" layoutY="14.0" text="Offeree" underline="true" />
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="25.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Lumber.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="72.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Lumber.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="133.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/grain.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="187.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Brick.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="237.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Ore.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="25.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Lumber.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="72.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Lumber.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="133.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/grain.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="187.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Brick.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="237.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Ore.png" />
+      </image>
+    </ImageView>
+  </children>
+</AnchorPane>
