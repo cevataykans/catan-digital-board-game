@@ -316,6 +316,7 @@ public class GameController extends Application {
         Game game = new Game(players);
         AnchorPane gameBox = (AnchorPane) scene.lookup("#gameBox");
         setupGameBoard(game, gameBox);
+        gameBox.setOnMouseClicked( );
 
         Rectangle cardPlayArea = (Rectangle) scene.lookup("#cardPlayArea");
         Label cardDragLabel = (Label) scene.lookup("#cardDragLabel");
@@ -487,12 +488,12 @@ public class GameController extends Application {
                 });
                 animation.play();
                 animation2.play();
-                Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
+               /* Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
                 Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-                System.out.println(rectanglePosition.getCenterX() + " " + playAreaPosition.getCenterX());
-                if ( playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY()) ||
+                System.out.println( rectanglePosition.getCenterX() + " " + playAreaPosition.getCenterX());
+                if ( playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY()) ||
                         playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
-                        playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
+                        playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                         playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()))
                 {
                     cardBox.getChildren().remove(temp);
@@ -501,7 +502,7 @@ public class GameController extends Application {
                 {
                     temp.setTranslateX(0);
                     temp.setTranslateY(0);
-                }
+                } */
             });
             rects.add(temp);
         }

@@ -119,7 +119,7 @@ public class Game
             return true;
 
         turnNumber++;
-        if(turnNumber == 2*playerCount) {
+        if( turnNumber == 2*playerCount) {
             board.collectResources();
             must.add(7); // roll dice
             gameStatus = 1;
@@ -413,7 +413,7 @@ public class Game
         if( type == Structure.Type.ROAD ){
             board.setStructure( cp, x ,y, type );
             cp.buyRoad();
-            updateLongestRoad(cp);
+            updateLongestRoad( cp);
             if( checkMust() == 0 )
                 doneMust();
         }
@@ -437,7 +437,7 @@ public class Game
      */
     private void updateLongestRoad(){
         for( int i = 0 ; i < playerCount ; i++ ){
-            updateLongestRoad(players.get(i));
+            updateLongestRoad( players.get(i));
         }
     }
 
@@ -472,7 +472,7 @@ public class Game
      * @return true if the current player has this particular port, false otherwise
      */
     public boolean selectPort(Port.PortType portType){
-        return getCurrentPlayer().hasPort(portType);
+        return getCurrentPlayer().hasPort( portType);
     }
 
     /**
