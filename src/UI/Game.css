@@ -1,0 +1,122 @@
+.label {
+    -fx-font-family: MinionPro-Bold;
+}
+
+.infoBox {
+    -fx-background-color: rgba(108, 108, 108, 0.51);
+    -fx-border-color: black;
+    -fx-border-width: 4px;
+    -fx-border-style: solid;
+    -fx-border-radius: 5px;
+}
+
+.gameBox {
+    -fx-opacity: 1;
+    -fx-background-color: darkblue;
+    -fx-border-width: 2px;
+    -fx-border-radius: 2px;
+    -fx-border-color: black;
+}
+
+.playerInfo {
+    -fx-border-width: 3px;
+    -fx-border-style: solid;
+    -fx-border-radius: 5px;
+}
+
+.currentPlayerBox {
+    -fx-border-color: rgba(0, 0, 0, 0.26);
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+    -fx-border-radius: 5px;
+}
+
+.cardBox {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-width: 4px;
+    -fx-border-radius: 10px;
+}
+
+#otherPlayer1Box {
+    -fx-border-width: 5px;
+    -fx-border-radius: 10px;
+    -fx-background-color: rgba(87, 109, 173, 0.75);
+    -fx-border-color: blue;
+}
+
+#otherPlayer2Box {
+    -fx-border-width: 5px;
+    -fx-border-radius: 10px;
+    -fx-background-color: rgba(224, 224, 224, 0.75);
+    -fx-border-color: white;
+}
+
+#otherPlayer3Box {
+    -fx-border-width: 5px;
+    -fx-border-radius: 10px;
+    -fx-background-color: rgba(156, 9, 9, 0.75);
+    -fx-border-color: brown;
+}
+
+#currentPlayerProgress {
+    -fx-pref-width: 30px;
+}
+
+.progress-indicator {
+
+}
+
+.progress-indicator .percentage {
+    -fx-fill: null;
+}
+
+.button{
+    -fx-background-color: #ffeb75;
+    -fx-border-width: 3px;
+    -fx-border-color: purple;
+    -fx-border-style: dashed;
+    -fx-border-radius: 3px;
+    -fx-font-family: MinionPro-Bold;
+}
+
+.button:hover {
+    -fx-background-color: #ffd581;
+    -fx-border-width: 3px;
+    -fx-border-color: #800051;
+    -fx-border-style: solid;
+    -fx-border-radius: 3px;
+}
+
+.button:pressed {
+    -fx-background-color: #6800ff;
+    -fx-border-width: 3px;
+    -fx-border-color: #800034;
+    -fx-border-style: solid;
+    -fx-border-radius: 3px;
+    -fx-translate-y: 10px;
+}
+
+#endTurn {
+     -fx-background-color: red;
+     -fx-pref-width: 100px;
+     -fx-pref-height: 100px;
+     -fx-background-radius: 100px;
+     -fx-font-size: 15px;
+     -fx-text-fill: white;
+     -fx-border-color: white;
+     -fx-border-radius: 100px;
+     -fx-border-width: 4px;
+     -fx-border-style: solid;
+}
+#endTurn:hover {
+    -fx-background-color: #ff4700;
+    -fx-text-fill: #282828;
+    -fx-border-color: #282828;
+}
+#endTurn:pressed {
+    -fx-background-color: #9e0000;
+    -fx-text-fill: #7b7b7b;
+    -fx-border-color: #7b7b7b;
+    -fx-font-size: 15px;
+}

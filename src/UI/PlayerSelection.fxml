@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane id="AnchorPane" fx:id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1584.0" styleClass="anchor" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+  <children>
+    <ImageView fitHeight="1056.6666666666667" fitWidth="1585.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" x="-1.0" y="-1.0">
+      <image>
+        <Image url="@../images/dark-red.jpg" />
+      </image>
+    </ImageView>
+    <Label layoutX="614.0" prefHeight="67.0" prefWidth="357.0" text="Player Selection" textAlignment="CENTER" textFill="#7200cc" AnchorPane.topAnchor="7.0">
+      <font>
+        <Font size="50.0" />
+      </font>
+    </Label>
+    <Button fx:id="startButton" layoutX="700.0" layoutY="745.0" mnemonicParsing="false" prefHeight="47.00006103515625" prefWidth="185.0" text="Start">
+      <font>
+        <Font size="25.0" />
+      </font>
+    </Button>
+    <TextField id="player1Name" fx:id="player2Name" layoutX="443.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.00009999999747" promptText="Player 2" />
+    <TextField id="player2Name" fx:id="player1Name" alignment="CENTER_LEFT" layoutX="32.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 1" />
+    <TextField fx:id="player3Name" layoutX="884.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 3" />
+    <TextField fx:id="player4Name" layoutX="1285.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 4" />
+    <Region fx:id="player1Color" layoutX="32.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />
+    <Region fx:id="player2Color" layoutX="443.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />
+    <Region fx:id="player3Color" layoutX="885.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />
+    <Region fx:id="player4Color" layoutX="1285.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />
+    <ImageView fx:id="goBack" fitHeight="40.00006103515625" fitWidth="54.11772865351836" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="39.0">
+      <image>
+        <Image url="@../images/goBackToMain.png" />
+      </image>
+    </ImageView>
+  </children>
+</AnchorPane>

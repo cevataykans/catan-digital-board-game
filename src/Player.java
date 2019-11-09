@@ -33,7 +33,7 @@ public class Player
 
 	// Player Attributes
 	private String name;
-	private Color color; // needs to be discussed for finalization;
+	private javafx.scene.paint.Color color; // needs to be discussed for finalization;
 
 	private int[] resources = { 0, 0, 4, 6, 0}; // pre construct for initial resources, not final!
 	private int totResources;
@@ -50,7 +50,7 @@ public class Player
 	private int armyCount;
 
 	// Constructors
-	public Player(String name, Color color)
+	public Player(String name, javafx.scene.paint.Color color)
 	{
 		this.name = name;
 		this.color = color;
@@ -168,7 +168,6 @@ public class Player
 
 	/**
 	 * Builds a road for the player with the cost withdrawn from resources.
-	 * @param resources is the amount of resources paid for settlement structure.
 	 */
 	public void buySettlement()
 	{
@@ -180,7 +179,6 @@ public class Player
 
 	/**
 	 * Builds a road for the player with the cost withdrawn from resources.
-	 * @param resources is the amount of resources paid for road structure.
 	 */
 	public void buyRoad()
 	{
@@ -193,7 +191,6 @@ public class Player
 
 	/**
 	 * Builds a city for the player with the cost withdrawn from resources.
-	 * @param resources is the amount of resources paid for city structure.
 	 */
 	public void buyCity()
 	{
@@ -371,7 +368,7 @@ public class Player
 	 * Gets the player's color.
 	 * @return player's color.
 	 */
-	public Color getColor() {
+	public javafx.scene.paint.Color getColor() {
 		return color;
 	}
 
@@ -379,7 +376,7 @@ public class Player
 	 * Sets the player color to the given color.
 	 * @param color The color that will be set as player's color.
 	 */
-	public void setColor(Color color) {
+	public void setColor(javafx.scene.paint.Color color) {
 		this.color = color;
 	}
 
