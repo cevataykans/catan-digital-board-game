@@ -1,3 +1,5 @@
+import com.sun.org.apache.xerces.internal.impl.dv.xs.BaseDVFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -213,7 +215,7 @@ public class GameBoard {
                 {1,0}, {1,0},
                 {1,-1}, {1,-1},
                 {-1,-1}, {-1,-1},
-                {-1,0},
+                {-1,0}
         };
 
         // keeps the start point of this hexagon
@@ -476,6 +478,47 @@ public class GameBoard {
                 resourceDistributionList[diceNumber - 2].add(newNode);
             }
         }
+    }
+
+    /**
+     * returns neighbor player except the specified player
+     * @param player expect this player
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return neighbor players except the current players
+     */
+    public ArrayList<Player> getNeighborPlayers( Player player, int x, int y){
+        int[][] changeNext = {
+                {-1,1}, {-1,1},
+                {1,1}, {1,1},
+                {1,0}, {1,0},
+                {1,-1}, {1,-1},
+                {-1,-1}, {-1,-1},
+                {-1,0}
+        };
+        Tile tile = board[y][x].getStartPoints().get(0);
+        ArrayList<Player> ret = new ArrayList<>();
+
+        for( int i = 0 ; i <= y ; i++ ) {
+            for (int j = 0; j <= x; j++) {
+                if (tile == board[i][j]) {
+                    y = i;
+                    x = j;
+                }
+            }
+        }
+
+        for( int i = 0 ; i < 12 ; i++ ){
+            if( board[y][x].getStructure() != null && board[y][x].getStructure().getOwner() != player )
+                ret.add(board[y][x].getStructure().getOwner());
+
+            if(i < 11){
+                x += changeNext[i][0];
+                y += changeNext[i][1];
+            }
+        }
+
+        return ret;
     }
 
     /**

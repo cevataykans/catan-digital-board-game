@@ -19,9 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * -----------------------
  */
 
-// todo must yapisi eklenecek(suan yapilmasi gereken bisey varsa onu belirten eg. cardlari kullandiktan sonra ya da basta settlement kurmak...)
-// todo port olayina henuz bakip dusunmedim burdaki implementedd haline goz atmam lazim
-// todo trade
+// todo port
 
 public class Game
 {
@@ -39,27 +37,18 @@ public class Game
     private int largestArmy;
     private Player longestRoadPlayer;
     private Player largestArmyPlayer;
-    private ArrayList<Player> selectedPlayers;
 
     /*
-        todo read this section
-
-        logic e yeni ekleyecegimiz bir must yapisi olacak
-        bu bize kullanicinin yapmasi gereken bisey var mi onu soylicek ve onun disinda bisey yapmasina izin vermeyecek
-        mesela oyun basladiginda kullanici bir koy ve bir yol kurmali ya da bi development card oynandigin
-        bu card yol kartiysa must a iki tane yol kur komutu atilacak vb.
-
-        integer atmak disinda fikriniz varsa onu da yapabiliriz. (enum olabilir mesela ama butun gameboard methoslari int dondugu icin uyumlu oluyordu her seyi enuma donusturebiliriz belki)
-
        -1 = there is no must
         0 = road need to be built
         1 = settlement need to be built
         2 = city need to be built
-        3 = inside tile selection ( for robber selection, after hexagon selected player and pick resource )
+        3 = inside tile selection ( for robber selection )
         4 = resource selection (for monopoly card)
         5 = resource selection (for year of plenty card)
         6 = end turn ( we will end the turn automatically, do not wait player to end )
         7 = roll dice
+        8 = get neighbor players ( after robber is places )
      */
     private Queue<Integer> must;
 
@@ -68,7 +57,6 @@ public class Game
     // Constructors
     public Game( ArrayList<Player> players )
     {
-        selectedPlayers = new ArrayList<>();
         longestRoadPlayer = null;
         longestRoad = 4; // minumum requierement to get this card
         this.largestArmy = 2; // minumum req to earn the army title
@@ -119,7 +107,7 @@ public class Game
      * @return if the game is end
      */
     public boolean endTurn(){
-        if( getCurrentPlayer().getScore() >= 10 )
+        if( getCurrentPlayer().getScore() >= 10 ) // todo 10 puana ulasinca end turnu beklemeden bitmeli oyun
             return true;
 
         turnNumber++;
@@ -136,6 +124,7 @@ public class Game
         else {
             must.add(7); // roll dice
         }
+        //todo cardlari playable yap
         return false;
     }
 
@@ -176,7 +165,8 @@ public class Game
      */
     public void collectResources(){
         if( currentDice == 7 ){
-            ////// todo robber
+            must.add(3); // inside tile
+            must.add(8); // get neighbors
         }
         else {
             board.collectResources(currentDice);
@@ -268,51 +258,30 @@ public class Game
     }
 
     /**
-     * todo karlarin sonucunda yapilmasi gereken seyler mustlara doldurulacak
      * Plays a development card specified from the current player. The effect of the card will take place depending on
-     * the type.
+     * the type. must will be loaded. actions will take place after input is taken at other specified functions
      * @param card is the development card that will be played with its effect.
      */
     public void playDevelopmentCard(Card card)
     {
         if ( card.getType() == Card.CardType.KNIGHT)
         {
-            int x = 0; // PLACEHOLDER! THIS SHOULD BE THE UI X PLAYER CHOOSES!
-            int y = 0; // PLACEHOLDER! THIS SHOULD BE THE UI Y PLAYER CHOOSES!
-            board.changeRobber(x, y); // Move the robber to the specified place.
+            must.add(3); // inside tile
+            must.add(8); // get neighbor
             getCurrentPlayer().incrementLargestArmy(); // Add 1 army point to the player.
             this.updateLargestArmy();
-            // SELECT A NEIGHBOURİNG PLAYER TO STEAL A RESOURCE.
         }
         else if ( card.getType() == Card.CardType.MONOPOLY)
         {
-            int selectedMaterial = Materials.LUMBER; // PLACEHOLDER! THIS MATERIAL SHOULD BE SELECTED FROM USER IN UI!
-            for ( int i = 0; i < playerCount; i++) // Loop through every player
-            {
-                if ( players.get(i) != getCurrentPlayer()) // If the looped player isn't the one stealing, start the steal loop.
-                {
-                    for ( int p = 0; p < players.get(p).getResources()[selectedMaterial]; p++) // Steal the material until the player no longer has any.
-                    {
-                        getCurrentPlayer().collectMaterial(selectedMaterial, 1);
-                        players.get(p).discardMaterial(selectedMaterial, 1);
-                    }
-                }
-            }
+            must.add(4); // monopoly
         }
         else if ( card.getType() == Card.CardType.ROADBUILDING)
         {
-            int total = 0;
-            // Do the free road building 2 valid times. If user clicks invalid location, ask for a new location by
-            // repeating the loop.
-            while ( total < 2) {
-                int x = 0; // PLACEHOLDER! THIS SHOULD BE THE ROAD TILE PLAYER CHOOSES IN UI!
-                int y = 0; // PLACEHOLDER! THIS SHOULD BE THE ROAD TILE PLAYER CHOOSES IN UI!
-                if (board.checkStructure(getCurrentPlayer(), x, y, 1) == 0) {
-                    board.setStructure(getCurrentPlayer(), x, y, Structure.Type.ROAD);
-                    getCurrentPlayer().buyRoad();
-                    total++;
-                }
-            }
+            getCurrentPlayer().addResource(Structure.REQUIREMENTS_FOR_ROAD);
+            getCurrentPlayer().addResource(Structure.REQUIREMENTS_FOR_ROAD);
+
+            must.add(0); //road
+            must.add(0); //road
         }
         else if ( card.getType() == Card.CardType.VICTORYPOINT)
         {
@@ -320,10 +289,45 @@ public class Game
         }
         else if ( card.getType() == Card.CardType.YEAROFPLENTY)
         {
-            //int material[2] = Materials.LUMBER; // PLACEHOLDER! THIS MATERIAL SHOULD BE SELECTED FROM USER IN UI!
-            //getCurrentPlayer().collectMaterial(material[0], 1); // Give a free specified resource to the player.
-            //getCurrentPlayer().collectMaterial(material[1], 1); // Give a free specified resource to the player.
+            must.add(5); // year of plenty
         }
+    }
+
+    /**
+     * when robber is placed, this method returns the players who have city/settlement at that hexagon
+     * @param x x-coordinate
+     * @param y y-coordinate
+     * @return players that have settlement at the hexagon
+     */
+    public ArrayList<Player> getNeighborPlayers( int x, int y){
+        return board.getNeighborPlayers( getCurrentPlayer(), x, y);
+    }
+
+    /**
+     * after user picked a material this method takes all materials from other players and add to the current player
+     * @param selectedMaterial selected material to play monopoly
+     */
+    public void playMonopoly( int selectedMaterial){
+        for ( int i = 0; i < playerCount; i++) // Loop through every player
+        {
+            if ( players.get(i) != getCurrentPlayer()) // If the looped player isn't the one stealing, start the steal loop.
+            {
+                for ( int p = 0; p < players.get(p).getResources()[selectedMaterial]; p++) // Steal the material until the player no longer has any.
+                {
+                    getCurrentPlayer().collectMaterial(selectedMaterial, 1);
+                    players.get(p).discardMaterial(selectedMaterial, 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * after user selected a material, this method gives two selected material to the current user
+     * @param selectedMaterial selected material to give
+     */
+    public void playYearOfPlenty( int selectedMaterial){
+        getCurrentPlayer().collectMaterial( selectedMaterial, 1);
+        getCurrentPlayer().collectMaterial( selectedMaterial, 1);
     }
 
     /**
@@ -337,6 +341,7 @@ public class Game
      *          5 = resource selection (for year of plenty card)
      *          6 = end turn
      *          7 = roll dice
+     *          8 = get neighbor players ( after robber is placed )
      */
     public int checkMust(){
         if( must.size() == 0 )
@@ -458,7 +463,6 @@ public class Game
         if( curRoadLength > longestRoad ){
 
             longestRoad = curRoadLength;
-            // todo eski longesti sil score olayi icin update: please check below
             if ( longestRoadPlayer != null )
             {
                 longestRoadPlayer.setLongestRoadTitle( false);
