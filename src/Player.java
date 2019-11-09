@@ -364,6 +364,14 @@ public class Player
 	public void setResources(int[] resources) {
 		this.resources = resources;
 	}
+
+	public void addResource( int[] resources ){
+		this.resources[0] += resources[0];
+		this.resources[1] += resources[1];
+		this.resources[2] += resources[2];
+		this.resources[3] += resources[3];
+		this.resources[4] += resources[4];
+	}
 	
 	/**
 	 * Add a new port to the player's ports ArrayList
