@@ -41,6 +41,7 @@ public class Game
     private int currentDice;
     private int longestRoad;
     private Player longestRoadPlayer;
+    private ArrayList<Player> selectedPlayers;
 
     /*
         todo read this section
@@ -52,11 +53,15 @@ public class Game
 
         integer atmak disinda fikriniz varsa onu da yapabiliriz. (enum olabilir mesela ama butun gameboard methoslari int dondugu icin uyumlu oluyordu her seyi enuma donusturebiliriz belki)
 
-        0=road
-        1=settlement
-        2=city
-        3=choose inside tile (to change robber position) (inside tile altigenlerin ici gameboardda bu tilelar configure asamasinda bulunuyo)
-        4=(suan ilk asamada aklima gelen bunlar varsa baska seyler siz eklersiniz)
+       -1 = there is no must
+        0 = road need to be built
+        1 = settlement need to be built
+        2 = city need to be built
+        3 = inside tile selection ( for robber selection, after hexagon selected player and pick resource )
+        4 = resource selection (for monopoly card)
+        5 = resource selection (for year of plenty card)
+        6 = end turn ( we will end the turn automatically, do not wait player to end )
+        7 = roll dice
      */
     private Queue<Integer> must;
 
@@ -65,6 +70,7 @@ public class Game
     // Constructors
     public Game( ArrayList<Player> players )
     {
+        selectedPlayers = new ArrayList<>();
         longestRoadPlayer = null;
         longestRoad = 5; // minumum requierement to get this card
         gameStatus = 0; // setup mode
@@ -99,26 +105,58 @@ public class Game
         Collections.shuffle(players);
         Collections.shuffle(devCards);
 
+        must.add(1); // settlement
+        must.add(0); // road
+        must.add(6); // end turn
+
         return players;
     }
 
-    public void endTurn(){
+    /**
+     * end turn and add must for the next turn
+     * @return if the game is end
+     */
+    public boolean endTurn(){
+        if( getCurrentPlayer().getScore() >= 10 )
+            return true;
+
         turnNumber++;
         if(turnNumber == 2*playerCount) {
             board.collectResources();
+            must.add(7); // roll dice
             gameStatus = 1;
         }
-        //todo birisi oyunu kazandimi kontrolu
+        else if( gameStatus == 0 ){
+            must.add(1); // settlement
+            must.add(0); // road
+            must.add(6); // end turn
+        }
+        else {
+            must.add(7); // roll dice
+        }
+        return false;
     }
 
+    /**
+     * get longest road
+     * @return longest road
+     */
     public int getLongestRoad(){
         return longestRoad;
     }
 
+    /**
+     * get current dice as sum of two dices (to show dice on ui use return of roll dice method)
+     * @return current dice
+     */
     public int getCurrentDice(){
         return currentDice;
     }
 
+    /**
+     * rolls dice and return result
+     * @return dice numbers for both dice
+     */
     public ArrayList<Integer> rollDice(){
         int firstDice =  (int)(Math.random()*6+1);
         int secondDice =  (int)(Math.random()*6+1);
@@ -286,6 +324,31 @@ public class Game
     }
 
     /**
+     * return if there is any must operation for this player and its type
+     * @return -1 = there is no must
+     *          0 = road need to be built
+     *          1 = settlement need to be built
+     *          2 = city need to be built
+     *          3 = inside tile selection
+     *          4 = resource selection (for monopoly card)
+     *          5 = resource selection (for year of plenty card)
+     *          6 = end turn
+     *          7 = roll dice
+     */
+    public int checkMust(){
+        if( must.size() == 0 )
+            return -1;
+        return must.peek();
+    }
+
+    /**
+     * last-must has been completed
+     */
+    public void doneMust(){
+        must.remove();
+    }
+
+    /**
      * This method returns all possibilities for any tile
      * @param x x coordinate
      * @param y y coordinate
@@ -353,15 +416,21 @@ public class Game
             board.setStructure( cp, x ,y, type );
             cp.buyRoad();
             updateLongestRoad(cp);
-        }
-        else if( type == Structure.Type.CITY ){
-            board.setStructure( cp, x ,y, type );
-            cp.buyCity();
+            if( checkMust() == 0 )
+                doneMust();
         }
         else if( type == Structure.Type.SETTLEMENT ){
             board.setStructure( cp, x ,y, type );
             cp.buySettlement();
             updateLongestRoad();
+            if( checkMust() == 1 )
+                doneMust();
+        }
+        else if( type == Structure.Type.CITY ){
+            board.setStructure( cp, x ,y, type );
+            cp.buyCity();
+            if( checkMust() == 2 )
+                doneMust();
         }
     }
 
