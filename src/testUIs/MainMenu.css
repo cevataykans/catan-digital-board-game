@@ -1,9 +1,3 @@
-.anchor {
-  -fx-background-image: url("/images/mainmenu.jpg");
-  -fx-background-repeat: no-repeat;
-  -fx-background-size: cover, auto;
-}
-
 Button{
   -fx-background-color: #ffeb75;
   -fx-border-width: 3px;

@@ -1,0 +1,79 @@
+.anchor {
+    -fx-background-image: url("/images/dark-red.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover, auto;
+    -fx-font-family: MinionPro-Bold;
+}
+
+#goBack {
+    -fx-opacity: 0.5;
+}
+
+#goBack:hover {
+    -fx-opacity: 1;
+}
+
+.playerColor {
+    -fx-border-style: dashed;
+    -fx-border-radius: 3px;
+    -fx-border-color: black;
+    -fx-border-width: 5px;
+}
+
+#player1Color {
+    -fx-background-color: #00007f;
+}
+
+#player2Color {
+    -fx-background-color: white;
+}
+
+#player3Color {
+    -fx-background-color: darkorange;
+}
+
+#player4Color {
+    -fx-background-color: #573500;
+}
+
+.text-field {
+    -fx-font-size: 20px;
+    -fx-alignment: center;
+    -fx-text-fill: white;
+    -fx-border-color: white;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: transparent;
+}
+
+.text-field:focused {
+    -fx-alignment: center-left;
+    -fx-text-fill: #d2d2d2;
+    -fx-border-color: blue;
+}
+
+.button{
+    -fx-background-color: #ffeb75;
+    -fx-border-width: 3px;
+    -fx-border-color: purple;
+    -fx-border-style: dashed;
+    -fx-border-radius: 3px;
+    -fx-font-family: MinionPro-Bold;
+    -fx-font-size: 30px;
+}
+
+.button:hover {
+    -fx-background-color: #ffd581;
+    -fx-border-width: 3px;
+    -fx-border-color: #800051;
+    -fx-border-style: solid;
+    -fx-border-radius: 3px;
+}
+
+.button:pressed {
+    -fx-background-color: #6800ff;
+    -fx-border-width: 3px;
+    -fx-border-color: #800034;
+    -fx-border-style: solid;
+    -fx-border-radius: 3px;
+    -fx-translate-y: 10px;
+}
