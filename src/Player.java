@@ -78,11 +78,11 @@ public class Player
 		// For each material on the toGive and toTake resource arrays, update player resources
 		for ( int i = 0; i < toGive.length; i++ )
 		{
-			this.resources[ i] -= toGive[ i] + toTake[ i];
-			this.totResources -= toGive[ i] + toTake[ i];
+			this.resources[i] -= (toGive[i] - toTake[i]);
+			this.totResources -= (toGive[i] - toTake[i]);
 
-			other.resources[ i] -= toTake[ i] + toGive[ i];
-			other.totResources -= toTake[ i] + toGive[ i];
+			other.resources[i] -= (toTake[i] - toGive[i]);
+			other.totResources -= (toTake[i] - toGive[i]);
 		}
 	}
 

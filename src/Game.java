@@ -544,5 +544,16 @@ public class Game
         }
     }
 
+    /**
+     * This method makes wanted trade between two users
+     * @param offerer is the Player make the trade request
+     * @param offeree is the Player accept the trade request
+     * @param toOfferer is the list of materials the offeree wants to give
+     * @param toOfferee is the list of materials the offerer wants to give
+     */
+    public void tradeWithPlayer(Player offerer, Player offeree, int[] toOfferer, int[] toOfferee){
+        offerer.tradeWithPlayer(offeree, toOfferee, toOfferer);
+    }
+
 
 }

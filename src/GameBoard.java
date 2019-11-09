@@ -567,7 +567,8 @@ public class GameBoard {
                 }
             }
         }
-
+        if(distances.size() == 0)
+            return 0;
         return Collections.max(distances);
     }
 
