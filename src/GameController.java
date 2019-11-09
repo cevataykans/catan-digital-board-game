@@ -405,11 +405,11 @@ public class GameController extends Application {
             for (int j = 0; j < board[i].length; j++)
             {
                 /*
-                 *      0-index = saman
-                 *      1-index = odun
-                 *      2-index = mermer
-                 *      3-index = kaya
-                 *      4-index = koyun
+                 *      0-index = LUMBER
+                 *      1-index = WOOL
+                 *      2-index = GRAIN
+                 *      3-index = BRICK
+                 *      4-index = ORE
                  *      çöl -> will be assigned automatically when dice is 7
                  */
                 if ( board[ i][ j].isItStartPoint() )
@@ -420,23 +420,23 @@ public class GameController extends Application {
                     String resourceStr;
                     if ( resource  == 0 )
                     {
-                        resourceStr = "grain" + diceNum;
+                        resourceStr = "lumber" + diceNum;
                     }
                     else if ( resource == 1)
                     {
-                        resourceStr = "lumber" + diceNum;
+                        resourceStr = "wool" + diceNum;
                     }
                     else if ( resource == 2 )
                     {
-                        resourceStr = "brick" + diceNum;
+                        resourceStr = "grain" + diceNum;
                     }
                     else if ( resource == 3)
                     {
-                        resourceStr = "ore" + diceNum;
+                        resourceStr = "brick" + diceNum;
                     }
                     else if ( resource == 4)
                     {
-                        resourceStr = "wool" + diceNum;
+                        resourceStr = "ore" + diceNum;
                     }
                     else
                     {
