@@ -36,7 +36,9 @@ public class Game
     private int gameStatus;
     private int currentDice;
     private int longestRoad;
+    private int largestArmy;
     private Player longestRoadPlayer;
+    private Player largestArmyPlayer;
     private ArrayList<Player> selectedPlayers;
 
     /*
@@ -68,7 +70,9 @@ public class Game
     {
         selectedPlayers = new ArrayList<>();
         longestRoadPlayer = null;
-        longestRoad = 5; // minumum requierement to get this card
+        longestRoad = 4; // minumum requierement to get this card
+        this.largestArmy = 2; // minumum req to earn the army title
+        this.largestArmyPlayer = null;
         gameStatus = 0; // setup mode
         this.players = players;
         playerCount = players.size();
@@ -277,6 +281,7 @@ public class Game
             int y = 0; // PLACEHOLDER! THIS SHOULD BE THE UI Y PLAYER CHOOSES!
             board.changeRobber(x, y); // Move the robber to the specified place.
             getCurrentPlayer().incrementLargestArmy(); // Add 1 army point to the player.
+            this.updateLargestArmy();
             // SELECT A NEIGHBOURİNG PLAYER TO STEAL A RESOURCE.
         }
         else if ( card.getType() == Card.CardType.MONOPOLY)
@@ -420,7 +425,7 @@ public class Game
         else if( type == Structure.Type.SETTLEMENT ){
             board.setStructure( cp, x ,y, type );
             cp.buySettlement();
-            updateLongestRoad();
+            //updateLongestRoad();
             if( checkMust() == 1 )
                 doneMust();
         }
@@ -436,6 +441,7 @@ public class Game
      * updates longest road by looking all players
      */
     private void updateLongestRoad(){
+
         for( int i = 0 ; i < playerCount ; i++ ){
             updateLongestRoad( players.get(i));
         }
@@ -443,16 +449,40 @@ public class Game
 
     /**
      * updates longest road by looking at the specified player
-     * @param player
+     * @param player is the player who has just build a road, in building a city scenario, it is every player.
      */
     private void updateLongestRoad( Player player ){
-        int tmp = board.longestRoadOfPlayer(player);
-        player.setRoadLength(tmp);
-        if( tmp > longestRoad ){
-            longestRoad = tmp;
-            // todo eski longesti sil score olayi icin
+
+        int curRoadLength = board.longestRoadOfPlayer( player);
+        player.setRoadLength( curRoadLength);
+        if( curRoadLength > longestRoad ){
+
+            longestRoad = curRoadLength;
+            // todo eski longesti sil score olayi icin update: please check below
+            if ( longestRoadPlayer != null )
+            {
+                longestRoadPlayer.setLongestRoadTitle( false);
+            }
             longestRoadPlayer = player;
-            player.checkLongestRoad(longestRoad);
+            player.setLongestRoadTitle( true);
+        }
+    }
+
+    /**
+     *
+     */
+    private void updateLargestArmy()
+    {
+        int curArmyCount = this.getCurrentPlayer().getLargestArmyCount();
+        if ( curArmyCount > this.largestArmy )
+        {
+            this.largestArmy = curArmyCount;
+            if ( this.largestArmyPlayer != null )
+            {
+                this.largestArmyPlayer.setLargestArmyTitle( false);
+            }
+            this.largestArmyPlayer = this.getCurrentPlayer();
+            this.getCurrentPlayer().setLargestArmyTitle( true);
         }
     }
 

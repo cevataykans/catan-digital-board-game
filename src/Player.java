@@ -35,7 +35,7 @@ public class Player
 	private String name;
 	private javafx.scene.paint.Color color; // needs to be discussed for finalization;
 
-	private int[] resources = { 0, 0, 4, 6, 0}; // pre construct for initial resources, not final!
+	private int[] resources = { 4, 2, 2, 4, 0};
 	private int totResources;
 
 	private ArrayList<Structure> structures; // needs to be discuessed for finalization;
@@ -63,7 +63,7 @@ public class Player
 		this.hasLargestArmy = false;
 		this.hasLongestRoad = false;
 		this.roadLength = -1;
-		this.armyCount = -1;
+		this.armyCount = 0;
 	}
 
 	// Functions
@@ -146,7 +146,7 @@ public class Player
 	/**
 	 * Randomly discards half of the resources if the player has more than 7 resources!
 	 */
-	public void discardHalfResources()
+	public void discardHalfOfResources()
 	{
 		// Check if the player has more than 7 resources.
 		if ( this.totResources > DICE_SEVEN)
@@ -207,8 +207,7 @@ public class Player
 	{
 		for ( int i = 0; i < cards.size(); i++ )
 		{
-			//cards.get( i).setPlayable();
-			i++; // this line to be deleted and implemented later when card class is implemented.
+			cards.get( i).setPlayable( true);
 		}
 	}
 
@@ -234,33 +233,25 @@ public class Player
 	  */
 
 	/**
-	 * Gets the largest army count of the player if the player has the largest army title.
+	 * Gets the largest army count of the player.
 	 * @return the largest army count of the player. If the player does not have the largest army, return -1 pivot.
 	 */
 	public int getLargestArmyCount()
 	{
-		if ( this.hasLargestArmy)
-		{
-			return this.armyCount;
-		}
-		return -1;
+		return this.armyCount;
 	}
 
 	/**
-	 * Gets the longest road length of the player if the player has the longest road title.
+	 * Gets the longest road length of the player.
 	 * @return the longest road length of the player. If the player does not have the longest road, return -1 pivot.
 	 */
 	public int getLongestRoadLength()
 	{
-		if ( this.hasLongestRoad)
-		{
-			return this.roadLength;
-		}
-		return -1;
+		return this.roadLength;
 	}
 
 	/**
-	 * sets the player's longest road
+	 * sets the player's longest road.
 	 */
 	public void setRoadLength( int roadLength ) { this.roadLength = roadLength; }
 
@@ -270,35 +261,21 @@ public class Player
 	public void incrementLargestArmy() { armyCount++; }
 
 	/**
-	 * Checks if the player has more roads than the current "Longest Road" card holder. If they do, they get the
-	 * "Longest Road" card.
-	 * @param currentLongest is the current longest road count of a player.
-	 * @return roadLength when the player achieves the longest road count after building a road.
-	 * @return currentLongest when player either equals or falls below the current longest road holder.
+	 * Sets the longest road title of the player.
+	 * @param hasLongestRoad is the boolean value to set the title - true if the player has the title else false
 	 */
-	public int checkLongestRoad(int currentLongest)
+	public void setLongestRoadTitle( boolean hasLongestRoad)
 	{
-		if ( roadLength > currentLongest) {
-			hasLongestRoad = true;
-			return roadLength;
-		}
-		return currentLongest;
+		this.hasLongestRoad = hasLongestRoad;
 	}
 
 	/**
-	 * Checks if the player has more "Knight" cards played than the current "Largest Army" card holder. If they do, they get the
-	 * "Largest Army" card.
-	 * @param currentLargest is the current longest road count of a player.
-	 * @return armyCount when the player achieves the largest army count after playing the Knight card.
-	 * @return currentLargest when player either equals or falls below the current largest army holder.
+	 * Sets the largest army title of the player.
+	 * @param hasLargestArmy is the boolean value to set the title - true if the player has the title else false
 	 */
-	public int checkLargestArmy(int currentLargest)
+	public void setLargestArmyTitle( boolean hasLargestArmy)
 	{
-		if ( armyCount > currentLargest) {
-			hasLargestArmy = true;
-			return armyCount;
-		}
-		return currentLargest;
+		this.hasLargestArmy = hasLargestArmy;
 	}
 
 	/**
