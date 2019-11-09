@@ -401,6 +401,7 @@ public class Player
 	 * @return ports which is player's port list
 	 */
 	public boolean hasPort(Port.PortType port){
+
 		boolean result = false;
 		for(int i = 0 ; i < ports.size() ; i++){
 			if(ports.get(i).getPortType() == port)
