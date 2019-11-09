@@ -11,16 +11,18 @@ import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
@@ -33,9 +35,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * Game Controller class which is the C in MVC.
+ * @author Cevat Aykan Sevinc
+ * @version 09.11.2019
+ * Added functions for game board to place structures
+ * Added function for end turn button
+ */
 public class GameController extends Application {
+
+    // Properties
+    private Game game; // game added here for function access
+    private Label statusBar; // this and the below three added for pop up dislyaing for info
+    private Popup myPopUp;
+    private Stage stage;
 
     public static void main(String[] args) {
         launch(args);
@@ -59,6 +75,8 @@ public class GameController extends Application {
         primaryStage.setTitle("CATAN");
         initializeGame(root, primaryStage);
         primaryStage.show();
+
+        stage = primaryStage; // I added here to display pop ups for info
     }
 
     private void initializeIntro1(Parent root, Stage primaryStage) throws IOException
@@ -313,10 +331,44 @@ public class GameController extends Application {
         players.add(new Player("Talha", Color.ORANGE));
         players.add(new Player("Talha", Color.WHITE));
         players.add(new Player("Talha", Color.BROWN));
-        Game game = new Game(players);
+        this.game = new Game(players);
         AnchorPane gameBox = (AnchorPane) scene.lookup("#gameBox");
         setupGameBoard(game, gameBox);
-        gameBox.setOnMouseClicked( );
+
+        //**************************************************************************************************************
+        // Configure game Board functions
+
+        gameBox.setOnMouseClicked( new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+
+                int x = processX( mouseEvent.getX() );
+                int y = processY( mouseEvent.getY() );
+
+                System.out.print( "X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY());
+                System.out.println( " X' is: " + x + " | Y' is: " + y );
+
+                createDialog( game.checkTile( x, y ), x, y );
+            }
+        } );
+
+        this.statusBar = new Label( "Hello World!");
+        this.myPopUp = new Popup();
+        this.myPopUp.getContent().add( this.statusBar);
+
+        Button endTurnButton = (Button) scene.lookup( "#endTurn");
+        endTurnButton.setOnMouseReleased(
+                new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent mouseEvent) {
+
+                        System.out.println( "You wanna finish your turn huh :)");
+                        game.endTurn();
+                    }
+                }
+        );
+
+        //**************************************************************************************************************
 
         Rectangle cardPlayArea = (Rectangle) scene.lookup("#cardPlayArea");
         Label cardDragLabel = (Label) scene.lookup("#cardDragLabel");
@@ -402,6 +454,7 @@ public class GameController extends Application {
                         imgPath = "/images/desert2.png";
                     }
                     hexagon = new ImageView(new Image(imgPath));
+                    System.out.println( hexagon.getFitWidth() + "   " + hexagon.getFitHeight() );
                     hexagon.setX((j - 2) * 30 + 30);
                     hexagon.setY(i * 30 + 15);
                     gameBox.getChildren().add(hexagon);
@@ -561,4 +614,205 @@ public class GameController extends Application {
             die2Result.setImage(new Image("/images/die" + results.get(1) + ".png"));
         });
     }
+
+
+    //******************************************************************************************************************
+    //
+    // FUNCTIONS RELATED TO GAME BOARD
+    //
+    //******************************************************************************************************************
+
+    /**
+     * Processes the mouse click event for the x coordinate of game board
+     * @param x is the x coordinate given by the mouse event
+     * @return an integer index, the processed result corresponding the x index for the game board
+     */
+    private int processX( double x)
+    {
+        if ( x > 15 && x < 45 )
+        {
+            return 0;
+        }
+        else if ( x > 650 && x < 672 )
+        {
+            return 22;
+        }
+        return ( (int) x / 30 );
+    }
+
+    /**
+     * Processes the mouse click event for the y coordinate of game board
+     * @param y is the y coordinate given by the mouse event
+     * @return an integer index, the processed result corresponding the y index for the game board
+     */
+    private int processY( double y)
+    {
+        //y = y - 15;
+        return (int) y / 30;
+    }
+
+    /**
+     * The function to handle user intereaction for the game board.
+     * @param resultCode is the code returned from the game controller
+     * @param x is the x corrdinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    private void createDialog(  int resultCode, int x, int y )
+    {
+
+        // If the controller returns minus integer, there is an error!
+        if ( resultCode < 0 )
+        {
+            System.out.println( " error is ** " + resultCode + "   ");
+            // handle error
+            informError( resultCode);
+        }
+        else
+        {
+            // The clicked tile is game tile, inform the user about the event regarding the resultCode gotten from controller
+            Alert alert = new Alert( Alert.AlertType.CONFIRMATION);
+            alert.initStyle( StageStyle.UTILITY);
+
+            // User icon could be used
+            ImageView icon = new ImageView();
+            icon.setFitHeight(48);
+            icon.setFitWidth(48);
+            alert.getDialogPane().setGraphic( icon);
+
+            System.out.println( "result is ** " + resultCode + "   ");
+            // Handle the intended user action could have a dedicated function for it!
+            informResult( alert, resultCode, x, y);
+        }
+        System.out.println();
+    }
+
+    /**
+     * Inform error function updates the status bar to display user error, this function could be evolved into pop up
+     * and a sound may be played regarding the error.
+     * @param resultCode is the error code given by the game controller
+     */
+    private void informError( int resultCode )
+    {
+        if ( resultCode == -1 )
+        {
+            this.statusBar.setText( "There is no connection for road to build for player:" +
+                    this.game.getCurrentPlayer().getName() );
+        }
+        else if ( resultCode == -2 )
+        {
+            this.statusBar.setText( "There is no connection for city to build for player:" +
+                    this.game.getCurrentPlayer().getName() );
+        }
+        else if ( resultCode == -3 )
+        {
+            this.statusBar.setText( "There is a building near for player:" +
+                    this.game.getCurrentPlayer().getName() );
+        }
+        else if ( resultCode == -4 )
+        {
+            this.statusBar.setText( "This spot is occupied by other players for player: " +
+                    this.game.getCurrentPlayer().getName() );
+        }
+        else
+        {
+            this.statusBar.setText( "Inform Error function could not detect the error??");
+        }
+
+        this.myPopUp.show( this.stage); // We need a sttaus label ! pop up is not good
+    }
+
+    /**
+     * Creates the dialog corresponding to the user action on the game board.
+     * @param alert is the dialog to display the user event
+     * @param resultCode is the positive result gotten from the controller
+     * @param x is the x coordinate of to perform action on the game board
+     * @param y is the y coordinate of to perform action on the game board
+     */
+    private void informResult( Alert alert, int resultCode, int x, int y )
+    {
+        if ( resultCode == 0 )
+        {
+            buildRoad( alert, x, y);
+        }
+        else if ( resultCode == 1)
+        {
+            buildSettlement( alert, x ,y);
+        }
+        else if ( resultCode == 2)
+        {
+            buildCity( alert, x, y);
+        }
+    }
+
+    /**
+     * Prompts to ask if the user really wants to build a settlement.
+     * @param alert is the dialog prompting confirmation of building the settlement
+     * @param x is the x coordinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    private void buildSettlement( Alert alert, int x, int y)
+    {
+        alert.setHeaderText("Look, a Confirmation Dialog");
+        alert.setContentText("Build settlement?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if ( result.get() == ButtonType.OK){
+            System.out.println( "Building Setlement...");
+            this.game.setTile( x, y, Structure.Type.SETTLEMENT);
+        }
+    }
+
+    /**
+     * A custom dialog to confirmation of road building
+     * @param alert is the dialog prompting confirmation of building the road
+     * @param x is the x coordinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    private void buildRoad(Alert alert, int x, int y)
+    {
+        alert.setHeaderText("Look, a Confirmation Dialog");
+        alert.setContentText("Build road?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if ( result.get() == ButtonType.OK){
+            System.out.println( "Building road...");
+            this.game.setTile( x, y, Structure.Type.ROAD);
+        }
+    }
+
+    /**
+     * A custom dialog to confirmation of city upgrading
+     * @param alert is the dialog prompting confirmation of upgrading to the city
+     * @param x is the x coordinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    private void buildCity( Alert alert, int x, int y)
+    {
+        alert.setHeaderText("");
+        alert.setContentText("Upgrade city?");
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if ( result.get() == ButtonType.OK){
+            System.out.println( "Upgrading to city");
+            this.game.setTile( x, y, Structure.Type.CITY);
+        }
+    }
+
+    //******************************************************************************************************************
+    //
+    // FUNCTIONS RELATED TO TRADE BUTTONS
+    //
+    //******************************************************************************************************************
+
+    // Insert function for trade buttons here
+
+
+    //******************************************************************************************************************
+    //
+    // FUNCTIONS RELATED TO END TURN BUTTON
+    //
+    //******************************************************************************************************************
+
+    // Insert function for end button here
+
 }
