@@ -1,5 +1,4 @@
-import animatefx.animation.FadeIn;
-import animatefx.animation.FadeOut;
+import animatefx.animation.*;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -14,6 +13,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
@@ -22,6 +22,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -32,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,10 +50,9 @@ import java.util.concurrent.atomic.AtomicReference;
 public class GameController extends Application {
 
     // Properties
+    private AnchorPane gameBox;
     private Game game; // game added here for function access
-    private Label statusBar; // this and the below three added for pop up dislyaing for info
-    private Popup myPopUp;
-    private Stage stage;
+    private Label statusText; // this and the below three added for pop up displaying for info
 
     public static void main(String[] args) {
         launch(args);
@@ -66,22 +67,19 @@ public class GameController extends Application {
         {
             System.out.println(e);
         }
-
-        Parent root = FXMLLoader.load(getClass().getResource("/UI/Test1.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/UI/Intro1.fxml"));
         primaryStage.initStyle(StageStyle.UNDECORATED);
         primaryStage.setFullScreen(true);
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setMaximized(true);
         primaryStage.setTitle("CATAN");
-        initializeGame(root, primaryStage);
+        initializePlayerSelection(root, primaryStage);
         primaryStage.show();
-
-        stage = primaryStage; // I added here to display pop ups for info
     }
 
     private void initializeIntro1(Parent root, Stage primaryStage) throws IOException
     {
-        root = FXMLLoader.load(getClass().getResource("/UI/Test1.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/UI/Intro1.fxml"));
         Scene scene = new Scene(root, Color.BLACK);
         scene.getStylesheets().add(getClass().getResource("/UI/Intro1.css").toExternalForm());
 
@@ -109,7 +107,7 @@ public class GameController extends Application {
 
     private void initializeIntro2(Parent root, Stage primaryStage) throws IOException
     {
-        root = FXMLLoader.load(getClass().getResource("/UI/Test2.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/UI/Intro2.fxml"));
         Scene scene = new Scene(root, Color.BLACK);
         scene.getStylesheets().add(getClass().getResource("/UI/Intro2.css").toExternalForm());
         Label label = (Label) scene.lookup("#test");
@@ -305,11 +303,20 @@ public class GameController extends Application {
             animation2.play();
         });
 
+        TextField player1Name = (TextField) scene.lookup("#player1Name");
+        TextField player2Name = (TextField) scene.lookup("#player2Name");
+        TextField player3Name = (TextField) scene.lookup("#player3Name");
+        TextField player4Name = (TextField) scene.lookup("#player4Name");
         Button startButton = (Button) scene.lookup("#startButton");
         startButton.setOnMouseClicked(event ->
         {
             try {
-                initializeGame(finalRoot, primaryStage);
+                ArrayList<Player> players = new ArrayList<>();
+                players.add(new Player(player1Name.getText(), Color.BLUE));
+                players.add(new Player(player2Name.getText(), Color.WHITE));
+                players.add(new Player(player3Name.getText(), Color.ORANGE));
+                players.add(new Player(player4Name.getText(), Color.BROWN));
+                initializeGame(finalRoot, primaryStage, players);
             }
             catch (IOException e)
             {
@@ -320,81 +327,132 @@ public class GameController extends Application {
         primaryStage.setScene(scene);
     }
 
-    private void initializeGame(Parent root, Stage primaryStage) throws IOException
+    private void initializeGame(Parent root, Stage primaryStage, ArrayList<Player> players) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Game.fxml"));
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/UI/Game.css").toExternalForm());
 
-        ArrayList<Player> players = new ArrayList<>();
-        players.add(new Player("Talha", Color.BLUE));
-        players.add(new Player("Talha", Color.ORANGE));
-        players.add(new Player("Talha", Color.WHITE));
-        players.add(new Player("Talha", Color.BROWN));
-        this.game = new Game(players);
-        AnchorPane gameBox = (AnchorPane) scene.lookup("#gameBox");
-        setupGameBoard(game, gameBox);
+        game = new Game(players);
+        game.getPlayer(2).increaseScore(4);
+        gameBox = (AnchorPane) scene.lookup("#gameBox");
+        setupGameBoard();
 
         //**************************************************************************************************************
         // Configure game Board functions
 
-        gameBox.setOnMouseClicked( new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
+        gameBox.setOnMouseClicked(mouseEvent -> {
 
-                int x = processX( mouseEvent.getX() );
-                int y = processY( mouseEvent.getY() );
+            int x = processX( mouseEvent.getX() );
+            int y = processY( mouseEvent.getY() );
 
-                System.out.print( "X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY());
-                System.out.println( " X' is: " + x + " | Y' is: " + y );
+            System.out.print( "X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY());
+            System.out.println( " X' is: " + x + " | Y' is: " + y );
 
-                createDialog( game.checkTile( x, y ), x, y );
-            }
-        } );
+            createDialog( game.checkTile( x, y ), x, y );
+        });
 
-        this.statusBar = new Label( "Hello World!");
-        this.myPopUp = new Popup();
-        this.myPopUp.getContent().add( this.statusBar);
-
-        Button endTurnButton = (Button) scene.lookup( "#endTurn");
-        endTurnButton.setOnMouseReleased(
-                new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent mouseEvent) {
-
-                        System.out.println( "You wanna finish your turn huh :)");
-                        game.endTurn();
-                    }
-                }
-        );
+        statusText = (Label) scene.lookup("#statusText");
 
         //**************************************************************************************************************
+        //*********************************************************************
+        //Initialize player boxes
+        AnchorPane currentPlayerBox = (AnchorPane) scene.lookup("#currentPlayerInf");
+        AnchorPane otherPlayer1Box = (AnchorPane) scene.lookup("#otherPlayer1Box");
+        AnchorPane otherPlayer2Box = (AnchorPane) scene.lookup("#otherPlayer2Box");
+        AnchorPane otherPlayer3Box = (AnchorPane) scene.lookup("#otherPlayer3Box");
+        ArrayList<AnchorPane> anchorPanes = new ArrayList<>();
+        anchorPanes.add(currentPlayerBox);
+        anchorPanes.add(otherPlayer1Box);
+        anchorPanes.add(otherPlayer2Box);
+        anchorPanes.add(otherPlayer3Box);
 
-        Rectangle cardPlayArea = (Rectangle) scene.lookup("#cardPlayArea");
-        Label cardDragLabel = (Label) scene.lookup("#cardDragLabel");
-        AnchorPane cardBox = (AnchorPane) scene.lookup("#cardBox");
-        setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox);
+        Label currentPlayer = (Label) scene.lookup("#currentPlayer");
+        Label otherPlayer1 = (Label) scene.lookup("#otherPlayer1");
+        Label otherPlayer2 = (Label) scene.lookup("#otherPlayer2");
+        Label otherPlayer3 = (Label) scene.lookup("#otherPlayer3");
+        ArrayList<Label> labels = new ArrayList<>();
+        labels.add(currentPlayer);
+        labels.add(otherPlayer1);
+        labels.add(otherPlayer2);
+        labels.add(otherPlayer3);
+
+        Button otherPlayer1Trade = (Button) scene.lookup("#otherPlayer1Trade");
+        Button otherPlayer2Trade = (Button) scene.lookup("#otherPlayer2Trade");
+        Button otherPlayer3Trade = (Button) scene.lookup("#otherPlayer3Trade");
+        ArrayList<Button> tradeButtons = new ArrayList<>();
+        tradeButtons.add(otherPlayer1Trade);
+        tradeButtons.add(otherPlayer2Trade);
+        tradeButtons.add(otherPlayer3Trade);
 
         ProgressIndicator currentPlayerIndicator = (ProgressIndicator) scene.lookup("#currentPlayerProgress");
         ProgressIndicator otherPlayer1Progress = (ProgressIndicator) scene.lookup("#otherPlayer1Progress");
         ProgressIndicator otherPlayer2Progress = (ProgressIndicator) scene.lookup("#otherPlayer2Progress");
         ProgressIndicator otherPlayer3Progress = (ProgressIndicator) scene.lookup("#otherPlayer3Progress");
+        ArrayList<ProgressIndicator> indicators = new ArrayList<>();
+        indicators.add(currentPlayerIndicator);
+        indicators.add(otherPlayer1Progress);
+        indicators.add(otherPlayer2Progress);
+        indicators.add(otherPlayer3Progress);
+
+        Label lumberCount = (Label) scene.lookup("#lumberCount");
+        Label woolCount = (Label) scene.lookup("#woolCount");
+        Label grainCount = (Label) scene.lookup("#grainCount");
+        Label brickCount = (Label) scene.lookup("#brickCount");
+        Label oreCount = (Label) scene.lookup("#oreCount");
+        ArrayList<Label> resources = new ArrayList<>();
+        resources.add(lumberCount);
+        resources.add(woolCount);
+        resources.add(grainCount);
+        resources.add(brickCount);
+        resources.add(oreCount);
+        setupPlayerBoxes(anchorPanes, labels, tradeButtons, indicators);
+        setupCurrentPlayerResources(resources);
+        //**********************************************************************
+
+        Rectangle cardPlayArea = (Rectangle) scene.lookup("#cardPlayArea");
+        Label cardDragLabel = (Label) scene.lookup("#cardDragLabel");
+        AnchorPane cardBox = (AnchorPane) scene.lookup("#cardBox");
+        setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox, game.getCurrentPlayer());
 
         ImageView diceRollAvailable = (ImageView) scene.lookup("#diceRollAvailable");
         ImageView die1Result = (ImageView) scene.lookup("#die1Result");
         ImageView die2Result = (ImageView) scene.lookup("#die2Result");
 
-        setupDiceRoll(diceRollAvailable, die1Result, die2Result, game);
+        setupDiceRoll(diceRollAvailable, die1Result, die2Result);
+
+        Button endTurnButton = (Button) scene.lookup( "#endTurn");
+        endTurnButton.setOnMouseReleased(mouseEvent ->
+        {
+            game.endTurn();
+            setupPlayerBoxes(anchorPanes, labels, tradeButtons, indicators);
+            Task<Void> sleeper = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                    }
+                    return null;
+                }
+            };
+            sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    setupCurrentPlayerResources(resources);
+                    setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox, game.getCurrentPlayer());
+                }
+            });
+            new Thread(sleeper).start();
+        });
 
         primaryStage.setScene(scene);
     }
 
     /**
      * Sets up the game board, its hexagons, numbers and their positions
-     * @param game is the game model that will give the game board so that ui can draw it.
-     * @param gameBox is the layout that will contain the game board.
      */
-    private void setupGameBoard(Game game, AnchorPane gameBox) {
+    private void setupGameBoard() {
         // Initialize the controller
         game.configureGame();
         Tile[][] board = game.getBoard();
@@ -454,13 +512,82 @@ public class GameController extends Application {
                         imgPath = "/images/desert2.png";
                     }
                     hexagon = new ImageView(new Image(imgPath));
-                    System.out.println( hexagon.getFitWidth() + "   " + hexagon.getFitHeight() );
                     hexagon.setX((j - 2) * 30 + 30);
                     hexagon.setY(i * 30 + 15);
                     gameBox.getChildren().add(hexagon);
                 }
             }
         }
+    }
+
+    private void setupPlayerBoxes(ArrayList<AnchorPane> anchorPanes, ArrayList<Label> labels,
+                                  ArrayList<Button> tradeButtons, ArrayList<ProgressIndicator> indicators)
+    {
+        FadeOut animation0 = new FadeOut(anchorPanes.get(0));
+        FadeOut animation1 = new FadeOut(anchorPanes.get(1));
+        FadeOut animation2 = new FadeOut(anchorPanes.get(2));
+        FadeOut animation3 = new FadeOut(anchorPanes.get(3));
+        animation0.setSpeed(3);
+        animation1.setSpeed(3);
+        animation2.setSpeed(3);
+        animation3.setSpeed(3);
+        animation0.play();
+        animation1.play();
+        animation2.play();
+        animation3.play();
+        animation0.setOnFinished(event ->
+        {
+            FadeIn animation0In = new FadeIn(anchorPanes.get(0));
+            anchorPanes.get(0).getStyleClass().clear();
+            anchorPanes.get(0).getStyleClass().add(game.getCurrentPlayer().getColor().toString().substring(1) + "PlayerBox");
+            labels.get(0).setText(game.getCurrentPlayer().getName());
+            indicators.get(0).setProgress(game.getCurrentPlayer().getScore() * 1.0 / 10);
+            animation0In.setSpeed(3);
+            animation0In.play();
+        });
+        animation1.setOnFinished(event ->
+        {
+            FadeIn animation1In = new FadeIn(anchorPanes.get(1));
+            anchorPanes.get(1).getStyleClass().clear();
+            anchorPanes.get(1).getStyleClass().add(game.getPlayer((game.getCurrentPlayerIndex() + 1) % 4)
+                    .getColor().toString().substring(1) + "PlayerBox");
+            labels.get(1).setText(game.getPlayer((game.getCurrentPlayerIndex() + 1) % 4).getName());
+            indicators.get(1).setProgress(game.getPlayer((game.getCurrentPlayerIndex() + 1) % 4).getScore() * 1.0 / 10);
+            animation1In.setSpeed(3);
+            animation1In.play();
+        });
+        animation2.setOnFinished(event ->
+        {
+            FadeIn animation2In = new FadeIn(anchorPanes.get(2));
+            anchorPanes.get(2).getStyleClass().clear();
+            anchorPanes.get(2).getStyleClass().add(game.getPlayer((game.getCurrentPlayerIndex() + 2) % 4)
+                    .getColor().toString().substring(1) + "PlayerBox");
+            labels.get(2).setText(game.getPlayer((game.getCurrentPlayerIndex() + 2) % 4).getName());
+            indicators.get(2).setProgress(game.getPlayer((game.getCurrentPlayerIndex() + 2) % 4).getScore() * 1.0 / 10);
+            animation2In.setSpeed(3);
+            animation2In.play();
+        });
+        animation3.setOnFinished(event ->
+        {
+            FadeIn animation3In = new FadeIn(anchorPanes.get(3));
+            anchorPanes.get(3).getStyleClass().clear();
+            anchorPanes.get(3).getStyleClass().add(game.getPlayer((game.getCurrentPlayerIndex() + 3) % 4)
+                    .getColor().toString().substring(1) + "PlayerBox");
+            labels.get(3).setText(game.getPlayer((game.getCurrentPlayerIndex() + 3) % 4).getName());
+            indicators.get(3).setProgress(game.getPlayer((game.getCurrentPlayerIndex() + 3) % 4).getScore() * 1.0/ 10);
+            animation3In.setSpeed(3);
+            animation3In.play();
+        });
+    }
+
+    private void setupCurrentPlayerResources(ArrayList<Label> resources)
+    {
+        int playerResources[] = game.getCurrentPlayer().getResources();
+        resources.get(0).setText("" + playerResources[0]);
+        resources.get(1).setText("" + playerResources[1]);
+        resources.get(2).setText("" + playerResources[2]);
+        resources.get(3).setText("" + playerResources[3]);
+        resources.get(4).setText("" + playerResources[4]);
     }
 
     /**
@@ -470,100 +597,78 @@ public class GameController extends Application {
      * @param cardDragLabel is the information given to the user so that he/she can know where to play.
      * @param cardBox is the layout that contains the development cards.
      */
-    private void setupDevelopmentCards(Rectangle cardPlayArea, Label cardDragLabel, AnchorPane cardBox)
+    private void setupDevelopmentCards(Rectangle cardPlayArea, Label cardDragLabel, AnchorPane cardBox, Player player)
     {
-
-        ArrayList<Rectangle> rects = new ArrayList<>();
-        Map<Rectangle, Point2D> originalPositions = new HashMap<>();
-        rects.add(new Rectangle(cardBox.getTranslateX() + 125, 10, 50, 75));
-        originalPositions.put(rects.get(0), new Point2D(rects.get(0).getX(), rects.get(0).getY()));
-        for(int i = 1; i < 10; i++)
+        FadeOut cardBoxOut = new FadeOut(cardBox);
+        cardBoxOut.setSpeed(3);
+        cardBoxOut.setOnFinished(event ->
         {
-            Rectangle temp = new Rectangle(rects.get(i - 1).getX() + 40, 10, 50, 75);
-            originalPositions.put(temp, new Point2D(temp.getX(), temp.getY()));
-            switch (i)
-            {
-                case 1:
-                    temp.setFill(Color.BLUE);
-                    break;
-                case 2:
-                    temp.setFill(Color.RED);
-                    break;
-                case 3:
-                    temp.setFill(Color.GREEN);
-                    break;
-                case 4:
-                    temp.setFill(Color.YELLOW);
-                    break;
-                case 5:
-                    temp.setFill(Color.PURPLE);
-                    break;
-                case 6:
-                    temp.setFill(Color.PINK);
-                    break;
-                case 7:
-                    temp.setFill(Color.ORANGE);
-                    break;
-                case 8:
-                    temp.setFill(Color.BROWN);
-                    break;
-                case 9:
-                    temp.setFill(Color.VIOLET);
-                    break;
-            }
-            AtomicReference<Double> x = new AtomicReference<>((double) 0);
-            AtomicReference<Double> y = new AtomicReference<>((double) 0);
-            temp.setOnMousePressed(e->
-            {
-                cardPlayArea.setVisible(true);
-                cardDragLabel.setVisible(true);
-                new FadeIn(cardPlayArea).play();
-                new FadeIn(cardDragLabel).play();
-                x.set(e.getX());
-                y.set(e.getY());
-            });
-            temp.setOnMouseDragged(e ->
-            {
-                temp.setTranslateX(temp.getTranslateX() + (e.getX() - x.get()));
-                temp.setTranslateY(temp.getTranslateY() + (e.getY() - y.get()));
-            });
-            temp.setOnMouseReleased(e->
-            {
-                FadeOut animation = new FadeOut(cardPlayArea);
-                FadeOut animation2 = new FadeOut(cardDragLabel);
-                animation.setOnFinished(event ->
-                {
-                    cardPlayArea.setVisible(false);
-                });
-                animation2.setOnFinished(event ->
-                {
-                    cardDragLabel.setVisible(false);
-                });
-                animation.play();
-                animation2.play();
-               /* Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
-                Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-                System.out.println( rectanglePosition.getCenterX() + " " + playAreaPosition.getCenterX());
-                if ( playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY()) ||
-                        playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
-                        playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
-                        playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()))
-                {
-                    cardBox.getChildren().remove(temp);
+            cardBox.getChildren().clear();
+            ArrayList<Card> cards = player.getCards();
+            ArrayList<ImageView> cardsInUI = new ArrayList<>();
+            for (int i = 0; i < cards.size(); i++) {
+                ImageView temp = new ImageView("/images/" + cards.get(i).getName() + ".png");
+                if (i == 0) {
+                    temp.setX(50);
+                } else {
+                    temp.setX(cardsInUI.get(i - 1).getX() + 40);
                 }
-                else
-                {
-                    temp.setTranslateX(0);
-                    temp.setTranslateY(0);
-                } */
-            });
-            rects.add(temp);
-        }
 
-        for ( Rectangle rectangle : rects)
-        {
-            cardBox.getChildren().add(rectangle);
-        }
+                temp.setY(10);
+                AtomicReference<Double> x = new AtomicReference<>((double) 0);
+                AtomicReference<Double> y = new AtomicReference<>((double) 0);
+                temp.setOnMousePressed(e ->
+                {
+                    cardPlayArea.setVisible(true);
+                    cardDragLabel.setVisible(true);
+                    new FadeIn(cardPlayArea).play();
+                    new FadeIn(cardDragLabel).play();
+                    x.set(e.getX());
+                    y.set(e.getY());
+                });
+                temp.setOnMouseDragged(e ->
+                {
+                    temp.setTranslateX(temp.getTranslateX() + (e.getX() - x.get()));
+                    temp.setTranslateY(temp.getTranslateY() + (e.getY() - y.get()));
+                });
+                temp.setOnMouseReleased(e ->
+                {
+                    FadeOut animation = new FadeOut(cardPlayArea);
+                    FadeOut animation2 = new FadeOut(cardDragLabel);
+                    animation.setOnFinished(event1 ->
+                    {
+                        cardPlayArea.setVisible(false);
+                    });
+                    animation2.setOnFinished(event1 ->
+                    {
+                        cardDragLabel.setVisible(false);
+                    });
+                    animation.play();
+                    animation2.play();
+                    Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
+                    Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
+                    if (playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY()) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
+                        cardBox.getChildren().remove(temp);
+                    } else {
+                        temp.setTranslateX(0);
+                        temp.setTranslateY(0);
+                    }
+                });
+                cardsInUI.add(temp);
+            }
+
+            for (ImageView card : cardsInUI) {
+                cardBox.getChildren().add(card);
+            }
+
+            FadeIn cardBoxIn = new FadeIn(cardBox);
+            cardBoxIn.setSpeed(3);
+            cardBoxIn.play();
+        });
+        cardBoxOut.play();
     }
 
     /**
@@ -573,9 +678,8 @@ public class GameController extends Application {
      *                          be rolled.
      * @param die1Result is the first die result.
      * @param die2Result is the second die result.
-     * @param game is the game model that will give the dice roll result to the controller.
      */
-    private void setupDiceRoll(ImageView diceRollAvailable, ImageView die1Result, ImageView die2Result, Game game)
+    private void setupDiceRoll(ImageView diceRollAvailable, ImageView die1Result, ImageView die2Result)
     {
         diceRollAvailable.setOnMouseClicked(event ->
         {
@@ -593,17 +697,14 @@ public class GameController extends Application {
                         return null;
                     }
                 };
-                sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                    @Override
-                    public void handle(WorkerStateEvent event) {
-                        diceRollAvailable.setVisible(false);
-                        FadeIn die1Anim = new FadeIn(die1Result);
-                        FadeIn die2Anim = new FadeIn(die2Result);
-                        die1Anim.play();
-                        die2Anim.play();
-                        die1Result.setVisible(true);
-                        die2Result.setVisible(true);
-                    }
+                sleeper.setOnSucceeded(event2 -> {
+                    diceRollAvailable.setVisible(false);
+                    FadeIn die1Anim = new FadeIn(die1Result);
+                    FadeIn die2Anim = new FadeIn(die2Result);
+                    die1Anim.play();
+                    die2Anim.play();
+                    die1Result.setVisible(true);
+                    die2Result.setVisible(true);
                 });
                 new Thread(sleeper).start();
             });
@@ -614,7 +715,6 @@ public class GameController extends Application {
             die2Result.setImage(new Image("/images/die" + results.get(1) + ".png"));
         });
     }
-
 
     //******************************************************************************************************************
     //
@@ -683,7 +783,6 @@ public class GameController extends Application {
             // Handle the intended user action could have a dedicated function for it!
             informResult( alert, resultCode, x, y);
         }
-        System.out.println();
     }
 
     /**
@@ -693,32 +792,35 @@ public class GameController extends Application {
      */
     private void informError( int resultCode )
     {
-        if ( resultCode == -1 )
+        FadeOutRight animation = new FadeOutRight(statusText);
+        animation.setSpeed(3);
+        animation.setOnFinished(event ->
         {
-            this.statusBar.setText( "There is no connection for road to build for player:" +
-                    this.game.getCurrentPlayer().getName() );
-        }
-        else if ( resultCode == -2 )
-        {
-            this.statusBar.setText( "There is no connection for city to build for player:" +
-                    this.game.getCurrentPlayer().getName() );
-        }
-        else if ( resultCode == -3 )
-        {
-            this.statusBar.setText( "There is a building near for player:" +
-                    this.game.getCurrentPlayer().getName() );
-        }
-        else if ( resultCode == -4 )
-        {
-            this.statusBar.setText( "This spot is occupied by other players for player: " +
-                    this.game.getCurrentPlayer().getName() );
-        }
-        else
-        {
-            this.statusBar.setText( "Inform Error function could not detect the error??");
-        }
-
-        this.myPopUp.show( this.stage); // We need a sttaus label ! pop up is not good
+            if ( resultCode == -1 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", there is no connection for a road to build");
+            }
+            else if ( resultCode == -2 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", there is no connection for a settlement to build");
+            }
+            else if ( resultCode == -3 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", there is another building near");
+            }
+            else if ( resultCode == -4 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", this spot is occupied by a player");
+            }
+            else
+            {
+                statusText.setText( "Function could not detect the error");
+            }
+            FadeInLeft animation2 = new FadeInLeft(statusText);
+            animation2.setSpeed(3);
+            animation2.play();
+        });
+        animation.play();
     }
 
     /**
@@ -758,7 +860,13 @@ public class GameController extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
             System.out.println( "Building Setlement...");
-            this.game.setTile( x, y, Structure.Type.SETTLEMENT);
+            game.setTile( x, y, Structure.Type.SETTLEMENT);
+            System.out.println("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
+            ImageView structure = new ImageView("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
+            structure.setX( x * 30);
+            structure.setY( y * 30);
+            new ZoomIn(structure).play();
+            gameBox.getChildren().add(structure);
         }
     }
 
@@ -776,7 +884,12 @@ public class GameController extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
             System.out.println( "Building road...");
-            this.game.setTile( x, y, Structure.Type.ROAD);
+            game.setTile( x, y, Structure.Type.ROAD);
+            ImageView structure = new ImageView("/images/road" + game.getCurrentPlayer().getColor() + ".png");
+            structure.setX( x * 30);
+            structure.setY( y * 30);
+            new ZoomIn(structure).play();
+            gameBox.getChildren().add(structure);
         }
     }
 
@@ -794,7 +907,12 @@ public class GameController extends Application {
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
             System.out.println( "Upgrading to city");
-            this.game.setTile( x, y, Structure.Type.CITY);
+            game.setTile( x, y, Structure.Type.CITY);
+            ImageView structure = new ImageView("/images/city" + game.getCurrentPlayer().getColor() + ".png");
+            structure.setX( x * 30 + 15);
+            structure.setY( y * 30);
+            new ZoomIn(structure).play();
+            gameBox.getChildren().add(structure);
         }
     }
 
@@ -805,7 +923,10 @@ public class GameController extends Application {
     //******************************************************************************************************************
 
     // Insert function for trade buttons here
+    private void setupTrade()
+    {
 
+    }
 
     //******************************************************************************************************************
     //

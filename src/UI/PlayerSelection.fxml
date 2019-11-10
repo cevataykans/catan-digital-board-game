@@ -25,8 +25,8 @@
         <Font size="25.0" />
       </font>
     </Button>
-    <TextField id="player1Name" fx:id="player2Name" layoutX="443.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.00009999999747" promptText="Player 2" />
     <TextField id="player2Name" fx:id="player1Name" alignment="CENTER_LEFT" layoutX="32.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 1" />
+    <TextField id="player1Name" fx:id="player2Name" layoutX="443.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.00009999999747" promptText="Player 2" />
     <TextField fx:id="player3Name" layoutX="884.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 3" />
     <TextField fx:id="player4Name" layoutX="1285.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 4" />
     <Region fx:id="player1Color" layoutX="32.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />

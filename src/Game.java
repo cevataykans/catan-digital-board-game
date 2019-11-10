@@ -210,6 +210,13 @@ public class Game
         return players.get(turnNumber % playerCount);
     }
 
+    public int getCurrentPlayerIndex()
+    {
+        if(gameStatus == 0 && turnNumber >= playerCount)
+            return 2 * playerCount - turnNumber - 1;
+        return turnNumber % playerCount;
+    }
+
     /**
      * Returns the current turn number players are playing.
      * @return the turn number.

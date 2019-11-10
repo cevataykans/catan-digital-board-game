@@ -40,17 +40,17 @@ public class Card
         }
         else if ( type == CardType.ROADBUILDING)
         {
-            name = "Road Building";
+            name = "Road-Building";
             information = "This special card allows you to build 2 roads freely.";
         }
         else if ( type == CardType.VICTORYPOINT)
         {
-            name = "Victory Point";
+            name = "Victory-Point";
             information = "This special card increases your score by 1 point.";
         }
         else if ( type == CardType.YEAROFPLENTY)
         {
-            name = "Year of Plenty";
+            name = "Year-of-Plenty";
             information = "This special card allows you to gain 2 resources of your choice from the bank";
         }
         this.type = type;

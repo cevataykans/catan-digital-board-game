@@ -12,7 +12,9 @@
 
 .gameBox {
     -fx-opacity: 1;
-    -fx-background-color: darkblue;
+    -fx-background-image: url("/images/waterBackground.gif");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover, auto;
     -fx-border-width: 2px;
     -fx-border-radius: 2px;
     -fx-border-color: black;
@@ -24,13 +26,6 @@
     -fx-border-radius: 5px;
 }
 
-.currentPlayerBox {
-    -fx-border-color: rgba(0, 0, 0, 0.26);
-    -fx-border-width: 2px;
-    -fx-border-style: solid;
-    -fx-border-radius: 5px;
-}
-
 .cardBox {
     -fx-background-color: transparent;
     -fx-border-color: black;
@@ -38,37 +33,37 @@
     -fx-border-radius: 10px;
 }
 
-#otherPlayer1Box {
+.x0000ffffPlayerBox {
     -fx-border-width: 5px;
     -fx-border-radius: 10px;
     -fx-background-color: rgba(87, 109, 173, 0.75);
     -fx-border-color: blue;
 }
 
-#otherPlayer2Box {
+.xffffffffPlayerBox {
     -fx-border-width: 5px;
     -fx-border-radius: 10px;
     -fx-background-color: rgba(224, 224, 224, 0.75);
     -fx-border-color: white;
 }
 
-#otherPlayer3Box {
+.xffa500ffPlayerBox {
+    -fx-border-width: 5px;
+    -fx-border-radius: 10px;
+    -fx-background-color: rgba(180, 94, 0, 0.75);
+    -fx-border-color: orange;
+}
+
+.xa52a2affPlayerBox {
     -fx-border-width: 5px;
     -fx-border-radius: 10px;
     -fx-background-color: rgba(156, 9, 9, 0.75);
     -fx-border-color: brown;
 }
 
+
 #currentPlayerProgress {
     -fx-pref-width: 30px;
-}
-
-.progress-indicator {
-
-}
-
-.progress-indicator .percentage {
-    -fx-fill: null;
 }
 
 .button{
@@ -119,4 +114,14 @@
     -fx-text-fill: #7b7b7b;
     -fx-border-color: #7b7b7b;
     -fx-font-size: 15px;
+}
+
+#statusText {
+    -fx-background-color: transparent;
+    -fx-font-family: MinionPro-Bold;
+    -fx-border-style: solid;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-border-radius: 3px;
+    -fx-padding: 10px;
 }
