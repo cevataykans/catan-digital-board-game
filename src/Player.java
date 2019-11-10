@@ -372,6 +372,10 @@ public class Player
 		this.resources[3] += resources[3];
 		this.resources[4] += resources[4];
 	}
+
+	public ArrayList<Card> getCards() {return cards;}
+
+	public void setCards(ArrayList<Card> cards) { this.cards = cards;}
 	
 	/**
 	 * Add a new port to the player's ports ArrayList
