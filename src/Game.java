@@ -439,7 +439,7 @@ public class Game
         else if( type == Structure.Type.SETTLEMENT ){
             board.setStructure( cp, x ,y, type );
             cp.buySettlement();
-            //updateLongestRoad();
+            updateLongestRoad();
             if( checkMust() == 1 )
                 doneMust();
         }
@@ -567,6 +567,5 @@ public class Game
     public void tradeWithPlayer(Player offerer, Player offeree, int[] toOfferer, int[] toOfferee){
         offerer.tradeWithPlayer(offeree, toOfferee, toOfferer);
     }
-
 
 }
