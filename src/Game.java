@@ -205,16 +205,18 @@ public class Game
      */
     public Player getCurrentPlayer()
     {
+        // If the game is at its construction stage and each player plays 2 turns at total
         if(gameStatus == 0 && turnNumber >= playerCount)
             return players.get(2 * playerCount - turnNumber - 1);
-        return players.get(turnNumber % playerCount);
+        return players.get(turnNumber % playerCount); // If the game has started and turns are in a loop, return the player with associated turn number.
     }
 
     public int getCurrentPlayerIndex()
     {
+        // If the game is at its construction stage and each player plays 2 turns at total
         if(gameStatus == 0 && turnNumber >= playerCount)
             return 2 * playerCount - turnNumber - 1;
-        return turnNumber % playerCount;
+        return turnNumber % playerCount; // If the game has started and turns are in a loop, return the player index with associated turn number.
     }
 
     /**

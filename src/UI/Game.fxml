@@ -139,5 +139,14 @@
       </image>
     </ImageView>
     <Button layoutX="64.0" layoutY="487.0" mnemonicParsing="false" prefHeight="40.000099999997474" text="Buy a Development Card" />
+    <AnchorPane fx:id="selectionBox" layoutX="166.0" layoutY="135.0" prefHeight="585.0" prefWidth="1074.0" styleClass="selectionBox" visible="false">
+      <children>
+        <Label fx:id="selectionLabel" layoutX="490.0" layoutY="23.0" text="Choose Your Resource">
+          <font>
+            <Font name="System Bold" size="30.0" />
+          </font>
+        </Label>
+      </children>
+    </AnchorPane>
   </children>
 </AnchorPane>
