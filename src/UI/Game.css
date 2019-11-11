@@ -33,6 +33,21 @@
     -fx-border-radius: 10px;
 }
 
+.selectionBox {
+    -fx-background-color: rgba(238, 241, 141, 0.31);
+    -fx-border-width: 3px;
+    -fx-border-radius: 5px;
+    -fx-border-color: black;
+    -fx-padding: 10px;
+}
+
+.resourceBox {
+    -fx-border-width: 3px;
+    -fx-border-radius: 5px;
+    -fx-border-style: solid;
+    -fx-border-color: black;
+}
+
 .x0000ffffPlayerBox {
     -fx-border-width: 5px;
     -fx-border-radius: 10px;

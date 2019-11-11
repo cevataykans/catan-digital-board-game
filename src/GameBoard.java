@@ -1,5 +1,3 @@
-import com.sun.org.apache.xerces.internal.impl.dv.xs.BaseDVFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 

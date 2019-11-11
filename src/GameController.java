@@ -6,10 +6,8 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -17,27 +15,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import org.w3c.dom.css.Rect;
 
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -73,7 +66,7 @@ public class GameController extends Application {
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setMaximized(true);
         primaryStage.setTitle("CATAN");
-        initializePlayerSelection(root, primaryStage);
+        initializeIntro1(root, primaryStage);
         primaryStage.show();
     }
 
@@ -334,9 +327,9 @@ public class GameController extends Application {
         scene.getStylesheets().add(getClass().getResource("/UI/Game.css").toExternalForm());
 
         game = new Game(players);
-        game.getPlayer(2).increaseScore(4);
         gameBox = (AnchorPane) scene.lookup("#gameBox");
-        setupGameBoard();
+        ImageView robber = new ImageView("/images/robber.png");
+        setupGameBoard(robber);
 
         //**************************************************************************************************************
         // Configure game Board functions
@@ -408,23 +401,35 @@ public class GameController extends Application {
         resources.add(oreCount);
         setupPlayerBoxes(anchorPanes, labels, tradeButtons, indicators);
         setupCurrentPlayerResources(resources);
+        setupRobber(robber);
         //**********************************************************************
 
+        // Development Cards
         Rectangle cardPlayArea = (Rectangle) scene.lookup("#cardPlayArea");
         Label cardDragLabel = (Label) scene.lookup("#cardDragLabel");
         AnchorPane cardBox = (AnchorPane) scene.lookup("#cardBox");
         setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox, game.getCurrentPlayer());
+        //----------------------------------------------
 
+        // Dice Roll
         ImageView diceRollAvailable = (ImageView) scene.lookup("#diceRollAvailable");
         ImageView die1Result = (ImageView) scene.lookup("#die1Result");
         ImageView die2Result = (ImageView) scene.lookup("#die2Result");
 
         setupDiceRoll(diceRollAvailable, die1Result, die2Result);
+        //-----------------------------------------------
+
+
+        // Selection
+        AnchorPane selectionBox = (AnchorPane) scene.lookup("#selectionBox");
+        Label selectionLabel = (Label) scene.lookup("#selectionLabel");
+        //-----------------------------------------------
 
         Button endTurnButton = (Button) scene.lookup( "#endTurn");
         endTurnButton.setOnMouseReleased(mouseEvent ->
         {
             game.endTurn();
+            askForPlayer(selectionBox, selectionLabel);
             setupPlayerBoxes(anchorPanes, labels, tradeButtons, indicators);
             Task<Void> sleeper = new Task<Void>() {
                 @Override
@@ -452,7 +457,7 @@ public class GameController extends Application {
     /**
      * Sets up the game board, its hexagons, numbers and their positions
      */
-    private void setupGameBoard() {
+    private void setupGameBoard(ImageView robber) {
         // Initialize the controller
         game.configureGame();
         Tile[][] board = game.getBoard();
@@ -510,11 +515,15 @@ public class GameController extends Application {
                     else
                     {
                         imgPath = "/images/desert2.png";
+                        robber.setX((j-2) * 30 + 90);
+                        robber.setY(i * 30 + 45);
+                        gameBox.getChildren().add(robber);
                     }
                     hexagon = new ImageView(new Image(imgPath));
                     hexagon.setX((j - 2) * 30 + 30);
                     hexagon.setY(i * 30 + 15);
                     gameBox.getChildren().add(hexagon);
+                    robber.toFront();
                 }
             }
         }
@@ -631,6 +640,7 @@ public class GameController extends Application {
                     temp.setTranslateX(temp.getTranslateX() + (e.getX() - x.get()));
                     temp.setTranslateY(temp.getTranslateY() + (e.getY() - y.get()));
                 });
+                int finalI = i;
                 temp.setOnMouseReleased(e ->
                 {
                     FadeOut animation = new FadeOut(cardPlayArea);
@@ -651,6 +661,7 @@ public class GameController extends Application {
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
+                        game.playDevelopmentCard(cards.get(finalI));
                         cardBox.getChildren().remove(temp);
                     } else {
                         temp.setTranslateX(0);
@@ -713,6 +724,39 @@ public class GameController extends Application {
             ArrayList<Integer> results = game.rollDice();
             die1Result.setImage(new Image("/images/die" + results.get(0) + ".png"));
             die2Result.setImage(new Image("/images/die" + results.get(1) + ".png"));
+        });
+    }
+
+    private void setupRobber(ImageView robber)
+    {
+        AtomicReference<Double> x = new AtomicReference<>((double) 0);
+        AtomicReference<Double> y = new AtomicReference<>((double) 0);
+        robber.setOnMousePressed(e ->
+        {
+            x.set(e.getX());
+            y.set(e.getY());
+        });
+        robber.setOnMouseDragged(e ->
+        {
+            robber.setTranslateX(robber.getTranslateX() + (e.getX() - x.get()));
+            robber.setTranslateY(robber.getTranslateY() + (e.getY() - y.get()));
+        });
+        robber.setOnMouseReleased(e ->
+        {
+            int movedX = processX(robber.getX());
+            int movedY = processY(robber.getY());
+            System.out.println("MovedX: " + movedX + " MovedY: " + movedY);
+            if(game.checkTile(movedX, movedY) != 3) // Inside tile
+            {
+                System.out.println("Not inside tile");
+                robber.setTranslateX(0);
+                robber.setTranslateY(0);
+            }
+            else
+            {
+                robber.setX((movedX - 2) * 30 + 90);
+                robber.setY(movedY * 30 + 45);
+            }
         });
     }
 
@@ -854,14 +898,12 @@ public class GameController extends Application {
      */
     private void buildSettlement( Alert alert, int x, int y)
     {
-        alert.setHeaderText("Look, a Confirmation Dialog");
-        alert.setContentText("Build settlement?");
+        alert.setHeaderText("Building a Settlement");
+        alert.setContentText("Do you want to build a settlement?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
-            System.out.println( "Building Setlement...");
             game.setTile( x, y, Structure.Type.SETTLEMENT);
-            System.out.println("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
             ImageView structure = new ImageView("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
             structure.setX( x * 30);
             structure.setY( y * 30);
@@ -878,12 +920,11 @@ public class GameController extends Application {
      */
     private void buildRoad(Alert alert, int x, int y)
     {
-        alert.setHeaderText("Look, a Confirmation Dialog");
-        alert.setContentText("Build road?");
+        alert.setHeaderText("Building a Road");
+        alert.setContentText("Do you want to build a road?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
-            System.out.println( "Building road...");
             game.setTile( x, y, Structure.Type.ROAD);
             ImageView structure = new ImageView("/images/road" + game.getCurrentPlayer().getColor() + ".png");
             structure.setX( x * 30);
@@ -901,12 +942,11 @@ public class GameController extends Application {
      */
     private void buildCity( Alert alert, int x, int y)
     {
-        alert.setHeaderText("");
-        alert.setContentText("Upgrade city?");
+        alert.setHeaderText("Upgrading To City");
+        alert.setContentText("Do you want to upgrade your settlement to a city?");
 
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
-            System.out.println( "Upgrading to city");
             game.setTile( x, y, Structure.Type.CITY);
             ImageView structure = new ImageView("/images/city" + game.getCurrentPlayer().getColor() + ".png");
             structure.setX( x * 30 + 15);
@@ -915,6 +955,113 @@ public class GameController extends Application {
             gameBox.getChildren().add(structure);
         }
     }
+
+    private void askForResource(AnchorPane selectionBox, Label selectionLabel)
+    {
+        statusText.setText("Choose a resource to select");
+        selectionLabel.setText("Choose Your Resource");
+        ArrayList<ImageView> resources = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            switch (i) {
+                case 0:
+                    ImageView lumber = new ImageView("/images/wood.jpg");
+                    lumber.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                    });
+                    lumber.setX(25);
+                    lumber.setY(100);
+                    resources.add(lumber);
+                    break;
+                case 1:
+                     ImageView wool = new ImageView("/images/sheep.jpg");
+                     wool.setOnMousePressed(e -> {
+                         new FadeOutRight(selectionBox).play();
+                         selectionBox.setVisible(false);
+                     });
+                     wool.setX(275);
+                     wool.setY(100);
+                     resources.add(wool);
+                     break;
+                case 2:
+                    ImageView grain = new ImageView("/images/grain.jpg");
+                    grain.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                    });
+                    grain.setX(525);
+                    grain.setY(100);
+                    resources.add(grain);
+                    break;
+                case 3:
+                    ImageView brick = new ImageView("/images/brick.jpg");
+                    brick.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                    });
+                    brick.setX(775);
+                    brick.setY(100);
+                    resources.add(brick);
+                    break;
+                case 4:
+                    ImageView ore = new ImageView("/images/ore.jpg");
+                    ore.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                    });
+                    ore.setX(1025);
+                    ore.setY(100);
+                    resources.add(ore);
+                    break;
+            }
+            resources.get(i).getStyleClass().add("resourceBox");
+            selectionBox.getChildren().add(resources.get(i));
+        }
+        new FadeInLeft(selectionBox).play();
+        selectionBox.setVisible(true);
+    }
+
+    private void askForPlayer(AnchorPane selectionBox, Label selectionLabel)
+    {
+        statusText.setText("Choose a player to steal from");
+        selectionLabel.setText("Choose Your Player");
+        ArrayList<Rectangle> players = new ArrayList<>();
+        for (int i = 0; i < 3; i++) {
+            switch (i) {
+                case 0:
+                    Rectangle otherPlayer1 = new Rectangle(150, 100, 200, 400);
+                    otherPlayer1.setFill(game.getPlayer((game.getCurrentPlayerIndex() + 1) % 4).getColor());
+                    otherPlayer1.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                    });
+                    players.add(otherPlayer1);
+                    break;
+                case 1:
+                    Rectangle otherPlayer2 = new Rectangle(450, 100, 200, 400);
+                    otherPlayer2.setFill(game.getPlayer((game.getCurrentPlayerIndex() + 2) % 4).getColor());
+                    otherPlayer2.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                    });
+                    players.add(otherPlayer2);
+                    break;
+                case 2:
+                    Rectangle otherPlayer3 = new Rectangle(750, 100, 200, 400);
+                    otherPlayer3.setFill(game.getPlayer((game.getCurrentPlayerIndex() + 3) % 4).getColor());
+                    otherPlayer3.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                    });
+                    players.add(otherPlayer3);
+            }
+            players.get(i).getStyleClass().add("resourceBox");
+            selectionBox.getChildren().add(players.get(i));
+        }
+        new FadeInLeft(selectionBox).play();
+        selectionBox.setVisible(true);
+    }
+
 
     //******************************************************************************************************************
     //
