@@ -336,13 +336,21 @@ public class GameController extends Application {
 
         gameBox.setOnMouseClicked(mouseEvent -> {
 
-            int x = processX( mouseEvent.getX() );
-            int y = processY( mouseEvent.getY() );
+            // Allow the action to be processed for game board UI if only game board related must, be done
+            if ( game.checkMust() < 4 )
+            {
+                int x = processX(mouseEvent.getX());
+                int y = processY(mouseEvent.getY());
 
-            System.out.print( "X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY());
-            System.out.println( " X' is: " + x + " | Y' is: " + y );
+                System.out.print("X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY());
+                System.out.println(" X' is: " + x + " | Y' is: " + y);
 
-            createDialog( game.checkTile( x, y ), x, y );
+                createDialog(game.checkTile(x, y), x, y);
+            }
+            else
+            {
+                informError( game.checkMust() );
+            }
         });
 
         statusText = (Label) scene.lookup("#statusText");
@@ -428,29 +436,42 @@ public class GameController extends Application {
         Button endTurnButton = (Button) scene.lookup( "#endTurn");
         endTurnButton.setOnMouseReleased(mouseEvent ->
         {
-            game.endTurn();
-            askForPlayer(selectionBox, selectionLabel);
-            setupPlayerBoxes(anchorPanes, labels, tradeButtons, indicators);
-            Task<Void> sleeper = new Task<Void>() {
-                @Override
-                protected Void call() throws Exception {
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
+            // Check if the user has to do something before ending their turn
+            if ( game.checkMust() == -1 || game.checkMust() == 6 )
+            {
+                // Check if the user ends the turn because of obligation
+                if ( game.checkMust() == 6 )
+                {
+                    // Done the must, yeey :)
+                    game.doneMust();
+                }
+                game.endTurn();
+                askForPlayer(selectionBox, selectionLabel);
+                setupPlayerBoxes(anchorPanes, labels, tradeButtons, indicators);
+                Task<Void> sleeper = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            };
-            sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    setupCurrentPlayerResources(resources);
-                    setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox, game.getCurrentPlayer());
-                }
-            });
-            new Thread(sleeper).start();
+                };
+                sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                    @Override
+                    public void handle(WorkerStateEvent event) {
+                        setupCurrentPlayerResources(resources);
+                        setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox, game.getCurrentPlayer());
+                    }
+                });
+                new Thread(sleeper).start();
+            }
+            else
+            {
+                informError( game.checkMust() );
+            }
         });
-
         primaryStage.setScene(scene);
     }
 
@@ -655,18 +676,18 @@ public class GameController extends Application {
                     });
                     animation.play();
                     animation2.play();
-                    Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
-                    Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-                    if (playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                        game.playDevelopmentCard(cards.get(finalI));
-                        cardBox.getChildren().remove(temp);
-                    } else {
-                        temp.setTranslateX(0);
-                        temp.setTranslateY(0);
-                    }
+                    //Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
+                    //Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
+                    //if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
+                    //        playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
+                    //        playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
+                    //        playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
+                    //    game.playDevelopmentCard(cards.get(finalI));
+                    //    cardBox.getChildren().remove(temp);
+                    //} else {
+                    //    temp.setTranslateX(0);
+                    //    temp.setTranslateY(0);
+                    //}
                 });
                 cardsInUI.add(temp);
             }
@@ -694,36 +715,48 @@ public class GameController extends Application {
     {
         diceRollAvailable.setOnMouseClicked(event ->
         {
-            FadeOut animation = new FadeOut(diceRollAvailable);
-            animation.setSpeed(2);
-            animation.setOnFinished(event1 ->
+            // Dice could only be rolled at the beginning of a turn
+            if ( game.checkMust() == 7 )
             {
-                Task<Void> sleeper = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
+                FadeOut animation = new FadeOut(diceRollAvailable);
+                animation.setSpeed(2);
+                animation.setOnFinished(event1 ->
+                {
+                    Task<Void> sleeper = new Task<Void>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            try {
+                                Thread.sleep(50);
+                            } catch (InterruptedException e) {
+                            }
+                            return null;
                         }
-                        return null;
-                    }
-                };
-                sleeper.setOnSucceeded(event2 -> {
-                    diceRollAvailable.setVisible(false);
-                    FadeIn die1Anim = new FadeIn(die1Result);
-                    FadeIn die2Anim = new FadeIn(die2Result);
-                    die1Anim.play();
-                    die2Anim.play();
-                    die1Result.setVisible(true);
-                    die2Result.setVisible(true);
+                    };
+                    sleeper.setOnSucceeded(event2 -> {
+                        diceRollAvailable.setVisible(false);
+                        FadeIn die1Anim = new FadeIn(die1Result);
+                        FadeIn die2Anim = new FadeIn(die2Result);
+                        die1Anim.play();
+                        die2Anim.play();
+                        die1Result.setVisible(true);
+                        die2Result.setVisible(true);
+                    });
+                    new Thread(sleeper).start();
                 });
-                new Thread(sleeper).start();
-            });
-            animation.play();
+                animation.play();
 
-            ArrayList<Integer> results = game.rollDice();
-            die1Result.setImage(new Image("/images/die" + results.get(0) + ".png"));
-            die2Result.setImage(new Image("/images/die" + results.get(1) + ".png"));
+                //***** Logic to roll the dice and collect resources, collecting resources could be made in the dice method of game class! *****
+                game.doneMust();
+                ArrayList<Integer> results = game.rollDice();
+                game.collectResources();
+
+                die1Result.setImage(new Image("/images/die" + results.get(0) + ".png"));
+                die2Result.setImage(new Image("/images/die" + results.get(1) + ".png"));
+            }
+            else
+            {
+                informError( game.checkMust() );
+            }
         });
     }
 
@@ -797,7 +830,7 @@ public class GameController extends Application {
 
     /**
      * The function to handle user intereaction for the game board.
-     * @param resultCode is the code returned from the game controller
+     * @param resultCode is the code returned from the game
      * @param x is the x corrdinate in the game board
      * @param y is the y coordinate in the game board
      */
@@ -818,6 +851,10 @@ public class GameController extends Application {
             alert.initStyle( StageStyle.UTILITY);
 
             // User icon could be used
+
+            /*
+                Add beautiful catan icon here !
+             */
             ImageView icon = new ImageView();
             icon.setFitHeight(48);
             icon.setFitWidth(48);
@@ -833,6 +870,26 @@ public class GameController extends Application {
      * Inform error function updates the status bar to display user error, this function could be evolved into pop up
      * and a sound may be played regarding the error.
      * @param resultCode is the error code given by the game controller
+     *
+     *        GameBoard related:
+     *        -1 = there is no connection for road to build
+     *        -2 = there is no connection for city to build
+     *        -3 = there is a building near
+     *        -4 = this tile is occupied by a road, city or other players structure, in this case there is no need to explain anything
+     *        -5 = there is no enough resource for road
+     *        -6 = there is no enough resource for settlement
+     *        -7 = there is no enough resource for city
+     *
+     *        Must related:
+     *         0 = road need to be built
+     *         1 = settlement need to be built
+     *         2 = city need to be built
+     *         3 = inside tile selection ( for robber selection )
+     *         4 = resource selection (for monopoly card)
+     *         5 = resource selection (for year of plenty card)
+     *         6 = end turn ( we will end the turn automatically, do not wait player to end )
+     *         7 = roll dice
+     *         8 = get neighbor players ( after robber is places )
      */
     private void informError( int resultCode )
     {
@@ -856,9 +913,57 @@ public class GameController extends Application {
             {
                 statusText.setText( game.getCurrentPlayer().getName() + ", this spot is occupied by a player");
             }
+            else if ( resultCode == -5 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", not enough resources for a road");
+            }
+            else if ( resultCode == -6 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", not enough resources for a settlement");
+            }
+            else if ( resultCode == -7 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", not enough resources for a city");
+            }
+            else if ( resultCode == 0 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", build road first!");
+            }
+            else if ( resultCode == 1 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", build settlement first!");
+            }
+            else if ( resultCode == 2 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", build city first!");
+            }
+            else if ( resultCode == 3 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", choose a hexagon first!");
+            }
+            else if ( resultCode == 4 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", select a resource for monopoly card!");
+            }
+            else if ( resultCode == 5 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", select two resources for year of plenty card!");
+            }
+            else if ( resultCode == 6 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", END YOUR TURN RIGHT NOW!!!!!");
+            }
+            else if ( resultCode == 7 )
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", but first, lets roll the dice!");
+            }
+            else if ( resultCode == 8)
+            {
+                statusText.setText( game.getCurrentPlayer().getName() + ", choose a neighbor player first!");
+            }
             else
             {
-                statusText.setText( "Function could not detect the error");
+                statusText.setText( "Function could not detect the error, lol, exploded!");
             }
             FadeInLeft animation2 = new FadeInLeft(statusText);
             animation2.setSpeed(3);
@@ -876,17 +981,46 @@ public class GameController extends Application {
      */
     private void informResult( Alert alert, int resultCode, int x, int y )
     {
+        int mustCheckCode = game.checkMust();
+
+        // Player tries to build a road
         if ( resultCode == 0 )
         {
-            buildRoad( alert, x, y);
+            // Allow construction only if player is obliged or free to hang arooound lol
+            if ( mustCheckCode == -1 || mustCheckCode == 0)
+            {
+                buildRoad(alert, x, y);
+            }
+            else
+            {
+                informError( mustCheckCode );
+            }
         }
+        // Player tries to build a settlement
         else if ( resultCode == 1)
         {
-            buildSettlement( alert, x ,y);
+            // Allow construction only if player is obliged or free to hang arooound lol
+            if ( mustCheckCode == -1 || mustCheckCode == 1)
+            {
+                buildSettlement(alert, x, y);
+            }
+            else
+            {
+                informError( mustCheckCode );
+            }
         }
+        // Player tries to build a city
         else if ( resultCode == 2)
         {
-            buildCity( alert, x, y);
+            // Allow construction only if player is obliged or free to hang arooound lol
+            if ( mustCheckCode == -1 || mustCheckCode == 2)
+            {
+                buildCity( alert, x, y);
+            }
+            else
+            {
+                informError( mustCheckCode);
+            }
         }
     }
 
@@ -903,6 +1037,13 @@ public class GameController extends Application {
 
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
+
+            // Check if the user obligated to build a settlement
+            if ( game.checkMust() == 1 )
+            {
+                game.doneMust();
+            }
+
             game.setTile( x, y, Structure.Type.SETTLEMENT);
             ImageView structure = new ImageView("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
             structure.setX( x * 30);
@@ -925,6 +1066,13 @@ public class GameController extends Application {
 
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
+
+            // Check if the user obligated to build a road
+            if ( game.checkMust() == 0 )
+            {
+                game.doneMust();
+            }
+
             game.setTile( x, y, Structure.Type.ROAD);
             ImageView structure = new ImageView("/images/road" + game.getCurrentPlayer().getColor() + ".png");
             structure.setX( x * 30);
@@ -947,6 +1095,13 @@ public class GameController extends Application {
 
         Optional<ButtonType> result = alert.showAndWait();
         if ( result.get() == ButtonType.OK){
+
+            // Check if the user obligated to build a city
+            if ( game.checkMust() == 2 )
+            {
+                game.doneMust();
+            }
+
             game.setTile( x, y, Structure.Type.CITY);
             ImageView structure = new ImageView("/images/city" + game.getCurrentPlayer().getColor() + ".png");
             structure.setX( x * 30 + 15);
@@ -1072,7 +1227,11 @@ public class GameController extends Application {
     // Insert function for trade buttons here
     private void setupTrade()
     {
+        // Tradings can only be done in the free of obligations
+        if ( game.checkMust() == -1 )
+        {
 
+        }
     }
 
     //******************************************************************************************************************
