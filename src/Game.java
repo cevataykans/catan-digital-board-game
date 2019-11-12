@@ -564,8 +564,13 @@ public class Game
      * @param toOfferer is the list of materials the offeree wants to give
      * @param toOfferee is the list of materials the offerer wants to give
      */
-    public void tradeWithPlayer(Player offerer, Player offeree, int[] toOfferer, int[] toOfferee){
-        offerer.tradeWithPlayer(offeree, toOfferee, toOfferer);
+    public boolean tradeWithPlayer(Player offerer, Player offeree, int[] toOfferer, int[] toOfferee){
+        if ( offeree.hasEnoughResources(toOfferer))
+        {
+            offerer.tradeWithPlayer(offeree, toOfferee, toOfferer);
+            return true;
+        }
+        return false;
     }
 
 }

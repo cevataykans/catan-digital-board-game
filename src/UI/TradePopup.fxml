@@ -7,62 +7,70 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="280.0" prefWidth="293.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="318.0" prefWidth="326.0" styleClass="root" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <Label layoutX="114.0" layoutY="65.0" text="Offering:" />
-    <Label layoutX="115.0" layoutY="152.0" text="Wanted:" />
-    <Button layoutX="114.0" layoutY="245.0" mnemonicParsing="false" text="Trade" />
-    <Label layoutX="39.0" layoutY="14.0" text="Offerer" underline="true" />
-    <Label layoutX="201.0" layoutY="14.0" text="Offeree" underline="true" />
+    <ImageView fx:id="background" fitHeight="318.0" fitWidth="477.0000346592494" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" styleClass="background">
+      <image>
+        <Image url="@../images/dark%20red.jpg" />
+      </image>
+    </ImageView>
+    <Label layoutX="134.0" layoutY="65.0" text="Offering:" textFill="WHITE" />
+    <Label layoutX="135.0" layoutY="170.0" text="Wanted:" textFill="WHITE" />
+    <Button fx:id="tradeButton" layoutX="70.0" layoutY="277.0" mnemonicParsing="false" text="Trade" />
+    <Label layoutX="39.0" layoutY="14.0" text="Offerer" textFill="WHITE" underline="true" />
+    <Label layoutX="233.0" layoutY="14.0" text="Offeree" textFill="WHITE" underline="true" />
     <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="25.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Lumber.png" />
+        <Image url="/images/Lumber.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="72.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="92.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Lumber.png" />
+        <Image url="/images/Wool.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="133.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="150.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/grain.png" />
+        <Image url="/images/grain.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="187.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="205.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Brick.png" />
+        <Image url="/images/Brick.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="237.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="270.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Ore.png" />
+        <Image url="/images/Ore.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="25.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="25.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Lumber.png" />
+        <Image url="/images/Lumber.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="72.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="92.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Lumber.png" />
+        <Image url="/images/Wool.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="133.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="150.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/grain.png" />
+        <Image url="/images/grain.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="187.0" layoutY="179.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="205.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Brick.png" />
+        <Image url="/images/Brick.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="237.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="270.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="file:/C:/Users/USER/Desktop/Project_Catan/CS319-3C-CA/src/images/Ore.png" />
+        <Image url="/images/Ore.png" />
       </image>
     </ImageView>
+    <Label fx:id="offeror" layoutX="39.0" layoutY="38.0" text="Label" textFill="WHITE" />
+    <Label fx:id="offeree" layoutX="233.0" layoutY="38.0" text="Label" textFill="WHITE" />
+    <Button fx:id="cancel" layoutX="192.0" layoutY="277.0" mnemonicParsing="false" text="Cancel" />
   </children>
 </AnchorPane>
