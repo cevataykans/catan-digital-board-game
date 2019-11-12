@@ -68,7 +68,7 @@
         <AnchorPane fx:id="otherPlayer3Box" layoutX="996.0" layoutY="14.0" prefHeight="101.0" prefWidth="486.0">
           <children>
             <Label fx:id="otherPlayer3" font="$x2" layoutX="117.0" layoutY="14.0" text="Player 3" />
-            <Button layoutX="99.0" layoutY="61.0" mnemonicParsing="false" prefWidth="105.0" text="Trade" />
+            <Button fx:id="otherPlayer3Trade" layoutX="99.0" layoutY="61.0" mnemonicParsing="false" prefWidth="105.0" text="Trade" />
             <Label layoutX="20.0" layoutY="5.0" text="Score">
               <font>
                 <Font size="18.0" fx:id="x1" />
@@ -138,7 +138,7 @@
         <Image url="@../images/legend.jpg" />
       </image>
     </ImageView>
-    <Button layoutX="64.0" layoutY="487.0" mnemonicParsing="false" prefHeight="40.000099999997474" text="Buy a Development Card" />
+    <Button fx:id="buyDevelopmentCard" layoutX="62.0" layoutY="534.0" mnemonicParsing="false" prefHeight="40.000099999997474" text="Buy a Development Card" />
     <AnchorPane fx:id="selectionBox" layoutX="166.0" layoutY="135.0" prefHeight="585.0" prefWidth="1074.0" styleClass="selectionBox" visible="false">
       <children>
         <Label fx:id="selectionLabel" layoutX="490.0" layoutY="23.0" text="Choose Your Resource">
@@ -148,5 +148,6 @@
         </Label>
       </children>
     </AnchorPane>
+    <Button fx:id="tradeWithPort" layoutX="62.0" layoutY="487.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="191.0" text="Trade With Port" />
   </children>
 </AnchorPane>
