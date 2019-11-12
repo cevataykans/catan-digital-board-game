@@ -6,6 +6,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -29,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -66,7 +68,7 @@ public class GameController extends Application {
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setMaximized(true);
         primaryStage.setTitle("CATAN");
-        initializeIntro1(root, primaryStage);
+        initializeMainMenu(root, primaryStage);
         primaryStage.show();
     }
 
@@ -142,8 +144,9 @@ public class GameController extends Application {
                 System.out.println(e);
             }
         });
-
         primaryStage.setScene(scene);
+        primaryStage.setFullScreen(true);
+        primaryStage.setMaximized(true);
     }
 
     private void initializeMainMenu(Parent root, Stage primaryStage) throws IOException
@@ -303,18 +306,25 @@ public class GameController extends Application {
         Button startButton = (Button) scene.lookup("#startButton");
         startButton.setOnMouseClicked(event ->
         {
-            try {
-                ArrayList<Player> players = new ArrayList<>();
-                players.add(new Player(player1Name.getText(), Color.BLUE));
-                players.add(new Player(player2Name.getText(), Color.WHITE));
-                players.add(new Player(player3Name.getText(), Color.ORANGE));
-                players.add(new Player(player4Name.getText(), Color.BROWN));
-                initializeGame(finalRoot, primaryStage, players);
-            }
-            catch (IOException e)
+            FadeOut animation2 = new FadeOut(finalRoot);
+            animation2.setSpeed(2);
+            animation2.setOnFinished(event1 ->
             {
-                System.out.println(e);
-            }
+                try
+                {
+                    ArrayList<Player> players = new ArrayList<>();
+                    players.add(new Player(player1Name.getText(), Color.BLUE));
+                    players.add(new Player(player2Name.getText(), Color.WHITE));
+                    players.add(new Player(player3Name.getText(), Color.ORANGE));
+                    players.add(new Player(player4Name.getText(), Color.BROWN));
+                    initializeGame(finalRoot, primaryStage, players);
+                }
+                catch (IOException e)
+                {
+                    System.out.println(e);
+                }
+            });
+            animation2.play();
         });
 
         primaryStage.setScene(scene);
@@ -323,8 +333,30 @@ public class GameController extends Application {
     private void initializeGame(Parent root, Stage primaryStage, ArrayList<Player> players) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Game.fxml"));
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(root, Color.BLACK);
         scene.getStylesheets().add(getClass().getResource("/UI/Game.css").toExternalForm());
+
+        Parent finalRoot = root;
+        finalRoot.setVisible(false);
+        Task<Void> sleeper = new Task<Void>() {
+            @Override
+            protected Void call() throws Exception {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                }
+                return null;
+            }
+        };
+        sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+            @Override
+            public void handle(WorkerStateEvent event) {
+                finalRoot.setVisible(true);
+                FadeIn animation = new FadeIn(finalRoot);
+                animation.play();
+            }
+        });
+        new Thread(sleeper).start();
 
         game = new Game(players);
         gameBox = (AnchorPane) scene.lookup("#gameBox");
@@ -378,14 +410,6 @@ public class GameController extends Application {
         labels.add(otherPlayer2);
         labels.add(otherPlayer3);
 
-        Button otherPlayer1Trade = (Button) scene.lookup("#otherPlayer1Trade");
-        Button otherPlayer2Trade = (Button) scene.lookup("#otherPlayer2Trade");
-        Button otherPlayer3Trade = (Button) scene.lookup("#otherPlayer3Trade");
-        ArrayList<Button> tradeButtons = new ArrayList<>();
-        tradeButtons.add(otherPlayer1Trade);
-        tradeButtons.add(otherPlayer2Trade);
-        tradeButtons.add(otherPlayer3Trade);
-
         ProgressIndicator currentPlayerIndicator = (ProgressIndicator) scene.lookup("#currentPlayerProgress");
         ProgressIndicator otherPlayer1Progress = (ProgressIndicator) scene.lookup("#otherPlayer1Progress");
         ProgressIndicator otherPlayer2Progress = (ProgressIndicator) scene.lookup("#otherPlayer2Progress");
@@ -407,7 +431,7 @@ public class GameController extends Application {
         resources.add(grainCount);
         resources.add(brickCount);
         resources.add(oreCount);
-        setupPlayerBoxes(anchorPanes, labels, tradeButtons, indicators);
+        setupPlayerBoxes(anchorPanes, labels, indicators);
         setupCurrentPlayerResources(resources);
         setupRobber(robber);
         //**********************************************************************
@@ -433,6 +457,27 @@ public class GameController extends Application {
         Label selectionLabel = (Label) scene.lookup("#selectionLabel");
         //-----------------------------------------------
 
+        // Trade
+        Button otherPlayer1Trade = (Button) scene.lookup("#otherPlayer1Trade");
+        Button otherPlayer2Trade = (Button) scene.lookup("#otherPlayer2Trade");
+        Button otherPlayer3Trade = (Button) scene.lookup("#otherPlayer3Trade");
+
+        otherPlayer1Trade.setOnMouseClicked(event ->
+        {
+            setupTrade(game.getPlayer((game.getCurrentPlayerIndex() + 1) % 4), resources);
+        });
+
+        otherPlayer2Trade.setOnMouseClicked(event ->
+        {
+            setupTrade(game.getPlayer((game.getCurrentPlayerIndex() + 2) % 4), resources);
+        });
+
+        otherPlayer3Trade.setOnMouseClicked(event ->
+        {
+            setupTrade(game.getPlayer((game.getCurrentPlayerIndex() + 3) % 4), resources);
+        });
+        //-----------------------------------------------
+
         Button endTurnButton = (Button) scene.lookup( "#endTurn");
         endTurnButton.setOnMouseReleased(mouseEvent ->
         {
@@ -446,9 +491,9 @@ public class GameController extends Application {
                     game.doneMust();
                 }
                 game.endTurn();
-                askForPlayer(selectionBox, selectionLabel);
-                setupPlayerBoxes(anchorPanes, labels, tradeButtons, indicators);
-                Task<Void> sleeper = new Task<Void>() {
+                setupPlayerBoxes(anchorPanes, labels, indicators);
+                setupDiceRoll(diceRollAvailable, die1Result, die2Result);
+                Task<Void> sleeper2 = new Task<Void>() {
                     @Override
                     protected Void call() throws Exception {
                         try {
@@ -458,14 +503,14 @@ public class GameController extends Application {
                         return null;
                     }
                 };
-                sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                     @Override
                     public void handle(WorkerStateEvent event) {
                         setupCurrentPlayerResources(resources);
                         setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox, game.getCurrentPlayer());
                     }
                 });
-                new Thread(sleeper).start();
+                new Thread(sleeper2).start();
             }
             else
             {
@@ -551,7 +596,7 @@ public class GameController extends Application {
     }
 
     private void setupPlayerBoxes(ArrayList<AnchorPane> anchorPanes, ArrayList<Label> labels,
-                                  ArrayList<Button> tradeButtons, ArrayList<ProgressIndicator> indicators)
+                                  ArrayList<ProgressIndicator> indicators)
     {
         FadeOut animation0 = new FadeOut(anchorPanes.get(0));
         FadeOut animation1 = new FadeOut(anchorPanes.get(1));
@@ -613,11 +658,21 @@ public class GameController extends Application {
     private void setupCurrentPlayerResources(ArrayList<Label> resources)
     {
         int playerResources[] = game.getCurrentPlayer().getResources();
-        resources.get(0).setText("" + playerResources[0]);
-        resources.get(1).setText("" + playerResources[1]);
-        resources.get(2).setText("" + playerResources[2]);
-        resources.get(3).setText("" + playerResources[3]);
-        resources.get(4).setText("" + playerResources[4]);
+
+        for ( int i = 0; i < resources.size(); i++)
+        {
+            FadeOut resourceOut = new FadeOut(resources.get(i));
+            resourceOut.setSpeed(3);
+            int finalI = i;
+            resourceOut.setOnFinished(event ->
+            {
+                resources.get(finalI).setText("" + playerResources[finalI]);
+                FadeIn resourceIn = new FadeIn(resources.get(finalI));
+                resourceIn.setSpeed(3);
+                resourceIn.play();
+            });
+            resourceOut.play();
+        }
     }
 
     /**
@@ -676,18 +731,18 @@ public class GameController extends Application {
                     });
                     animation.play();
                     animation2.play();
-                    //Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
-                    //Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-                    //if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
-                    //        playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
-                    //        playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
-                    //        playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                    //    game.playDevelopmentCard(cards.get(finalI));
-                    //    cardBox.getChildren().remove(temp);
-                    //} else {
-                    //    temp.setTranslateX(0);
-                    //    temp.setTranslateY(0);
-                    //}
+                    Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
+                    Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
+                    if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
+                        game.playDevelopmentCard(cards.get(finalI));
+                        cardBox.getChildren().remove(temp);
+                    } else {
+                        temp.setTranslateX(0);
+                        temp.setTranslateY(0);
+                    }
                 });
                 cardsInUI.add(temp);
             }
@@ -713,6 +768,21 @@ public class GameController extends Application {
      */
     private void setupDiceRoll(ImageView diceRollAvailable, ImageView die1Result, ImageView die2Result)
     {
+        FadeOut die1Out = new FadeOut(die1Result);
+        FadeOut die2Out = new FadeOut(die2Result);
+        die1Out.setSpeed(2);
+        die2Out.setSpeed(2);
+        die1Out.setOnFinished(event ->
+        {
+            die1Result.setVisible(false);
+            die2Result.setVisible(false);
+            diceRollAvailable.setVisible(true);
+            FadeIn rollAvailableIn = new FadeIn(diceRollAvailable);
+            rollAvailableIn.setSpeed(2);
+            rollAvailableIn.play();
+        });
+        die1Out.play();
+        die2Out.play();
         diceRollAvailable.setOnMouseClicked(event ->
         {
             // Dice could only be rolled at the beginning of a turn
@@ -855,7 +925,7 @@ public class GameController extends Application {
             /*
                 Add beautiful catan icon here !
              */
-            ImageView icon = new ImageView();
+            ImageView icon = new ImageView("/images/catanIcon.png");
             icon.setFitHeight(48);
             icon.setFitWidth(48);
             alert.getDialogPane().setGraphic( icon);
@@ -924,6 +994,10 @@ public class GameController extends Application {
             else if ( resultCode == -7 )
             {
                 statusText.setText( game.getCurrentPlayer().getName() + ", not enough resources for a city");
+            }
+            else if ( resultCode == -8 )
+            {
+                statusText.setText( "Other player does not have enough resources");
             }
             else if ( resultCode == 0 )
             {
@@ -1224,14 +1298,108 @@ public class GameController extends Application {
     //
     //******************************************************************************************************************
 
-    // Insert function for trade buttons here
-    private void setupTrade()
+    private void setupTrade(Player playerToTrade, ArrayList<Label> resources)
     {
         // Tradings can only be done in the free of obligations
-        if ( game.checkMust() == -1 )
-        {
+        //if ( game.checkMust() == -1) { Delete this when must check for trade or -1 is implemented.
+            try {
+                // Initialize the trade popup, its a new stage.
+                Stage tradeStage = new Stage();
+                Parent root = FXMLLoader.load(getClass().getResource("/UI/TradePopup.fxml"));
+                Scene scene = new Scene(root, Color.BLACK);
+                scene.getStylesheets().add(getClass().getResource("/UI/TradePopup.css").toExternalForm());
 
-        }
+                // Get the current player of the game and set the offeror and offeree labels to related players.
+                Player currentPlayer = game.getCurrentPlayer();
+                Label offeror = (Label) scene.lookup("#offeror");
+                offeror.setText(currentPlayer.getName());
+                Label offeree = (Label) scene.lookup("#offeree");
+                offeree.setText(playerToTrade.getName());
+                // Initialize spinners for each offering resource type and add it to root.
+                ArrayList<Spinner<Integer>> offerings = new ArrayList<>();
+                for (int i = 0; i < 5; i++) {
+                    Spinner<Integer> offer = new Spinner<>(0, currentPlayer.getResources()[0], 0);
+                    offer.setPrefWidth(50);
+                    offer.setPrefHeight(30);
+                    offer.setTranslateX(i * 60 + 20);
+                    offer.setTranslateY(130);
+                    offerings.add(offer);
+                    ((AnchorPane) root).getChildren().add(offer);
+                }
+
+                // Initialize spinners for each wanted resource type and add it to root.
+                ArrayList<Spinner<Integer>> wanteds = new ArrayList<>();
+                for (int i = 0; i < 5; i++) {
+                    Spinner<Integer> wanted = new Spinner<>(0, 7, 0);
+                    wanted.setPrefWidth(50);
+                    wanted.setPrefHeight(30);
+                    wanted.setTranslateX(i * 60 + 20);
+                    wanted.setTranslateY(240);
+                    wanteds.add(wanted);
+                    ((AnchorPane) root).getChildren().add(wanted);
+                }
+
+                // Initialize the trade button. It creates a confirmation popup.
+                Button tradeButton = (Button) scene.lookup("#tradeButton");
+                tradeButton.setOnMouseClicked(event ->
+                {
+                    // Initialize resource arrays for offerings and wanteds.
+                    int[] offeringResources = new int[5];
+                    int[] wantedResources = new int[5];
+
+                    // Get each offered resource from their spinners.
+                    for ( int i = 0; i < offerings.size(); i++)
+                    {
+                        offeringResources[i] = offerings.get(i).getValue();
+                    }
+
+                    // Get each wanted resource from their spinners.
+                    for ( int i = 0; i < offerings.size(); i++)
+                    {
+                        wantedResources[i] = wanteds.get(i).getValue();
+                    }
+
+                    // Create a confirmation popup where you ask the offeree if they accept the trade.
+                    Alert alert = new Alert( Alert.AlertType.CONFIRMATION);
+                    alert.initStyle( StageStyle.UTILITY);
+
+                    ImageView icon = new ImageView("/images/catanIcon.png");
+                    icon.setFitHeight(48);
+                    icon.setFitWidth(48);
+                    alert.getDialogPane().setGraphic( icon);
+
+                    alert.setHeaderText("Trade Confirmation");
+                    alert.setContentText(playerToTrade.getName() + ", do you confirm the trade?");
+
+                    // If accepted, check if the offeree has enough resources, if not make new status, if do make the trade.
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if ( result.get() == ButtonType.OK){
+                        if ( !game.tradeWithPlayer(currentPlayer, playerToTrade, wantedResources, offeringResources))
+                        {
+                            informError(-8);
+                        }
+                        setupCurrentPlayerResources(resources);
+                        tradeStage.close();
+                    }
+                });
+
+                // Initialize cancel button. It closes the trade popup.
+                Button cancel = (Button) scene.lookup("#cancel");
+                cancel.setOnMouseClicked(event ->
+                {
+                    tradeStage.close();
+                });
+
+                // Show the trade popup in the game.
+                tradeStage.initStyle(StageStyle.UTILITY);
+                tradeStage.setTitle("Player Trade");
+                tradeStage.setResizable(false);
+                tradeStage.setScene(scene);
+                tradeStage.show();
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+       //}
     }
 
     //******************************************************************************************************************
