@@ -1,4 +1,3 @@
-import java.awt.Color;
 import java.util.ArrayList;
 
 /**
@@ -23,6 +22,10 @@ import java.util.ArrayList;
  * --------------
  * Log 25.10.2019 (Hakan)
  * Implemented ports attributes and addPort(), getPorts() methods
+ * --------------
+ * Log 13.11.2019 (Cevat)
+ * Implemented stealing a random resource through robber placement function. Corrected total resource implementation in
+ * functions.
  */
 public class Player
 {
@@ -39,7 +42,7 @@ public class Player
 	private int totResources;
 
 	private ArrayList<Structure> structures; // needs to be discuessed for finalization;
-	private ArrayList<Card> cards; // trouble! I suggest arrayList!
+	private ArrayList<Card> cards;
 	private ArrayList<Port> ports;
 
 	// Player Attributes related to score and board
@@ -55,9 +58,9 @@ public class Player
 		this.name = name;
 		this.color = color;
 		this.totResources = 10; // pre construct for initial resources, not final!
-		this.cards = new ArrayList<Card>();
-		this.structures = new ArrayList<Structure>();
-		this.ports = new ArrayList<Port>();
+		this.cards = new ArrayList<>();
+		this.structures = new ArrayList<>();
+		this.ports = new ArrayList<>();
 
 		this.score = 0;
 		this.hasLargestArmy = false;
@@ -83,6 +86,35 @@ public class Player
 
 			other.resources[i] -= (toTake[i] - toGive[i]);
 			other.totResources -= (toTake[i] - toGive[i]);
+		}
+	}
+
+	/**
+	 * A function to enable players steal a random material from other players when the robber is changed.
+	 * @param other other player whose resource is being stolen by this player
+	 */
+	public void stealResourceFromPlayer( Player other )
+	{
+		// Other player must have at least one resource
+		if ( other.totResources > 0 )
+		{
+			// There is one resource to steal, find a suitable index until stealing can be performed
+			int leftToSteal = 1;
+			while ( leftToSteal > 0 )
+			{
+				int randomStealIndex = (int)(Math.random() * 5);
+				if ( other.resources[ randomStealIndex] > 0 ) // steal
+				{
+					// Adjust total resources
+					this.totResources++;
+					other.totResources--;
+
+					// Adjust the stolen resource material
+					this.resources[ randomStealIndex]++;
+					other.resources[ randomStealIndex]--;
+					leftToSteal = 0;
+				}
+			}
 		}
 	}
 
@@ -371,6 +403,7 @@ public class Player
 		this.resources[2] += resources[2];
 		this.resources[3] += resources[3];
 		this.resources[4] += resources[4];
+		this.totResources += resources[ 0] + resources[ 1] + resources[ 2] + resources[3] + resources[4];
 	}
 
 	public ArrayList<Card> getCards() {return cards;}

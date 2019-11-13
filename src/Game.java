@@ -48,7 +48,7 @@ public class Game
         5 = resource selection (for year of plenty card)
         6 = end turn ( we will end the turn automatically, do not wait player to end )
         7 = roll dice
-        8 = get neighbor players ( after robber is places )
+        8 = get neighbor players ( after robber is places ) (resource selection for robber placement?)
      */
     private Queue<Integer> must;
 
