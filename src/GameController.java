@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -41,13 +42,29 @@ import java.util.concurrent.atomic.AtomicReference;
  * @version 09.11.2019
  * Added functions for game board to place structures
  * Added function for end turn button
+ *
+ * @version 11.11.2019
+ * Added must checks to building structures
+ *
+ * @version 13.11.2019
+ * Added must checks to trade and robber, implemented some handlings of development cards
  */
 public class GameController extends Application {
 
     // Properties
     private AnchorPane gameBox;
     private Game game; // game added here for function access
-    private Label statusText; // this and the below three added for pop up displaying for info
+    private Label statusText; // To inform user
+
+    // For function access of player selection and resource selection, I have put them in here
+    private AnchorPane selectionBox;
+    private Label selectionLabel;
+
+    // For function access of information of all the players in the game.
+    private ArrayList<AnchorPane> anchorPanes;
+    private ArrayList<Label> labels;
+    private ArrayList<ProgressIndicator> indicators;
+    private ArrayList<Label> resources;
 
     public static void main(String[] args) {
         launch(args);
@@ -56,7 +73,9 @@ public class GameController extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
-            final Font font1 = Font.loadFont(new FileInputStream(new File("C:\\Users\\USER\\Desktop\\Project_Catan\\CS319-3C-CA\\src\\fonts\\MinionPro-Bold.otf")), 40);
+            // Get the Catan font from the fonts file and initialize it for the game.
+            final Font font1 = Font.loadFont(new FileInputStream(new File("").getAbsolutePath()
+                    .concat("/src/fonts/MinionPro-Bold.otf")), 40);
         }
         catch (FileNotFoundException e)
         {
@@ -68,7 +87,7 @@ public class GameController extends Application {
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setMaximized(true);
         primaryStage.setTitle("CATAN");
-        initializeMainMenu(root, primaryStage);
+        initializeIntro1(root, primaryStage);
         primaryStage.show();
     }
 
@@ -89,7 +108,7 @@ public class GameController extends Application {
         animation2.setOnFinished(event ->
         {
             try {
-                initializeIntro2(finalRoot, primaryStage);
+                initializeIntro2(finalRoot, primaryStage, scene);
             }
             catch (IOException e)
             {
@@ -100,11 +119,13 @@ public class GameController extends Application {
         primaryStage.setScene(scene);
     }
 
-    private void initializeIntro2(Parent root, Stage primaryStage) throws IOException
+    private void initializeIntro2(Parent root, Stage primaryStage, Scene scene) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Intro2.fxml"));
-        Scene scene = new Scene(root, Color.BLACK);
+        scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/UI/Intro2.css").toExternalForm());
+        scene.setRoot(root);
+
         Label label = (Label) scene.lookup("#test");
         label.setVisible(false);
         Task<Void> sleeper = new Task<Void>() {
@@ -137,7 +158,7 @@ public class GameController extends Application {
         animation2.setOnFinished(event ->
         {
             try {
-                initializeMainMenu(finalRoot, primaryStage);
+                initializeMainMenu(finalRoot, primaryStage, scene);
             }
             catch (IOException e)
             {
@@ -149,13 +170,14 @@ public class GameController extends Application {
         primaryStage.setMaximized(true);
     }
 
-    private void initializeMainMenu(Parent root, Stage primaryStage) throws IOException
+    private void initializeMainMenu(Parent root, Stage primaryStage, Scene scene) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/MainMenu.fxml"));
-        Scene scene = new Scene(root, Color.BLACK);
+        scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/UI/MainMenu.css").toExternalForm());
-        root.setVisible(false);
+        scene.setRoot(root);
 
+        root.setVisible(false);
         Parent finalRoot = root;
         Task<Void> sleeper = new Task<Void>() {
             @Override
@@ -190,7 +212,7 @@ public class GameController extends Application {
                 try
                 {
                     finalRoot.setVisible(false);
-                    initializePlayerSelection(finalRoot, primaryStage);
+                    initializePlayerSelection(finalRoot, primaryStage, scene);
                 }
                 catch (IOException e)
                 {
@@ -208,7 +230,7 @@ public class GameController extends Application {
                 try
                 {
                     finalRoot.setVisible(false);
-                    initializeHelp(finalRoot, primaryStage);
+                    initializeHelp(finalRoot, primaryStage, scene);
                 }
                 catch (IOException e)
                 {
@@ -232,11 +254,12 @@ public class GameController extends Application {
         primaryStage.setScene(scene);
     }
 
-    private void initializeHelp(Parent root, Stage primaryStage) throws IOException
+    private void initializeHelp(Parent root, Stage primaryStage, Scene scene) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Help.fxml"));
-        Scene scene = new Scene(root, Color.BLACK);
+        scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/UI/Help.css").toExternalForm());
+        scene.setRoot(root);
 
         FadeIn animation = new FadeIn(root);
         animation.setSpeed(3.5);
@@ -253,7 +276,7 @@ public class GameController extends Application {
                 try
                 {
                     finalRoot.setVisible(false);
-                    initializeMainMenu(finalRoot, primaryStage);
+                    initializeMainMenu(finalRoot, primaryStage, scene);
                 }
                 catch (IOException e)
                 {
@@ -268,11 +291,12 @@ public class GameController extends Application {
         primaryStage.setScene(scene);
     }
 
-    private void initializePlayerSelection(Parent root, Stage primaryStage) throws IOException
+    private void initializePlayerSelection(Parent root, Stage primaryStage, Scene scene) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/PlayerSelection.fxml"));
-        Scene scene = new Scene(root, Color.BLACK);
+        scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/UI/PlayerSelection.css").toExternalForm());
+        scene.setRoot(root);
 
         FadeIn animation = new FadeIn(root);
         animation.setSpeed(2);
@@ -289,7 +313,7 @@ public class GameController extends Application {
                 try
                 {
                     finalRoot.setVisible(false);
-                    initializeMainMenu(finalRoot, primaryStage);
+                    initializeMainMenu(finalRoot, primaryStage, scene);
                 }
                 catch (IOException e)
                 {
@@ -317,7 +341,7 @@ public class GameController extends Application {
                     players.add(new Player(player2Name.getText(), Color.WHITE));
                     players.add(new Player(player3Name.getText(), Color.ORANGE));
                     players.add(new Player(player4Name.getText(), Color.BROWN));
-                    initializeGame(finalRoot, primaryStage, players);
+                    initializeGame(finalRoot, primaryStage, players, scene);
                 }
                 catch (IOException e)
                 {
@@ -330,11 +354,12 @@ public class GameController extends Application {
         primaryStage.setScene(scene);
     }
 
-    private void initializeGame(Parent root, Stage primaryStage, ArrayList<Player> players) throws IOException
+    private void initializeGame(Parent root, Stage primaryStage, ArrayList<Player> players, Scene scene) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Game.fxml"));
-        Scene scene = new Scene(root, Color.BLACK);
+        scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/UI/Game.css").toExternalForm());
+        scene.setRoot(root);
 
         Parent finalRoot = root;
         finalRoot.setVisible(false);
@@ -394,7 +419,7 @@ public class GameController extends Application {
         AnchorPane otherPlayer1Box = (AnchorPane) scene.lookup("#otherPlayer1Box");
         AnchorPane otherPlayer2Box = (AnchorPane) scene.lookup("#otherPlayer2Box");
         AnchorPane otherPlayer3Box = (AnchorPane) scene.lookup("#otherPlayer3Box");
-        ArrayList<AnchorPane> anchorPanes = new ArrayList<>();
+        anchorPanes = new ArrayList<>();
         anchorPanes.add(currentPlayerBox);
         anchorPanes.add(otherPlayer1Box);
         anchorPanes.add(otherPlayer2Box);
@@ -404,7 +429,7 @@ public class GameController extends Application {
         Label otherPlayer1 = (Label) scene.lookup("#otherPlayer1");
         Label otherPlayer2 = (Label) scene.lookup("#otherPlayer2");
         Label otherPlayer3 = (Label) scene.lookup("#otherPlayer3");
-        ArrayList<Label> labels = new ArrayList<>();
+        labels = new ArrayList<>();
         labels.add(currentPlayer);
         labels.add(otherPlayer1);
         labels.add(otherPlayer2);
@@ -414,7 +439,7 @@ public class GameController extends Application {
         ProgressIndicator otherPlayer1Progress = (ProgressIndicator) scene.lookup("#otherPlayer1Progress");
         ProgressIndicator otherPlayer2Progress = (ProgressIndicator) scene.lookup("#otherPlayer2Progress");
         ProgressIndicator otherPlayer3Progress = (ProgressIndicator) scene.lookup("#otherPlayer3Progress");
-        ArrayList<ProgressIndicator> indicators = new ArrayList<>();
+        indicators = new ArrayList<>();
         indicators.add(currentPlayerIndicator);
         indicators.add(otherPlayer1Progress);
         indicators.add(otherPlayer2Progress);
@@ -425,14 +450,13 @@ public class GameController extends Application {
         Label grainCount = (Label) scene.lookup("#grainCount");
         Label brickCount = (Label) scene.lookup("#brickCount");
         Label oreCount = (Label) scene.lookup("#oreCount");
-        ArrayList<Label> resources = new ArrayList<>();
+        resources = new ArrayList<>();
         resources.add(lumberCount);
         resources.add(woolCount);
         resources.add(grainCount);
         resources.add(brickCount);
         resources.add(oreCount);
         setupPlayerBoxes(anchorPanes, labels, indicators);
-        setupCurrentPlayerResources(resources);
         setupRobber(robber);
         //**********************************************************************
 
@@ -453,8 +477,8 @@ public class GameController extends Application {
 
 
         // Selection
-        AnchorPane selectionBox = (AnchorPane) scene.lookup("#selectionBox");
-        Label selectionLabel = (Label) scene.lookup("#selectionLabel");
+        selectionBox = (AnchorPane) scene.lookup("#selectionBox");
+        selectionLabel = (Label) scene.lookup("#selectionLabel");
         //-----------------------------------------------
 
         // Trade
@@ -506,7 +530,8 @@ public class GameController extends Application {
                 sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                     @Override
                     public void handle(WorkerStateEvent event) {
-                        setupCurrentPlayerResources(resources);
+                        informError(-9);
+                        setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
                         setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox, game.getCurrentPlayer());
                     }
                 });
@@ -615,8 +640,8 @@ public class GameController extends Application {
             FadeIn animation0In = new FadeIn(anchorPanes.get(0));
             anchorPanes.get(0).getStyleClass().clear();
             anchorPanes.get(0).getStyleClass().add(game.getCurrentPlayer().getColor().toString().substring(1) + "PlayerBox");
+            setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
             labels.get(0).setText(game.getCurrentPlayer().getName());
-            indicators.get(0).setProgress(game.getCurrentPlayer().getScore() * 1.0 / 10);
             animation0In.setSpeed(3);
             animation0In.play();
         });
@@ -655,24 +680,24 @@ public class GameController extends Application {
         });
     }
 
-    private void setupCurrentPlayerResources(ArrayList<Label> resources)
+    private void setupCurrentPlayerInfo(AnchorPane infoBox, ProgressIndicator score, ArrayList<Label> resources)
     {
-        int playerResources[] = game.getCurrentPlayer().getResources();
-
-        for ( int i = 0; i < resources.size(); i++)
+        FadeOut infoOut = new FadeOut(infoBox);
+        infoOut.setSpeed(3);
+        infoOut.setOnFinished(event ->
         {
-            FadeOut resourceOut = new FadeOut(resources.get(i));
-            resourceOut.setSpeed(3);
-            int finalI = i;
-            resourceOut.setOnFinished(event ->
+            score.setProgress(game.getCurrentPlayer().getScore() * 1.0 / 10);
+            int playerResources[] = game.getCurrentPlayer().getResources();
+
+            for ( int i = 0; i < resources.size(); i++)
             {
-                resources.get(finalI).setText("" + playerResources[finalI]);
-                FadeIn resourceIn = new FadeIn(resources.get(finalI));
-                resourceIn.setSpeed(3);
-                resourceIn.play();
-            });
-            resourceOut.play();
-        }
+                resources.get(i).setText("" + playerResources[i]);
+            }
+            FadeIn infoIn = new FadeIn(infoBox);
+            infoIn.setSpeed(3);
+            infoIn.play();
+        });
+        infoOut.play();
     }
 
     /**
@@ -733,6 +758,7 @@ public class GameController extends Application {
                     animation2.play();
                     Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
                     Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
+
                     if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
@@ -743,6 +769,18 @@ public class GameController extends Application {
                         temp.setTranslateX(0);
                         temp.setTranslateY(0);
                     }
+
+                    if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
+                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
+                        game.playDevelopmentCard(cards.get(finalI));
+                        cardBox.getChildren().remove(temp);
+                    } else {
+                        temp.setTranslateX(0);
+                        temp.setTranslateY(0);
+                    }
+
                 });
                 cardsInUI.add(temp);
             }
@@ -819,6 +857,7 @@ public class GameController extends Application {
                 game.doneMust();
                 ArrayList<Integer> results = game.rollDice();
                 game.collectResources();
+                setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
 
                 die1Result.setImage(new Image("/images/die" + results.get(0) + ".png"));
                 die2Result.setImage(new Image("/images/die" + results.get(1) + ".png"));
@@ -830,35 +869,77 @@ public class GameController extends Application {
         });
     }
 
+    /**
+     * Sets the UI display of the robber while asserting certain functions to it when it moves
+     * @param robber is the ImageView representation of the robber for displaying it on the UI
+     */
     private void setupRobber(ImageView robber)
     {
         AtomicReference<Double> x = new AtomicReference<>((double) 0);
         AtomicReference<Double> y = new AtomicReference<>((double) 0);
+
+        // User clicks to robber to move it
         robber.setOnMousePressed(e ->
         {
-            x.set(e.getX());
-            y.set(e.getY());
-        });
-        robber.setOnMouseDragged(e ->
-        {
-            robber.setTranslateX(robber.getTranslateX() + (e.getX() - x.get()));
-            robber.setTranslateY(robber.getTranslateY() + (e.getY() - y.get()));
-        });
-        robber.setOnMouseReleased(e ->
-        {
-            int movedX = processX(robber.getX());
-            int movedY = processY(robber.getY());
-            System.out.println("MovedX: " + movedX + " MovedY: " + movedY);
-            if(game.checkTile(movedX, movedY) != 3) // Inside tile
+            if ( game.checkMust() == 3 )
             {
-                System.out.println("Not inside tile");
-                robber.setTranslateX(0);
-                robber.setTranslateY(0);
+                x.set(e.getX());
+                y.set(e.getY());
             }
             else
             {
-                robber.setX((movedX - 2) * 30 + 90);
-                robber.setY(movedY * 30 + 45);
+                informError( game.checkMust() );
+            }
+
+        });
+
+        // User drags the robber to another hexagon of choice or simply can put it in the same place to continue blocking the users
+        robber.setOnMouseDragged(e ->
+        {
+            if ( game.checkMust() == 3 )
+            {
+                robber.setTranslateX(robber.getTranslateX() + (e.getX() - x.get()));
+                robber.setTranslateY(robber.getTranslateY() + (e.getY() - y.get()));
+            }
+            else
+            {
+                informError( game.checkMust() );
+            }
+        });
+
+        // Check if user has put the robber onto a valid position
+        robber.setOnMouseReleased(e ->
+        {
+            // When user releases the robber, if the robber should not play, this function must not work!
+            if ( game.checkMust() == 3)
+            {
+                // Get the coordinate and process it (processing and checking tile couldbe made in one line!)
+                int movedX = processX(robber.getX());
+                int movedY = processY(robber.getY());
+                System.out.println("MovedX: " + movedX + " MovedY: " + movedY); /***********************************************/
+
+                int resultCode = game.checkTile( movedX, movedY);
+                if ( resultCode != 3) // Inside tile
+                {
+                    System.out.println("Not inside tile"); /***********************************************/
+                    robber.setTranslateX(0);
+                    robber.setTranslateY(0);
+                    informError( resultCode);
+                }
+                else
+                {
+                    // It is known that place is a inside tile, do must!
+                    game.doneMust();
+                    robber.setX( (movedX - 2) * 30 + 65);
+                    robber.setY( movedY * 30 + 15);
+
+                    // Now get the neighbors of that hexagon and display player selection to do the must
+                    ArrayList<Player> neighbors = game.getNeighborPlayers(movedX, movedY);
+                    if ( neighbors.size() != 0)
+                    {
+                        askForPlayerCevatImplementation(neighbors);
+                    }
+                }
             }
         });
     }
@@ -910,7 +991,7 @@ public class GameController extends Application {
         // If the controller returns minus integer, there is an error!
         if ( resultCode < 0 )
         {
-            System.out.println( " error is ** " + resultCode + "   ");
+            System.out.println( " error is ** " + resultCode + "   "); /***********************************************/
             // handle error
             informError( resultCode);
         }
@@ -920,19 +1001,16 @@ public class GameController extends Application {
             Alert alert = new Alert( Alert.AlertType.CONFIRMATION);
             alert.initStyle( StageStyle.UTILITY);
 
-            // User icon could be used
+            // Create a beautiful icon for catan dialog
 
-            /*
-                Add beautiful catan icon here !
-             */
             ImageView icon = new ImageView("/images/catanIcon.png");
             icon.setFitHeight(48);
             icon.setFitWidth(48);
             alert.getDialogPane().setGraphic( icon);
 
-            System.out.println( "result is ** " + resultCode + "   ");
+            System.out.println( "result is ** " + resultCode + "   "); /***********************************************/
             // Handle the intended user action could have a dedicated function for it!
-            informResult( alert, resultCode, x, y);
+            informBoardSelection( alert, resultCode, x, y);
         }
     }
 
@@ -999,6 +1077,10 @@ public class GameController extends Application {
             {
                 statusText.setText( "Other player does not have enough resources");
             }
+            else if ( resultCode == -9)
+            {
+                statusText.setText( "-");
+            }
             else if ( resultCode == 0 )
             {
                 statusText.setText( game.getCurrentPlayer().getName() + ", build road first!");
@@ -1013,7 +1095,7 @@ public class GameController extends Application {
             }
             else if ( resultCode == 3 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", choose a hexagon first!");
+                statusText.setText( game.getCurrentPlayer().getName() + ", move the robber first by clicking and dragging!");
             }
             else if ( resultCode == 4 )
             {
@@ -1033,11 +1115,11 @@ public class GameController extends Application {
             }
             else if ( resultCode == 8)
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", choose a neighbor player first!");
+                statusText.setText( game.getCurrentPlayer().getName() + ", choose a neighbor player first to steal a resource!");
             }
             else
             {
-                statusText.setText( "Function could not detect the error, lol, exploded!");
+                statusText.setText( "-");
             }
             FadeInLeft animation2 = new FadeInLeft(statusText);
             animation2.setSpeed(3);
@@ -1053,7 +1135,7 @@ public class GameController extends Application {
      * @param x is the x coordinate of to perform action on the game board
      * @param y is the y coordinate of to perform action on the game board
      */
-    private void informResult( Alert alert, int resultCode, int x, int y )
+    private void informBoardSelection( Alert alert, int resultCode, int x, int y )
     {
         int mustCheckCode = game.checkMust();
 
@@ -1125,6 +1207,7 @@ public class GameController extends Application {
             new ZoomIn(structure).play();
             gameBox.getChildren().add(structure);
         }
+        setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
     }
 
     /**
@@ -1154,6 +1237,7 @@ public class GameController extends Application {
             new ZoomIn(structure).play();
             gameBox.getChildren().add(structure);
         }
+        setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
     }
 
     /**
@@ -1183,7 +1267,14 @@ public class GameController extends Application {
             new ZoomIn(structure).play();
             gameBox.getChildren().add(structure);
         }
+        setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
     }
+
+    //******************************************************************************************************************
+    //
+    // FUNCTIONS RELATED TO DEVELOPMENT CARDS
+    //
+    //******************************************************************************************************************
 
     private void askForResource(AnchorPane selectionBox, Label selectionLabel)
     {
@@ -1291,17 +1382,68 @@ public class GameController extends Application {
         selectionBox.setVisible(true);
     }
 
+    /**
+     * This function displays player boxes for the current player to choose a player to steal a random resource from them.
+     * @param playersToSelect is the players arraylist to display available players.
+     */
+    private void askForPlayerCevatImplementation( ArrayList<Player> playersToSelect)
+    {
+        statusText.setText( "Choose a player to steal from");
+        selectionLabel.setText( "Choose Your Player");
+        ArrayList<Rectangle> players = new ArrayList<>();
+        for ( int i = 0; i < playersToSelect.size(); i++ )
+        {
+            // According to the index of the array list, configure the player information
+            Rectangle otherPlayer = new Rectangle(i * 300 + 150, 100, 200, 400);
+            otherPlayer.setFill( playersToSelect.get( i).getColor() );
+            int finalI = i;
+            otherPlayer.setOnMousePressed(e -> {
+                stealResourceFromPlayer( playersToSelect.get(finalI) );
+                setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
+            });
+            players.add(otherPlayer);
+
+            players.get(i).getStyleClass().add("resourceBox");
+            selectionBox.getChildren().add(players.get(i));
+        }
+        new FadeInLeft(selectionBox).play();
+        selectionBox.setVisible(true);
+    }
+
+    /**
+     * Helper function of the askForPlayerCevatImplementation, to avoid code duplication. This function allows the
+     * current player to steal a resource and close the resource selection event, while doing the must.
+     * @
+     */
+    private void stealResourceFromPlayer( Player stealingFrom)
+    {
+        // Resource stealing for the selected player must
+        if ( game.checkMust() == 8 )
+        {
+            game.doneMust();
+
+            game.getCurrentPlayer().stealResourceFromPlayer( stealingFrom );
+        }
+        new FadeOutRight( selectionBox).play();
+        selectionBox.setVisible(false);
+    }
+
 
     //******************************************************************************************************************
     //
     // FUNCTIONS RELATED TO TRADE BUTTONS
     //
     //******************************************************************************************************************
-
+    /**
+     * Function to trade with a player when a player offers a trade to another player by clicking the trade button.
+     * @param playerToTrade the player who current player wants to trade with
+     * @param resources resources is the resource labels of the current player which will be updated after trade.
+     */
     private void setupTrade(Player playerToTrade, ArrayList<Label> resources)
     {
-        // Tradings can only be done in the free of obligations
-        //if ( game.checkMust() == -1) { Delete this when must check for trade or -1 is implemented.
+        // Tradings can only be done when free of obligations
+        if ( game.checkMust() == -1)
+        {
             try {
                 // Initialize the trade popup, its a new stage.
                 Stage tradeStage = new Stage();
@@ -1315,6 +1457,7 @@ public class GameController extends Application {
                 offeror.setText(currentPlayer.getName());
                 Label offeree = (Label) scene.lookup("#offeree");
                 offeree.setText(playerToTrade.getName());
+
                 // Initialize spinners for each offering resource type and add it to root.
                 ArrayList<Spinner<Integer>> offerings = new ArrayList<>();
                 for (int i = 0; i < 5; i++) {
@@ -1378,7 +1521,7 @@ public class GameController extends Application {
                         {
                             informError(-8);
                         }
-                        setupCurrentPlayerResources(resources);
+                        setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
                         tradeStage.close();
                     }
                 });
@@ -1399,7 +1542,11 @@ public class GameController extends Application {
             } catch (Exception e) {
                 System.out.println(e);
             }
-       //}
+       }
+       else
+       {
+           informError( game.checkMust() );
+       }
     }
 
     //******************************************************************************************************************
@@ -1409,5 +1556,4 @@ public class GameController extends Application {
     //******************************************************************************************************************
 
     // Insert function for end button here
-
 }
