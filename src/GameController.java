@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
@@ -41,13 +42,23 @@ import java.util.concurrent.atomic.AtomicReference;
  * @version 09.11.2019
  * Added functions for game board to place structures
  * Added function for end turn button
+ *
+ * @version 11.11.2019
+ * Added must checks to building structures
+ *
+ * @version 13.11.2019
+ * Added must checks to trade and robber, implemented some handlings of development cards
  */
 public class GameController extends Application {
 
     // Properties
     private AnchorPane gameBox;
     private Game game; // game added here for function access
-    private Label statusText; // this and the below three added for pop up displaying for info
+    private Label statusText; // To inform user
+
+    // For function access of player selection and resource selection, I have put them in here
+    private AnchorPane selectionBox;
+    private Label selectionLabel;
 
     public static void main(String[] args) {
         launch(args);
@@ -56,6 +67,7 @@ public class GameController extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         try {
+            /* Please correct this path, it is not realiable */
             final Font font1 = Font.loadFont(new FileInputStream(new File("C:\\Users\\USER\\Desktop\\Project_Catan\\CS319-3C-CA\\src\\fonts\\MinionPro-Bold.otf")), 40);
         }
         catch (FileNotFoundException e)
@@ -453,8 +465,8 @@ public class GameController extends Application {
 
 
         // Selection
-        AnchorPane selectionBox = (AnchorPane) scene.lookup("#selectionBox");
-        Label selectionLabel = (Label) scene.lookup("#selectionLabel");
+        selectionBox = (AnchorPane) scene.lookup("#selectionBox");
+        selectionLabel = (Label) scene.lookup("#selectionLabel");
         //-----------------------------------------------
 
         // Trade
@@ -733,16 +745,16 @@ public class GameController extends Application {
                     animation2.play();
                     Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
                     Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-                    if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                        game.playDevelopmentCard(cards.get(finalI));
-                        cardBox.getChildren().remove(temp);
-                    } else {
-                        temp.setTranslateX(0);
-                        temp.setTranslateY(0);
-                    }
+                    //if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
+                    //        playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
+                    //        playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
+                    //        playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
+                    //    game.playDevelopmentCard(cards.get(finalI));
+                    //    cardBox.getChildren().remove(temp);
+                    //} else {
+                    //    temp.setTranslateX(0);
+                    //    temp.setTranslateY(0);
+                    //}
                 });
                 cardsInUI.add(temp);
             }
@@ -830,35 +842,73 @@ public class GameController extends Application {
         });
     }
 
+    /**
+     * Sets the UI display of the robber while asserting certain functions to it when it moves
+     * @param robber is the ImageView representation of the robber for displaying it on the UI
+     */
     private void setupRobber(ImageView robber)
     {
         AtomicReference<Double> x = new AtomicReference<>((double) 0);
         AtomicReference<Double> y = new AtomicReference<>((double) 0);
+
+        // User clicks to robber to move it
         robber.setOnMousePressed(e ->
         {
-            x.set(e.getX());
-            y.set(e.getY());
-        });
-        robber.setOnMouseDragged(e ->
-        {
-            robber.setTranslateX(robber.getTranslateX() + (e.getX() - x.get()));
-            robber.setTranslateY(robber.getTranslateY() + (e.getY() - y.get()));
-        });
-        robber.setOnMouseReleased(e ->
-        {
-            int movedX = processX(robber.getX());
-            int movedY = processY(robber.getY());
-            System.out.println("MovedX: " + movedX + " MovedY: " + movedY);
-            if(game.checkTile(movedX, movedY) != 3) // Inside tile
+            if ( game.checkMust() == 3 )
             {
-                System.out.println("Not inside tile");
-                robber.setTranslateX(0);
-                robber.setTranslateY(0);
+                x.set(e.getX());
+                y.set(e.getY());
             }
             else
             {
-                robber.setX((movedX - 2) * 30 + 90);
-                robber.setY(movedY * 30 + 45);
+                informError( game.checkMust() );
+            }
+
+        });
+
+        // User drags the robber to another hexagon of choice or simply can put it in the same place to continue blocking the users
+        robber.setOnMouseDragged(e ->
+        {
+            if ( game.checkMust() == 3 )
+            {
+                robber.setTranslateX(robber.getTranslateX() + (e.getX() - x.get()));
+                robber.setTranslateY(robber.getTranslateY() + (e.getY() - y.get()));
+            }
+            else
+            {
+                informError( game.checkMust() );
+            }
+        });
+
+        // Check if user has put the robber onto a valid position
+        robber.setOnMouseReleased(e ->
+        {
+            // When user releases the robber, if the robber should not play, this function must not work!
+            if ( game.checkMust() == 3)
+            {
+                // Get the coordinate and process it (processing and checking tile couldbe made in one line!)
+                int movedX = processX(robber.getX());
+                int movedY = processY(robber.getY());
+                System.out.println("MovedX: " + movedX + " MovedY: " + movedY); /***********************************************/
+
+                int resultCode = game.checkTile( movedX, movedY);
+                if ( resultCode != 3) // Inside tile
+                {
+                    System.out.println("Not inside tile"); /***********************************************/
+                    robber.setTranslateX(0);
+                    robber.setTranslateY(0);
+                    informError( resultCode);
+                }
+                else
+                {
+                    // It is known that place is a inside tile, do must!
+                    game.doneMust();
+                    robber.setX( (movedX - 2) * 30 + 90);
+                    robber.setY( movedY * 30 + 45);
+
+                    // Now get the neighbors of that hexagon and display player selection to do the must
+                    askForPlayerCevatImplementation( game.getNeighborPlayers( movedX, movedY) );
+                }
             }
         });
     }
@@ -910,7 +960,7 @@ public class GameController extends Application {
         // If the controller returns minus integer, there is an error!
         if ( resultCode < 0 )
         {
-            System.out.println( " error is ** " + resultCode + "   ");
+            System.out.println( " error is ** " + resultCode + "   "); /***********************************************/
             // handle error
             informError( resultCode);
         }
@@ -920,19 +970,15 @@ public class GameController extends Application {
             Alert alert = new Alert( Alert.AlertType.CONFIRMATION);
             alert.initStyle( StageStyle.UTILITY);
 
-            // User icon could be used
-
-            /*
-                Add beautiful catan icon here !
-             */
+            // Create a beautiful icon for catan dialog
             ImageView icon = new ImageView("/images/catanIcon.png");
             icon.setFitHeight(48);
             icon.setFitWidth(48);
             alert.getDialogPane().setGraphic( icon);
 
-            System.out.println( "result is ** " + resultCode + "   ");
+            System.out.println( "result is ** " + resultCode + "   "); /***********************************************/
             // Handle the intended user action could have a dedicated function for it!
-            informResult( alert, resultCode, x, y);
+            informBoardSelection( alert, resultCode, x, y);
         }
     }
 
@@ -1013,7 +1059,7 @@ public class GameController extends Application {
             }
             else if ( resultCode == 3 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", choose a hexagon first!");
+                statusText.setText( game.getCurrentPlayer().getName() + ", move the robber first by clicking and dragging!");
             }
             else if ( resultCode == 4 )
             {
@@ -1033,7 +1079,7 @@ public class GameController extends Application {
             }
             else if ( resultCode == 8)
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", choose a neighbor player first!");
+                statusText.setText( game.getCurrentPlayer().getName() + ", choose a neighbor player first to steal a resource!");
             }
             else
             {
@@ -1053,7 +1099,7 @@ public class GameController extends Application {
      * @param x is the x coordinate of to perform action on the game board
      * @param y is the y coordinate of to perform action on the game board
      */
-    private void informResult( Alert alert, int resultCode, int x, int y )
+    private void informBoardSelection( Alert alert, int resultCode, int x, int y )
     {
         int mustCheckCode = game.checkMust();
 
@@ -1185,6 +1231,12 @@ public class GameController extends Application {
         }
     }
 
+    //******************************************************************************************************************
+    //
+    // FUNCTIONS RELATED TO DEVELOPMENT CARDS
+    //
+    //******************************************************************************************************************
+
     private void askForResource(AnchorPane selectionBox, Label selectionLabel)
     {
         statusText.setText("Choose a resource to select");
@@ -1291,6 +1343,73 @@ public class GameController extends Application {
         selectionBox.setVisible(true);
     }
 
+    /**
+     * This function displays player boxes for the current player to choose a player to steal a random resource from them.
+     * @param playersToSelect is the players arraylist to display available players.
+     */
+    private void askForPlayerCevatImplementation( ArrayList<Player> playersToSelect)
+    {
+        statusText.setText( "Choose a player to steal from");
+        selectionLabel.setText( "Choose Your Player");
+        ArrayList<Rectangle> players = new ArrayList<>();
+        for ( int i = 0; i < playersToSelect.size(); i++ )
+        {
+            // According to the index of the array list, configure the player information
+            switch (i) {
+                case 0:
+                    Rectangle otherPlayer1 = new Rectangle(150, 100, 200, 400);
+                    otherPlayer1.setFill( playersToSelect.get( i).getColor() );
+                    otherPlayer1.setOnMousePressed(e -> {
+
+                        stealResourceFromPlayer( playersToSelect.get( 0) );
+                    });
+                    players.add(otherPlayer1);
+                    break;
+
+                case 1:
+                    Rectangle otherPlayer2 = new Rectangle(450, 100, 200, 400);
+                    otherPlayer2.setFill( playersToSelect.get( i).getColor() );
+                    otherPlayer2.setOnMousePressed(e -> {
+
+                        stealResourceFromPlayer( playersToSelect.get( 1) );
+                    });
+                    players.add(otherPlayer2);
+                    break;
+
+                case 2:
+                    Rectangle otherPlayer3 = new Rectangle(750, 100, 200, 400);
+                    otherPlayer3.setFill( playersToSelect.get( i).getColor() );
+                    otherPlayer3.setOnMousePressed(e -> {
+
+                        stealResourceFromPlayer( playersToSelect.get( 2) );
+                    });
+                    players.add(otherPlayer3);
+            }
+            players.get(i).getStyleClass().add("resourceBox");
+            selectionBox.getChildren().add(players.get(i));
+        }
+        new FadeInLeft(selectionBox).play();
+        selectionBox.setVisible(true);
+    }
+
+    /**
+     * Helper function of the askForPlayerCevatImplementation, to avoid code duplication. This function allows the
+     * current player to steal a resource and close the resource selection event, while doing the must.
+     * @
+     */
+    private void stealResourceFromPlayer( Player stealingFrom)
+    {
+        // Resource stealing for the selected player must
+        if ( game.checkMust() == 8 )
+        {
+            game.doneMust();
+
+            game.getCurrentPlayer().stealResourceFromPlayer( stealingFrom );
+        }
+        new FadeOutRight( selectionBox).play();
+        selectionBox.setVisible(false);
+    }
+
 
     //******************************************************************************************************************
     //
@@ -1298,10 +1417,17 @@ public class GameController extends Application {
     //
     //******************************************************************************************************************
 
+    /**
+     * (Talha pls delete this enclosed sentence if javadoc is right) Function to trade with a player when a player
+     * offers a trade to another player by clicking the trade button.
+     * @param playerToTrade the player who current player wants to trade with
+     * @param resources ????? is not used in the function?
+     */
     private void setupTrade(Player playerToTrade, ArrayList<Label> resources)
     {
-        // Tradings can only be done in the free of obligations
-        //if ( game.checkMust() == -1) { Delete this when must check for trade or -1 is implemented.
+        // Tradings can only be done when free of obligations
+        if ( game.checkMust() == -1)
+        {
             try {
                 // Initialize the trade popup, its a new stage.
                 Stage tradeStage = new Stage();
@@ -1315,6 +1441,7 @@ public class GameController extends Application {
                 offeror.setText(currentPlayer.getName());
                 Label offeree = (Label) scene.lookup("#offeree");
                 offeree.setText(playerToTrade.getName());
+
                 // Initialize spinners for each offering resource type and add it to root.
                 ArrayList<Spinner<Integer>> offerings = new ArrayList<>();
                 for (int i = 0; i < 5; i++) {
@@ -1399,7 +1526,11 @@ public class GameController extends Application {
             } catch (Exception e) {
                 System.out.println(e);
             }
-       //}
+       }
+       else
+       {
+           informError( game.checkMust() );
+       }
     }
 
     //******************************************************************************************************************
