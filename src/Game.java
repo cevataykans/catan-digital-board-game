@@ -165,6 +165,10 @@ public class Game
      */
     public void collectResources(){
         if( currentDice == 7 ){
+            for( Player player : players ){
+                if( player != getCurrentPlayer() )
+                    player.discardHalfOfResources();
+            }
             must.add(3); // inside tile
             must.add(8); // get neighbors
         }
@@ -313,6 +317,15 @@ public class Game
     }
 
     /**
+     * change robber position
+     * @param x x coordinate
+     * @param y y coordinate
+     */
+    public void changeRobber( int x, int y){
+        board.changeRobber( x, y);
+    }
+
+    /**
      * after user picked a material this method takes all materials from other players and add to the current player
      * @param selectedMaterial selected material to play monopoly
      */
@@ -421,6 +434,16 @@ public class Game
     }
 
     /**
+     * return rotation type of the road
+     * @param x x coordinate of the road
+     * @param y y coordinate of the road
+     * @return rotation type of the road
+     */
+    public Road.RotationType rotationType( int x, int y){
+        return board.rotationType( x, y);
+    }
+
+    /**
      * sets a structrure to (x,y) with the given type
      * (value of type can be directed from checkTile method)
      * @param x x coordinate
@@ -433,21 +456,15 @@ public class Game
             board.setStructure( cp, x ,y, type );
             cp.buyRoad();
             updateLongestRoad( cp);
-            if( checkMust() == 0 )
-                doneMust();
         }
         else if( type == Structure.Type.SETTLEMENT ){
             board.setStructure( cp, x ,y, type );
             cp.buySettlement();
             updateLongestRoad();
-            if( checkMust() == 1 )
-                doneMust();
         }
         else if( type == Structure.Type.CITY ){
             board.setStructure( cp, x ,y, type );
             cp.buyCity();
-            if( checkMust() == 2 )
-                doneMust();
         }
     }
 
