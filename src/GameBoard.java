@@ -233,6 +233,13 @@ public class GameBoard {
                 board[y][x].addStartPoint(board[startY][startX]);
             }
 
+            if( i % 6 == 1 )
+                ((Road)board[y][x].getStructure()).setRotation(Road.RotationType.UPPER_RIGHT_VERTICAL);
+            else if( i % 6 == 3 )
+                ((Road)board[y][x].getStructure()).setRotation(Road.RotationType.UPPER_LEFT_VERTICAL);
+            else if( i % 6 == 5 )
+                ((Road)board[y][x].getStructure()).setRotation(Road.RotationType.HORIZONTAL);
+
             if(i < 11){
                 x += changeNext[i][0];
                 y += changeNext[i][1];
@@ -258,6 +265,16 @@ public class GameBoard {
 
             board[targetY][targetX].addStartPoint(board[y][x]);
         }
+    }
+
+    /**
+     * return rotation type of the road
+     * @param x x coordinate of the road
+     * @param y y coordinate of the road
+     * @return rotation type of the road
+     */
+    public Road.RotationType rotationType( int x, int y){
+        return ((Road)board[y][x].getStructure()).getRotation();
     }
 
     /**
@@ -494,12 +511,13 @@ public class GameBoard {
                 {-1,-1}, {-1,-1},
                 {-1,0}
         };
-        Tile tile = board[y][x].getStartPoints().get(0);
+        Tile startPoint = board[y][x].getStartPoints().get(0);
         ArrayList<Player> ret = new ArrayList<>();
 
+        //find start point by traversing
         for( int i = 0 ; i <= y ; i++ ) {
             for (int j = 0; j <= x; j++) {
-                if (tile == board[i][j]) {
+                if (startPoint == board[i][j]) {
                     y = i;
                     x = j;
                 }
@@ -507,7 +525,7 @@ public class GameBoard {
         }
 
         for( int i = 0 ; i < 12 ; i++ ){
-            if( board[y][x].getStructure() != null && board[y][x].getStructure().getOwner() != player )
+            if( board[y][x].getStructure() != null && board[y][x].getStructure().getOwner() != player && !ret.contains(board[y][x].getStructure().getOwner()) )
                 ret.add(board[y][x].getStructure().getOwner());
 
             if(i < 11){
@@ -528,15 +546,12 @@ public class GameBoard {
     }
 
     /**
-     * Change location of the robber.
-     * @param r new robber tile
+     * change robber position
+     * @param x x coordinate
+     * @param y y coordinate
      */
-    public void changeRobber( Tile r ){
-        robber = r;
-    }
-
     public void changeRobber( int x, int y){
-        Tile start = board[y][x].getStartPoints().get(0);
+        robber = board[y][x].getStartPoints().get(0);
     }
 
     /**

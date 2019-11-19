@@ -204,7 +204,6 @@ public class Player
 	public void buySettlement()
 	{
 		this.payForStructure( Structure.REQUIREMENTS_FOR_SETTLEMENT );
-		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
 		this.score += Structure.VICTORY_POINTS_FOR_SETTLEMENT;
 	}
@@ -216,8 +215,6 @@ public class Player
 	{
 		this.payForStructure( Structure.REQUIREMENTS_FOR_ROAD );
 
-		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
-
 		this.score += Structure.VICTORY_POINTS_FOR_ROAD;
 	}
 
@@ -227,8 +224,8 @@ public class Player
 	public void buyCity()
 	{
 		this.payForStructure( Structure.REQUIREMENTS_FOR_CITY );
-		// Add structure to the player structure data collection. Not implemented yet as if it is array or AL
 
+		this.score -= Structure.VICTORY_POINTS_FOR_SETTLEMENT;
 		this.score += Structure.VICTORY_POINTS_FOR_CITY;
 	}
 
