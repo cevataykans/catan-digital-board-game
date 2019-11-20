@@ -479,13 +479,6 @@ public class GameBoard {
             for(int i = 0; i < startPoints.size() ; i++){
                 Tile startPoint = startPoints.get(i);
                 int diceNumber = startPoint.getDiceNumber();
-                boolean done = false;
-                for(int j = 0; j < resourceDistributionList[diceNumber - 2].size() ; j++){
-                    if(resourceDistributionList[diceNumber - 2].get(j).player == player){
-                        resourceDistributionList[diceNumber - 2].get(j).amount++;
-                        done = true;
-                    }
-                }
                 DistributionNode newNode = new DistributionNode();
                 newNode.player = player;
                 newNode.startPoint = startPoint;
