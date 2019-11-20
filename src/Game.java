@@ -439,7 +439,7 @@ public class Game
      * @param y y coordinate of the road
      * @return rotation type of the road
      */
-    public Road.RotationType rotationType( int x, int y){
+    public Tile.RotationType rotationType( int x, int y){
         return board.rotationType( x, y);
     }
 

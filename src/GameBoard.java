@@ -234,11 +234,11 @@ public class GameBoard {
             }
 
             if( i % 6 == 1 )
-                ((Road)board[y][x].getStructure()).setRotation(Road.RotationType.UPPER_RIGHT_VERTICAL);
+                board[y][x].setRotation(Tile.RotationType.UPPER_RIGHT_VERTICAL);
             else if( i % 6 == 3 )
-                ((Road)board[y][x].getStructure()).setRotation(Road.RotationType.UPPER_LEFT_VERTICAL);
+                board[y][x].setRotation(Tile.RotationType.UPPER_LEFT_VERTICAL);
             else if( i % 6 == 5 )
-                ((Road)board[y][x].getStructure()).setRotation(Road.RotationType.HORIZONTAL);
+                board[y][x].setRotation(Tile.RotationType.HORIZONTAL);
 
             if(i < 11){
                 x += changeNext[i][0];
@@ -273,8 +273,8 @@ public class GameBoard {
      * @param y y coordinate of the road
      * @return rotation type of the road
      */
-    public Road.RotationType rotationType( int x, int y){
-        return ((Road)board[y][x].getStructure()).getRotation();
+    public Tile.RotationType rotationType( int x, int y){
+        return board[y][x].getRotation();
     }
 
     /**

@@ -15,6 +15,10 @@ import java.util.ArrayList;
 
 public class Tile{
 
+    enum RotationType{
+        UPPER_LEFT_VERTICAL, UPPER_RIGHT_VERTICAL, HORIZONTAL
+    }
+
 	// Attributes
 	private boolean isGameTile;
 	private Structure structure;
@@ -23,6 +27,7 @@ public class Tile{
 	private int resource;
 	private ArrayList<Tile> startPoints; // List of tiles that are start points of hexagons that includes this tile
 	private Port.PortType port; // enum
+    private Tile.RotationType rotation;
 
 
 	// Constructor
@@ -39,6 +44,13 @@ public class Tile{
 
 	// Getter and setter methods
 
+    public Tile.RotationType getRotation(){
+        return rotation;
+    }
+
+    public void setRotation( Tile.RotationType rotation ){
+        this.rotation = rotation;
+    }
 
 	// isGameTile methods
 
