@@ -164,10 +164,11 @@ public class Game
      * collect resources after dice has been rolled or moves robber
      */
     public void collectResources(){
-        if( currentDice == 7 ){
-            for( Player player : players ){
-                if( player != getCurrentPlayer() )
-                    player.discardHalfOfResources();
+        if( currentDice == 7 )
+        {
+            for( Player player : players )
+            {
+                player.discardHalfOfResources();
             }
             must.add(3); // inside tile
             must.add(8); // get neighbors
