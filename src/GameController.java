@@ -74,7 +74,12 @@ public class GameController extends Application {
     // To keep hexagon index for a better display!
     private static int hexIndex = -1;
     private static int tileIndex = -1;
-    private Button endTurnButton;
+    private ImageView diceRollAvailable;
+    private ImageView die1Result;
+    private ImageView die2Result;
+    private Rectangle cardPlayArea;
+    private Label cardDragLabel;
+    private AnchorPane cardBox;
 
     public static void main(String[] args) {
         launch(args);
@@ -471,16 +476,16 @@ public class GameController extends Application {
         //**********************************************************************
 
         // Development Cards
-        Rectangle cardPlayArea = (Rectangle) scene.lookup("#cardPlayArea");
-        Label cardDragLabel = (Label) scene.lookup("#cardDragLabel");
-        AnchorPane cardBox = (AnchorPane) scene.lookup("#cardBox");
+        cardPlayArea = (Rectangle) scene.lookup("#cardPlayArea");
+        cardDragLabel = (Label) scene.lookup("#cardDragLabel");
+        cardBox = (AnchorPane) scene.lookup("#cardBox");
         setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox);
         //----------------------------------------------
 
         // Dice Roll
-        ImageView diceRollAvailable = (ImageView) scene.lookup("#diceRollAvailable");
-        ImageView die1Result = (ImageView) scene.lookup("#die1Result");
-        ImageView die2Result = (ImageView) scene.lookup("#die2Result");
+        diceRollAvailable = (ImageView) scene.lookup("#diceRollAvailable");
+        die1Result = (ImageView) scene.lookup("#die1Result");
+        die2Result = (ImageView) scene.lookup("#die2Result");
 
         setupDiceRoll(diceRollAvailable, die1Result, die2Result);
         //-----------------------------------------------
@@ -525,45 +530,11 @@ public class GameController extends Application {
             }
         });
 
-        endTurnButton = (Button) scene.lookup( "#endTurn");
+        Button endTurnButton = (Button) scene.lookup( "#endTurn");
         endTurnButton.setOnMouseReleased(mouseEvent ->
         {
-            // Check if the user has to do something before ending their turn
-            if ( game.checkMust() == -1 || game.checkMust() == 6 )
-            {
-                // Check if the user ends the turn because of obligation
-                if ( game.checkMust() == 6 )
-                {
-                    // Done the must, yeey :)
-                    game.doneMust();
-                }
-                game.endTurn();
-                setupPlayerBoxes(anchorPanes, labels, indicators);
-                setupDiceRoll(diceRollAvailable, die1Result, die2Result);
-                Task<Void> sleeper2 = new Task<Void>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        try {
-                            Thread.sleep(300);
-                        } catch (InterruptedException e) {
-                        }
-                        return null;
-                    }
-                };
-                sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                    @Override
-                    public void handle(WorkerStateEvent event) {
-                        informError(-9);
-                        setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
-                        setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox);
-                    }
-                });
-                new Thread(sleeper2).start();
-            }
-            else
-            {
-                informError( game.checkMust() );
-            }
+            performEndTurnButtonEvent();
+
         });
         primaryStage.setScene(scene);
     }
@@ -781,7 +752,7 @@ public class GameController extends Application {
                     animation2.play();
                     Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
                     Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-
+                    /*
                     if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
@@ -802,7 +773,7 @@ public class GameController extends Application {
                     } else {
                         temp.setTranslateX(0);
                         temp.setTranslateY(0);
-                    }
+                    } */
 
                 });
                 cardsInUI.add(temp);
@@ -1377,7 +1348,7 @@ public class GameController extends Application {
             // If its initial state, player has to immediately end the turn.
             if ( game.checkMust() == 6 )
             {
-                endTurnButton.fire();
+                performEndTurnButtonEvent();
             }
         }
     }
@@ -1705,4 +1676,47 @@ public class GameController extends Application {
     // FUNCTIONS RELATED TO END TURN BUTTON
     //
     //******************************************************************************************************************
+
+    /**
+     * End the turn when the end turn button is pressed or player builds a road in the initial phase.
+     */
+    private void performEndTurnButtonEvent()
+    {
+        // Check if the user has to do something before ending their turn
+        if ( game.checkMust() == -1 || game.checkMust() == 6 )
+        {
+            // Check if the user ends the turn because of obligation
+            if ( game.checkMust() == 6 )
+            {
+                // Done the must, yeey :)
+                game.doneMust();
+            }
+            game.endTurn();
+            setupPlayerBoxes(anchorPanes, labels, indicators);
+            setupDiceRoll( diceRollAvailable, die1Result, die2Result);
+            Task<Void> sleeper2 = new Task<Void>() {
+                @Override
+                protected Void call() throws Exception {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                    }
+                    return null;
+                }
+            };
+            sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    informError(-9);
+                    setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
+                    setupDevelopmentCards( cardPlayArea, cardDragLabel, cardBox);
+                }
+            });
+            new Thread(sleeper2).start();
+        }
+        else
+        {
+            informError( game.checkMust() );
+        }
+    }
 }
