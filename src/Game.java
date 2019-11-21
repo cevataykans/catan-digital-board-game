@@ -591,4 +591,12 @@ public class Game
         return false;
     }
 
+
+    public Player getLongestRoadPlayer() {
+        return longestRoadPlayer;
+    }
+
+    public Player getLargestArmyPlayer() {
+        return largestArmyPlayer;
+    }
 }

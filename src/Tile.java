@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class Tile{
 
     enum RotationType{
-        UPPER_LEFT_VERTICAL, UPPER_RIGHT_VERTICAL, HORIZONTAL
+        UPPER_RIGHT_VERTICAL, UPPER_LEFT_VERTICAL, HORIZONTAL
     }
 
 	// Attributes
