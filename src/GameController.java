@@ -68,6 +68,8 @@ public class GameController extends Application {
     private ArrayList<Label> labels;
     private ArrayList<ProgressIndicator> indicators;
     private ArrayList<Label> resources;
+    private ArrayList<ImageView> longestRoads;
+    private ArrayList<ImageView> largestArmies;
 
     HashMap<Point2D, Integer> settlementMap = new HashMap<>();
 
@@ -102,7 +104,7 @@ public class GameController extends Application {
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.setMaximized(true);
         primaryStage.setTitle("CATAN");
-        initializeIntro1(root, primaryStage);
+        initializePlayerSelection(root, primaryStage, new Scene(root, Color.BLACK));
         primaryStage.show();
     }
 
@@ -471,7 +473,28 @@ public class GameController extends Application {
         resources.add(grainCount);
         resources.add(brickCount);
         resources.add(oreCount);
-        setupPlayerBoxes(anchorPanes, labels, indicators);
+
+        ImageView currentLR = (ImageView) scene.lookup("#currentLR");
+        ImageView other1LR = (ImageView) scene.lookup("#other1LR");
+        ImageView other2LR = (ImageView) scene.lookup("#other2LR");
+        ImageView other3LR = (ImageView) scene.lookup("#other3LR");
+        longestRoads = new ArrayList<>();
+        longestRoads.add(currentLR);
+        longestRoads.add(other1LR);
+        longestRoads.add(other2LR);
+        longestRoads.add(other3LR);
+
+        ImageView currentLA = (ImageView) scene.lookup("#currentLA");
+        ImageView other1LA = (ImageView) scene.lookup("#other1LA");
+        ImageView other2LA = (ImageView) scene.lookup("#other2LA");
+        ImageView other3LA = (ImageView) scene.lookup("#other3LA");
+        largestArmies = new ArrayList<>();
+        largestArmies.add(currentLA);
+        largestArmies.add(other1LA);
+        largestArmies.add(other2LA);
+        largestArmies.add(other3LA);
+
+        setupPlayerBoxes();
         setupRobber(robber);
         //**********************************************************************
 
@@ -614,8 +637,7 @@ public class GameController extends Application {
         }
     }
 
-    private void setupPlayerBoxes(ArrayList<AnchorPane> anchorPanes, ArrayList<Label> labels,
-                                  ArrayList<ProgressIndicator> indicators)
+    private void setupPlayerBoxes()
     {
         FadeOut animation0 = new FadeOut(anchorPanes.get(0));
         FadeOut animation1 = new FadeOut(anchorPanes.get(1));
@@ -752,29 +774,17 @@ public class GameController extends Application {
                     animation2.play();
                     Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
                     Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-                    /*
                     if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
                         game.playDevelopmentCard(cards.get(finalI));
+                        setupLargestArmy();
                         cardBox.getChildren().remove(temp);
                     } else {
                         temp.setTranslateX(0);
                         temp.setTranslateY(0);
                     }
-
-                    if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                        game.playDevelopmentCard(cards.get(finalI));
-                        cardBox.getChildren().remove(temp);
-                    } else {
-                        temp.setTranslateX(0);
-                        temp.setTranslateY(0);
-                    } */
-
                 });
                 cardsInUI.add(temp);
             }
@@ -937,6 +947,58 @@ public class GameController extends Application {
                 }
             }
         });
+    }
+
+    private void setupLongestRoad()
+    {
+        for ( int i = 0; i < 4; i++)
+        {
+            if ( game.getPlayer((game.getCurrentPlayerIndex() + i) % 4) == game.getLongestRoadPlayer())
+            {
+                longestRoads.get(i).setVisible(true);
+                FadeIn laIn = new FadeIn(longestRoads.get(i));
+                laIn.setSpeed(3);
+                laIn.play();
+            }
+            else
+            {
+                FadeOut laOut = new FadeOut(longestRoads.get(i));
+                laOut.setSpeed(3);
+                int finalI = i;
+                laOut.setOnFinished(event ->
+                {
+                    longestRoads.get(finalI).setVisible(false);
+                });
+                laOut.play();
+            }
+        }
+        setupPlayerBoxes();
+    }
+
+    private void setupLargestArmy()
+    {
+        for ( int i = 0; i < 4; i++)
+        {
+            if ( game.getPlayer((game.getCurrentPlayerIndex() + i) % 4) == game.getLargestArmyPlayer())
+            {
+                largestArmies.get(i).setVisible(true);
+                FadeIn laIn = new FadeIn(largestArmies.get(i));
+                laIn.setSpeed(3);
+                laIn.play();
+            }
+            else
+            {
+                FadeOut laOut = new FadeOut(largestArmies.get(i));
+                laOut.setSpeed(3);
+                int finalI = i;
+                laOut.setOnFinished(event ->
+                {
+                    largestArmies.get(finalI).setVisible(false);
+                });
+                laOut.play();
+            }
+        }
+        setupPlayerBoxes();
     }
 
     //******************************************************************************************************************
@@ -1313,6 +1375,7 @@ public class GameController extends Application {
             settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
 
             setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
+            setupLongestRoad();
         }
     }
 
@@ -1338,13 +1401,28 @@ public class GameController extends Application {
 
             game.setTile( x, y, Structure.Type.ROAD);
             ImageView structure = new ImageView("/images/road" + game.getCurrentPlayer().getColor() + ".png");
-            structure.setX( getXToDisplay() );
-            structure.setY( y * 30);
+            Tile.RotationType rotationType = game.rotationType(x, y);
+            switch (rotationType)
+            {
+                case HORIZONTAL:
+                    structure.setRotate(structure.getRotate() + 105);
+                    structure.setX( getXToDisplay() + 5);
+                    break;
+                case UPPER_LEFT_VERTICAL:
+                    structure.setRotate(structure.getRotate() - 15);
+                    structure.setX( getXToDisplay());
+                    break;
+                case UPPER_RIGHT_VERTICAL:
+                    structure.setRotate(structure.getRotate() + 225);
+                    structure.setX( getXToDisplay() - 5);
+                    break;
+            }
+            structure.setY( y * 30 - 5);
             new ZoomIn(structure).play();
             gameBox.getChildren().add(structure);
 
             setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
-
+            setupLongestRoad();
             // If its initial state, player has to immediately end the turn.
             if ( game.checkMust() == 6 )
             {
@@ -1692,7 +1770,9 @@ public class GameController extends Application {
                 game.doneMust();
             }
             game.endTurn();
-            setupPlayerBoxes(anchorPanes, labels, indicators);
+            setupPlayerBoxes();
+            setupLargestArmy();
+            setupLongestRoad();
             setupDiceRoll( diceRollAvailable, die1Result, die2Result);
             Task<Void> sleeper2 = new Task<Void>() {
                 @Override
