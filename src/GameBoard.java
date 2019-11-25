@@ -15,12 +15,6 @@ import java.util.Collections;
 
 public class GameBoard {
 
-    class DistributionNode{
-        public Player player;
-        public Tile startPoint;
-        public int amount;
-    }
-
     //constants
     final private int FIELDPEREDGE = 3;
     final private int WIDTH = FIELDPEREDGE * 8 - 1;
@@ -28,28 +22,13 @@ public class GameBoard {
 
     //properties
     private Tile[][] board;
-    private ArrayList<Integer> diceNumbers;
-    private ArrayList<Integer> resources;
-    private ArrayList<Port.PortType> ports;
-    private ArrayList<DistributionNode>[] resourceDistributionList;
+    private GameBoardBuilder builder;
     private Tile robber;
 
     //constructor
-    public GameBoard(){
-        board = new Tile[HEIGHT][WIDTH];
-        for( int i = 0 ; i < HEIGHT ; i++ ){
-            for( int j = 0 ; j < WIDTH ; j++ ){
-                board[i][j] = new Tile();
-            }
-        }
-        diceNumbers = new ArrayList<>();
-        resources = new ArrayList<>();
-        ports = new ArrayList<>();
-        resourceDistributionList = new ArrayList[11];
-        for(int i = 0; i < 11; i++){
-            resourceDistributionList[i] = new ArrayList<>();
-        }
-        robber = null;
+    public GameBoard()
+    {
+        builder = new GameBoardBuilder();
     }
 
     /**
@@ -57,214 +36,10 @@ public class GameBoard {
      * Shuffles dices and resources and fills hexagons with them
      */
     public void configurate(){
-        addDiceNumbers();
-        addResources();
-        setPorts();
-        setUpGameBoard();
-    }
 
-    /**
-     * distrubutes ports to exact positions randomly
-     */
-    private void setPorts(){
-        int[][] positions={ // (x,y,x,y)
-                {10,0,12,0},{4,4,6,2},{0,10,2,8},{0,14,2,16},{6,18,8,18},{14,18,16,18},{20,16,22,14},{20,8,22,10},{16,2,18,4}
-        };
-        int[] portTypes={4,1,1,1,1,1};
-
-        int ii = 0;
-        for( Port.PortType pt : Port.PortType.values() ){
-            for( int j = 0 ; j < portTypes[ii] ; j++ ){
-                ports.add(pt);
-            }
-            ii++;
-        }
-
-        Collections.shuffle(ports);
-
-        for( int i = 0 ; i < ports.size() ; i++ ){
-            board[positions[i][1]][positions[i][0]].setPort(ports.get(i));
-            board[positions[i][3]][positions[i][2]].setPort(ports.get(i));
-        }
-    }
-
-    /**
-     * After decide counts of dice numbers add them to an arraylist and shuffles.
-     * diceCounts are filled through 2 to 12
-     */
-    private void addDiceNumbers(){
-        int[] diceCounts = {1,2,2,2,2,1,2,2,2,2,1};
-
-        for( int i = 2 ; i <= 12 ; i++ )
-            for( int j = 0 ; j < diceCounts[i - 2] ; j++ )
-                diceNumbers.add(i);
-
-        Collections.shuffle(diceNumbers);
-    }
-
-    /**
-     * After decide counts of resources add them to an arraylist and shuffles
-     * for the resourceCount array:
-     *      0-index = saman
-     *      1-index = odun
-     *      2-index = mermer
-     *      3-index = kaya
-     *      4-index = koyun
-     *      çöl -> will be assigned automatically when dice is 7
-     */
-    private void addResources(){
-        int[] resourceCounts = {4,4,3,3,4};
-
-        for( int i = 0 ; i <= 4 ; i++ )
-            for( int j = 0 ; j < resourceCounts[i] ; j++ )
-                resources.add(i);
-
-        Collections.shuffle(resources);
-    }
-
-    /**
-     * Determine the most upper-left game tile and start the process from there, downward
-     */
-    private void setUpGameBoard(){
-        int x = WIDTH / 2 - 1;
-        int y = 0;
-
-        for( int i = 1 ; y < HEIGHT ; y += 4, i++ )
-            setUpByTraversingHexagon( x, y, i);
-    }
-
-    /**
-     * Starting from the given x and y traverse toward left and right, traverse only the start points of the hexagons,
-     * other tiles of the hexagons are filled in another method
-     * @param x x-coordinate of the start point
-     * @param y y-coordinate of the start point
-     * @param numberOfHexagon number of the field from the top, with this param we can know the boundaries of game board
-     */
-    private void setUpByTraversingHexagon( int x, int y, int numberOfHexagon){
-        setUpLeftHexagon( x, y, numberOfHexagon); //center hexagon is traversed here
-        setUpRightHexagon( x + 4, y + 2, numberOfHexagon);
-    }
-
-    /**
-     * traverse toward left, traverse only the starting point of the hexagons
-     * @param x x-coordinate of the start point
-     * @param y y-coordinate of the start point
-     * @param numberOfHexagon number of the field from the top, with this param we can know the boundaries of game board
-     */
-    private void setUpLeftHexagon( int x, int y, int numberOfHexagon){
-        int iterationNum = (numberOfHexagon<=FIELDPEREDGE ? FIELDPEREDGE: FIELDPEREDGE * 2 - numberOfHexagon);
-
-        int dice, resource;
-        for( int i = 1 ; i <= iterationNum ; x -= 4, y += 2, i++ ){
-            dice = diceNumbers.get(diceNumbers.size() - 1);
-            diceNumbers.remove(diceNumbers.size()-1);
-
-            if( dice != 7 ) {
-                resource = resources.get(resources.size() - 1);
-                resources.remove( resources.size() - 1);
-            }
-            else{ // if dice is 7 then this hexagon will be desert
-                resource = 5;
-                robber = board[y][x];
-            }
-            fillHexagon( x, y, dice, resource);
-        }
-    }
-
-    /**
-     * traverse toward right, traverse only the starting point of the hexagons
-     * @param x x-coordinate of the start point
-     * @param y y-coordinate of the start point
-     * @param numberOfHexagon number of the field from the top, with this param we can know the boundaries of game board
-     */
-    private void setUpRightHexagon( int x, int y, int numberOfHexagon){
-        int iterationNum = (numberOfHexagon<=FIELDPEREDGE ? FIELDPEREDGE : FIELDPEREDGE * 2 - numberOfHexagon ) - 1;
-
-        int dice, resource;
-        for( int i = 1 ; i <= iterationNum ; x += 4, y += 2, i++ ){
-            dice = diceNumbers.get(diceNumbers.size() - 1);
-            diceNumbers.remove(diceNumbers.size()-1);
-            if( dice != 7 ) {
-                resource = resources.get(resources.size() - 1);
-                resources.remove( resources.size() - 1);
-            }
-            else{ // if dice is 7 then this hexagon will be desert
-                resource = 5;
-                robber = board[y][x];
-            }
-            fillHexagon( x, y, dice, resource);
-        }
-    }
-
-    /**
-     * traverse all tiles of the current hexagon
-     * resource and dice info are kept on start tile of each hexagon,
-     * and all other tiles will know their all starting points as a list(1 tile can belong to more than one hexagon)
-     * @param x x-coordinate of the start point of this hexagon
-     * @param y y-coordinate of the start point of this hexagon
-     * @param dice determined dice number for this hexagon
-     * @param resource determined resource for this hexagon
-     */
-    private void fillHexagon( int x, int y, int dice, int resource){
-        // keeps the distance from the last tile as x, y
-        int[][] changeNext = {
-                {-1,1}, {-1,1},
-                {1,1}, {1,1},
-                {1,0}, {1,0},
-                {1,-1}, {1,-1},
-                {-1,-1}, {-1,-1},
-                {-1,0}
-        };
-
-        // keeps the start point of this hexagon
-        int startX = x;
-        int startY = y;
-
-        for( int i = 0 ; i < 12 ; i++ ){
-            if( x == startX && y == startY ){
-                board[y][x].setDiceNumber(dice);
-                board[y][x].setGameTile();
-                board[y][x].setResource(resource);
-                board[y][x].addStartPoint(board[startY][startX]);
-                board[y][x].setStartPoint();
-            }
-            else {
-                board[y][x].setGameTile();
-                board[y][x].addStartPoint(board[startY][startX]);
-            }
-
-            if( i % 6 == 1 )
-                board[y][x].setRotation(Tile.RotationType.UPPER_RIGHT_VERTICAL);
-            else if( i % 6 == 3 )
-                board[y][x].setRotation(Tile.RotationType.UPPER_LEFT_VERTICAL);
-            else if( i % 6 == 5 )
-                board[y][x].setRotation(Tile.RotationType.HORIZONTAL);
-
-            if(i < 11){
-                x += changeNext[i][0];
-                y += changeNext[i][1];
-            }
-        }
-
-        fillInsideWithStartPoint( startX, startY);
-    }
-
-    /**
-     * fill inside of the given hexagon with their starting point by using bfs
-     * @param x start point of the hexagon
-     * @param y start point of the hexagon
-     */
-    private void fillInsideWithStartPoint( int x, int y){
-        int[][] tiles = { // (x,y)
-                {-1,2},{0,1},{0,2},{0,3},{1,1},{1,2},{1,3},{2,1},{2,2},{2,3},{3,2}
-        };
-
-        for( int i = 0 ; i < 11 ; i++){
-            int targetX = x + tiles[i][0];
-            int targetY = y + tiles[i][1];
-
-            board[targetY][targetX].addStartPoint(board[y][x]);
-        }
+        builder.configurate();
+        this.robber = builder.getRobber();
+        this.board = builder.getBoard();
     }
 
     /**
@@ -474,18 +249,6 @@ public class GameBoard {
                 }
             }
         }
-        if(type != Structure.Type.ROAD){
-            ArrayList<Tile> startPoints = board[y][x].getStartPoints();
-            for(int i = 0; i < startPoints.size() ; i++){
-                Tile startPoint = startPoints.get(i);
-                int diceNumber = startPoint.getDiceNumber();
-                DistributionNode newNode = new DistributionNode();
-                newNode.player = player;
-                newNode.startPoint = startPoint;
-                newNode.amount = 1;
-                resourceDistributionList[diceNumber - 2].add(newNode);
-            }
-        }
     }
 
     /**
@@ -517,9 +280,29 @@ public class GameBoard {
             }
         }
 
+        /*  YUSUF PLEASE CHECK MY ALGORITHM IT MAY BE MORE EFFICIENT :)))))))
+        int [][] toDecrease = { {1, -2}, {0, -1 }, { 0, -2}, {0, -3}, { -1, -1}, {-1, -2},
+                                {-1, -3}, {-2, -1}, {-2, -2}, {-2, -3}, {-3, -2} };  // { x, y}
+        for ( int i = 0; i < toDecrease.length; i++ )
+        {
+            int tempX = x + toDecrease[ i][ 0];
+            int tempY = y + toDecrease[ i][ 1];
+            if ( tempX >= 0 && tempY >= 0)
+            {
+                if ( board[ tempY][ tempX].isItStartPoint() )
+                {
+                    x = tempX;
+                    y = tempY;
+                    System.out.println( "Break succesful?");
+                    break;
+                }
+            }
+            System.out.print( "Hexagon index = " + i + " ");
+        } */
+
         for( int i = 0 ; i < 12 ; i++ ){
             if( board[y][x].getStructure() != null && board[y][x].getStructure().getOwner() != player && !ret.contains(board[y][x].getStructure().getOwner()) )
-                ret.add(board[y][x].getStructure().getOwner());
+                ret.add( board[y][x].getStructure().getOwner());
 
             if(i < 11){
                 x += changeNext[i][0];
@@ -545,28 +328,6 @@ public class GameBoard {
      */
     public void changeRobber( int x, int y){
         robber = board[y][x].getStartPoints().get(0);
-    }
-
-    /**
-     * Collect resources for each player before the game starts.
-     */
-    public void collectResources(){
-        for(int i = 2; i < 13 ; i++){
-            collectResources(i);
-        }
-    }
-
-    /**
-     * Collect resources for each player that belongs to hexagons related to given dice number.
-     * @param diceNumber is given dice number
-     */
-    public void collectResources(int diceNumber){
-        int len = resourceDistributionList[diceNumber - 2].size();
-        for(int i = 0 ; i < len; i++){
-            DistributionNode node = resourceDistributionList[diceNumber - 2].get(i);
-            if(node.startPoint != robber)
-                node.player.collectMaterial(node.startPoint.getResource(), node.amount);
-        }
     }
 
     /**

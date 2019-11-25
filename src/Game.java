@@ -29,6 +29,8 @@ public class Game
     // Attributes
     private GameBoard board;
     private ArrayList<Player> players;
+    private ResourceDistributer distributor;
+
     private int turnNumber;
     private int playerCount;
     private int gameStatus;
@@ -91,7 +93,10 @@ public class Game
      */
     public ArrayList<Player> configureGame()
     {
+        // The order must not be changed!
         board.configurate();
+        distributor = new ResourceDistributer( board.getBoard() );
+
         Collections.shuffle(players);
         Collections.shuffle(devCards);
 
@@ -111,12 +116,14 @@ public class Game
             return true;
 
         turnNumber++;
-        if( turnNumber == 2*playerCount) {
-            board.collectResources();
+        if( turnNumber == 2*playerCount)
+        {
+            distributor.collectResources( board.getRobber() );
             must.add(7); // roll dice
             gameStatus = 1;
         }
-        else if( gameStatus == 0 ){
+        else if( gameStatus == 0 )
+        {
             must.add(1); // settlement
             must.add(0); // road
             must.add(6); // end turn
@@ -124,24 +131,7 @@ public class Game
         else {
             must.add(7); // roll dice
         }
-        //todo cardlari playable yap
         return false;
-    }
-
-    /**
-     * get longest road
-     * @return longest road
-     */
-    public int getLongestRoad(){
-        return longestRoad;
-    }
-
-    /**
-     * get current dice as sum of two dices (to show dice on ui use return of roll dice method)
-     * @return current dice
-     */
-    public int getCurrentDice(){
-        return currentDice;
     }
 
     /**
@@ -157,13 +147,19 @@ public class Game
         ArrayList<Integer> ret = new ArrayList<>();
         ret.add(firstDice);
         ret.add(secondDice);
+
+        // After the dice is rolled, players must collect resource and current player must be able to play previously
+        // bought development cards!
+        collectResources();
+        getCurrentPlayer().makeCardsPlayable();
+
         return ret;
     }
 
     /**
      * collect resources after dice has been rolled or moves robber
      */
-    public void collectResources(){
+    private void collectResources(){
         if( currentDice == 7 )
         {
             for( Player player : players )
@@ -174,25 +170,10 @@ public class Game
             must.add(8); // get neighbors
         }
         else {
-            board.collectResources(currentDice);
+            distributor.collectResources( currentDice, board.getRobber() );
         }
     }
 
-    /**
-     * Returns the player list.
-     * @return the player list.
-     */
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    /**
-     * Sets the player list to the given players list.
-     * @param players is the new player list.
-     */
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
-    }
 
     /**
      * Returns a specific player given in the player index.
@@ -231,31 +212,6 @@ public class Game
     public int getTurn()
     {
         return turnNumber;
-    }
-
-    /**
-     * Returns the development cards stack.
-     * @return the dev cards stack.
-     */
-    public Stack<Card> getDevCards() {
-        return devCards;
-    }
-
-    /**
-     * Sets the development cards stack to the given stack.
-     * @param devCards is the new development cards stack.
-     */
-    public void setDevCards(Stack<Card> devCards) {
-        this.devCards = devCards;
-    }
-
-    /**
-     * checks is the current user can buy a develpment card
-     * @return true if there is enough resources
-     */
-    public boolean checkDevelopmentCard(){
-        Player cp = getCurrentPlayer();
-        return cp.hasEnoughResources( Card.REQUIREMENTS_FOR_CARD );
     }
 
     /**
@@ -460,11 +416,13 @@ public class Game
         }
         else if( type == Structure.Type.SETTLEMENT ){
             board.setStructure( cp, x ,y, type );
+            distributor.addHexagonResource( cp, x, y);
             cp.buySettlement();
             updateLongestRoad();
         }
         else if( type == Structure.Type.CITY ){
             board.setStructure( cp, x ,y, type );
+            distributor.addHexagonResource( cp, x, y);
             cp.buyCity();
         }
     }

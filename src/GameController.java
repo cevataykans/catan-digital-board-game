@@ -17,6 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -32,10 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -82,6 +80,14 @@ public class GameController extends Application {
     private Rectangle cardPlayArea;
     private Label cardDragLabel;
     private AnchorPane cardBox;
+
+    // For robber
+    AtomicReference<Double> xRob = new AtomicReference<>((double) 0);
+    AtomicReference<Double> yRob = new AtomicReference<>((double) 0);
+    double distXRob = 0;
+    double distYRob = 0;
+    double initialRobX;
+    double initialRobY;
 
     public static void main(String[] args) {
         launch(args);
@@ -625,7 +631,7 @@ public class GameController extends Application {
                         imgPath = "/images/desert2.png";
                         robber.setX((j-2) * 30 + 90);
                         robber.setY(i * 30 + 45);
-                        gameBox.getChildren().add(robber);
+                        gameBox.getChildren().add( robber);
                     }
                     hexagon = new ImageView(new Image(imgPath));
                     hexagon.setX((j - 2) * 30 + 30);
@@ -774,7 +780,7 @@ public class GameController extends Application {
                     animation2.play();
                     Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
                     Bounds playAreaPosition = cardPlayArea.localToScene(cardPlayArea.getBoundsInLocal());
-                    if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
+                 /*   if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
@@ -784,7 +790,7 @@ public class GameController extends Application {
                     } else {
                         temp.setTranslateX(0);
                         temp.setTranslateY(0);
-                    }
+                    } */
                 });
                 cardsInUI.add(temp);
             }
@@ -861,7 +867,7 @@ public class GameController extends Application {
                 //***** Logic to roll the dice and collect resources, collecting resources could be made in the dice method of game class! *****
                 game.doneMust();
                 ArrayList<Integer> results = game.rollDice();
-                game.collectResources();
+                //game.collectResources();
 
                 die1Result.setImage(new Image("/images/die" + results.get(0) + ".png"));
                 die2Result.setImage(new Image("/images/die" + results.get(1) + ".png"));
@@ -879,16 +885,21 @@ public class GameController extends Application {
      */
     private void setupRobber(ImageView robber)
     {
-        AtomicReference<Double> x = new AtomicReference<>((double) 0);
-        AtomicReference<Double> y = new AtomicReference<>((double) 0);
 
         // User clicks to robber to move it
         robber.setOnMousePressed(e ->
         {
             if ( game.checkMust() == 3 )
             {
-                x.set(e.getX());
-                y.set(e.getY());
+                // Save the initial value so that if dropped place is invalid, return to this position
+                initialRobX = robber.getX();
+                initialRobY = robber.getY();
+
+                // Source: https://blogs.oracle.com/vaibhav/image-drag-with-mouse-in-javafx
+                xRob.set( e.getX());
+                yRob.set( e.getY());
+                distXRob = xRob.get() - robber.getX();
+                distYRob = yRob.get() - robber.getY();
             }
             else
             {
@@ -900,10 +911,15 @@ public class GameController extends Application {
         // User drags the robber to another hexagon of choice or simply can put it in the same place to continue blocking the users
         robber.setOnMouseDragged(e ->
         {
+            System.out.println( "Mouse Dragging, coordinateX: "+ processX( e.getX() ) + " y: "+ processY( e.getY() ) );
             if ( game.checkMust() == 3 )
             {
-                robber.setTranslateX(robber.getTranslateX() + (e.getX() - x.get()));
-                robber.setTranslateY(robber.getTranslateY() + (e.getY() - y.get()));
+                //robber.setTranslateX(robber.getTranslateX() + (e.getX() - xRob.get()));
+                //robber.setTranslateY(robber.getTranslateY() + (e.getY() - yRob.get()));
+
+                // source : https://blogs.oracle.com/vaibhav/image-drag-with-mouse-in-javafx
+                robber.setX( e.getX() - distXRob );
+                robber.setY( e.getY() - distYRob );
             }
             else
             {
@@ -914,35 +930,43 @@ public class GameController extends Application {
         // Check if user has put the robber onto a valid position
         robber.setOnMouseReleased(e ->
         {
+            System.out.println( "Moude Released, coordinateX: "+ processX( e.getX() ) + " y: "+ processY( e.getY() ) );
             // When user releases the robber, if the robber should not play, this function must not work!
             if ( game.checkMust() == 3)
             {
                 // Get the coordinate and process it (processing and checking tile couldbe made in one line!)
-                int movedX = processX(robber.getX());
-                int movedY = processY(robber.getY());
+                int movedX = processX( e.getX() );
+                int movedY = processY( e.getY() );
                 System.out.println("MovedX: " + movedX + " MovedY: " + movedY); /***********************************************/
 
                 int resultCode = game.checkTile( movedX, movedY);
                 if ( resultCode != 3) // Inside tile
                 {
                     System.out.println("Not inside tile"); /***********************************************/
-                    robber.setTranslateX(0);
-                    robber.setTranslateY(0);
+                    //robber.setTranslateX(0);
+                    //robber.setTranslateY(0);
+                    robber.setX( initialRobX );
+                    robber.setY( initialRobY );
                     informError( resultCode);
                 }
                 else
                 {
                     // It is known that place is a inside tile, do must!
                     game.doneMust();
-                    robber.setX( getXToDisplay() + 65);
-                    robber.setY( movedY * 30 + 15);
+                    robber.setX( getXToDisplay() );
+                    robber.setY( movedY * 30 );
                     game.changeRobber( movedX, movedY);
 
                     // Now get the neighbors of that hexagon and display player selection to do the must
-                    ArrayList<Player> neighbors = game.getNeighborPlayers(movedX, movedY);
+                    ArrayList<Player> neighbors = game.getNeighborPlayers( movedX, movedY);
                     if ( neighbors.size() != 0)
                     {
                         askForPlayerCevatImplementation(neighbors);
+                    }
+                    else
+                    {
+                        // As there is not other player, do the must
+                        game.doneMust();
                     }
                 }
             }
@@ -1598,7 +1622,12 @@ public class GameController extends Application {
             otherPlayer.setFill( playersToSelect.get( i).getColor() );
             int finalI = i;
             otherPlayer.setOnMousePressed(e -> {
-                stealResourceFromPlayer( playersToSelect.get(finalI) );
+
+                if ( game.checkMust() == 8 )
+                {
+                    game.doneMust();
+                }
+                stealResourceFromPlayer( playersToSelect.get( finalI) );
                 setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
             });
             players.add(otherPlayer);
