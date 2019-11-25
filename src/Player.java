@@ -191,7 +191,7 @@ public class Player
 				int discardIndex = ( int)( Math.random() * 5);
 				if ( this.resources[ discardIndex] > 0)
 				{
-					this.resources[ discardIndex]--;
+					this.resources[ discardIndex] -= 1;
 					discardCount--;
 				}
 			}
