@@ -14,7 +14,7 @@ public class GameBoardBuilder
 
 	// Attributes
 	private Tile[][] board;
-	private Tile robber;
+	private StartTile robber;
 	private ArrayList<Integer> diceNumbers;
 	private ArrayList<Integer> resources;
 	private ArrayList<Port.PortType> ports;
@@ -22,11 +22,13 @@ public class GameBoardBuilder
 	public GameBoardBuilder()
 	{
 		this.board = new Tile[HEIGHT][WIDTH];
+		/*
 		for( int i = 0 ; i < HEIGHT ; i++ ){
 			for( int j = 0 ; j < WIDTH ; j++ ){
 				board[i][j] = new Tile();
 			}
 		}
+		*/
 		this.robber = null;
 		this.diceNumbers = new ArrayList<>();
 		this.resources = new ArrayList<>();
@@ -37,8 +39,8 @@ public class GameBoardBuilder
 	{
 		this.addDiceNumbers();
 		this.addResources();
-		this.setPorts();
 		this.setUpGameBoard();
+		this.setPorts();
 	}
 
 	/**
@@ -97,8 +99,8 @@ public class GameBoardBuilder
 		for( int i = 0 ; i < ports.size(); i++ )
 		{
 			System.out.println( i);
-			board[positions[i][1]][positions[i][0]].setPort(ports.get(i));
-			board[positions[i][3]][positions[i][2]].setPort(ports.get(i));
+			((BuildingTile)board[positions[i][1]][positions[i][0]]).setPort(ports.get(i));
+			((BuildingTile)board[positions[i][3]][positions[i][2]]).setPort(ports.get(i));
 		}
 	}
 
@@ -145,9 +147,11 @@ public class GameBoardBuilder
 			}
 			else{ // if dice is 7 then this hexagon will be desert
 				resource = 5;
-				this.robber = board[y][x];
 			}
 			fillHexagon( x, y, dice, resource);
+
+			if(dice == 7)
+				this.robber = (StartTile)board[y][x];
 		}
 	}
 
@@ -170,9 +174,11 @@ public class GameBoardBuilder
 			}
 			else{ // if dice is 7 then this hexagon will be desert
 				resource = 5;
-				this.robber = board[y][x];
 			}
 			fillHexagon( x, y, dice, resource);
+
+			if(dice == 7)
+				this.robber = (StartTile)board[y][x];
 		}
 	}
 
@@ -197,28 +203,25 @@ public class GameBoardBuilder
 		};
 
 		// keeps the start point of this hexagon
-		int startX = x;
-		int startY = y;
+		StartTile startTile = null;
 
 		for( int i = 0 ; i < 12 ; i++ ){
-			if( x == startX && y == startY ){
-				board[y][x].setDiceNumber(dice);
-				board[y][x].setGameTile();
-				board[y][x].setResource(resource);
-				board[y][x].addStartPoint(board[startY][startX]);
-				board[y][x].setStartPoint();
+			if( i == 0 ){
+				board[y][x] = new StartTile( BuildingTile.BuildingType.SETTLEMENT, dice, resource, x, y );
+				startTile = (StartTile) board[y][x];
+				((StartTile)board[y][x]).addStartTile( startTile);
 			}
+			else if( i % 6 == 1 )
+				board[y][x] = new RoadTile( RoadTile.RotationType.UPPER_RIGHT_VERTICAL, x, y );
+			else if( i % 6 == 3 )
+				board[y][x] =  new RoadTile(RoadTile.RotationType.UPPER_LEFT_VERTICAL, x, y);
+			else if( i % 6 == 5 )
+				board[y][x] = new RoadTile(RoadTile.RotationType.HORIZONTAL, x, y);
 			else {
-				board[y][x].setGameTile();
-				board[y][x].addStartPoint(board[startY][startX]);
+				board[y][x] = new BuildingTile( BuildingTile.BuildingType.SETTLEMENT, x, y);
+				((BuildingTile)board[y][x]).addStartTile( startTile);
 			}
 
-			if( i % 6 == 1 )
-				board[y][x].setRotation(Tile.RotationType.UPPER_RIGHT_VERTICAL);
-			else if( i % 6 == 3 )
-				board[y][x].setRotation(Tile.RotationType.UPPER_LEFT_VERTICAL);
-			else if( i % 6 == 5 )
-				board[y][x].setRotation(Tile.RotationType.HORIZONTAL);
 
 			if(i < 11){
 				x += changeNext[i][0];
@@ -226,15 +229,16 @@ public class GameBoardBuilder
 			}
 		}
 
-		fillInsideWithStartPoint( startX, startY);
+		fillInsideWithStartPoint( startTile);
 	}
 
 	/**
 	 * fill inside of the given hexagon with their starting point by using bfs
-	 * @param x start point of the hexagon
-	 * @param y start point of the hexagon
+	 * @param startTile start point of the hexagon
 	 */
-	private void fillInsideWithStartPoint( int x, int y){
+	private void fillInsideWithStartPoint( StartTile startTile){
+		int x = startTile.getX();
+		int y = startTile.getY();
 		int[][] tiles = { // (x,y)
 				{-1,2},{0,1},{0,2},{0,3},{1,1},{1,2},{1,3},{2,1},{2,2},{2,3},{3,2}
 		};
@@ -243,7 +247,7 @@ public class GameBoardBuilder
 			int targetX = x + tiles[i][0];
 			int targetY = y + tiles[i][1];
 
-			board[targetY][targetX].addStartPoint(board[y][x]);
+			board[targetY][targetX] = new InsideTile( startTile, x, y);
 		}
 	}
 
@@ -251,7 +255,7 @@ public class GameBoardBuilder
 	 * Returns the configurated robber to to gameboard.
 	 * @return Tile robber for gameboard.
 	 */
-	public Tile getRobber()
+	public StartTile getRobber()
 	{
 		return this.robber;
 	}

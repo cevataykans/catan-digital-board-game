@@ -589,10 +589,10 @@ public class GameController extends Application {
                  *      4-index = ORE
                  *      çöl -> will be assigned automatically when dice is 7
                  */
-                if ( board[ i][ j].isItStartPoint() )
+                if ( board[ i][ j] instanceof StartTile )
                 {
-                    int diceNum = board[i][j].getDiceNumber();
-                    int resource = board[ i][ j].getResource();
+                    int diceNum = ((StartTile)board[i][j]).getDiceNumber();
+                    int resource = ((StartTile)board[ i][ j]).getResource();
 
                     String resourceStr;
                     if ( resource  == 0 )
@@ -1390,7 +1390,7 @@ public class GameController extends Application {
                 game.doneMust();
             }
 
-            game.setTile( x, y, Structure.Type.SETTLEMENT);
+            game.setTile( x, y);
             ImageView structure = new ImageView("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
             structure.setX( getXToDisplay() );
             structure.setY( y * 30);
@@ -1423,9 +1423,9 @@ public class GameController extends Application {
                 game.doneMust();
             }
 
-            game.setTile( x, y, Structure.Type.ROAD);
+            game.setTile( x, y);
             ImageView structure = new ImageView("/images/road" + game.getCurrentPlayer().getColor() + ".png");
-            Tile.RotationType rotationType = game.rotationType(x, y);
+            RoadTile.RotationType rotationType = game.rotationType(x, y);
             switch (rotationType)
             {
                 case HORIZONTAL:
@@ -1475,7 +1475,7 @@ public class GameController extends Application {
                 game.doneMust();
             }
 
-            game.setTile( x, y, Structure.Type.CITY);
+            game.setTile( x, y);
             ImageView structure = new ImageView("/images/city" + game.getCurrentPlayer().getColor() + ".png");
             structure.setX( getXToDisplay() );
             structure.setY( y * 30);

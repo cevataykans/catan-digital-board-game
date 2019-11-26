@@ -247,8 +247,8 @@ public class Game
         }
         else if ( card.getType() == Card.CardType.ROADBUILDING)
         {
-            getCurrentPlayer().addResource(Structure.REQUIREMENTS_FOR_ROAD);
-            getCurrentPlayer().addResource(Structure.REQUIREMENTS_FOR_ROAD);
+            getCurrentPlayer().addResource(StructureTile.REQUIREMENTS_FOR_ROAD);
+            getCurrentPlayer().addResource(StructureTile.REQUIREMENTS_FOR_ROAD);
 
             must.add(0); //road
             must.add(0); //road
@@ -362,19 +362,19 @@ public class Game
                 return structureStatus;
 
             else if( structureStatus == 0 ){ // road can be built in terms of gameboard
-                if( cp.hasEnoughResources( Structure.REQUIREMENTS_FOR_ROAD ) )
+                if( cp.hasEnoughResources( StructureTile.REQUIREMENTS_FOR_ROAD ) )
                     return structureStatus;
                 else
                     return -5; // error because of resource
             }
             else if( structureStatus == 1 ){ // settlement can be built in terms of gameboard
-                if( cp.hasEnoughResources( Structure.REQUIREMENTS_FOR_SETTLEMENT ) )
+                if( cp.hasEnoughResources( StructureTile.REQUIREMENTS_FOR_SETTLEMENT ) )
                     return structureStatus;
                 else
                     return -6; // error because of resource
             }
             else if( structureStatus == 2 ){ // city can be built in terms of gameboard
-                if( cp.hasEnoughResources( Structure.REQUIREMENTS_FOR_CITY ) )
+                if( cp.hasEnoughResources( StructureTile.REQUIREMENTS_FOR_CITY ) )
                     return structureStatus;
                 else
                     return -7; // error because of resource
@@ -396,7 +396,7 @@ public class Game
      * @param y y coordinate of the road
      * @return rotation type of the road
      */
-    public Tile.RotationType rotationType( int x, int y){
+    public RoadTile.RotationType rotationType( int x, int y){
         return board.rotationType( x, y);
     }
 
@@ -405,23 +405,22 @@ public class Game
      * (value of type can be directed from checkTile method)
      * @param x x coordinate
      * @param y y coordinate
-     * @param type structure type
      */
-    public void setTile( int x, int y, Structure.Type type){
+    public void setTile( int x, int y){
         Player cp = getCurrentPlayer();
-        if( type == Structure.Type.ROAD ){
-            board.setStructure( cp, x ,y, type );
+        if( board.getTile( x, y) instanceof RoadTile ){
+            board.setStructure( cp, x ,y );
             cp.buyRoad();
             updateLongestRoad( cp);
         }
-        else if( type == Structure.Type.SETTLEMENT ){
-            board.setStructure( cp, x ,y, type );
+        else if( !(((StructureTile)board.getTile( x, y)).getAvailability()) ){
+            board.setStructure( cp, x ,y );
             distributor.addHexagonResource( cp, x, y);
             cp.buySettlement();
             updateLongestRoad();
         }
-        else if( type == Structure.Type.CITY ){
-            board.setStructure( cp, x ,y, type );
+        else{
+            board.setStructure( cp, x ,y);
             distributor.addHexagonResource( cp, x, y);
             cp.buyCity();
         }

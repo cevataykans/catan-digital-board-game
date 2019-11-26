@@ -23,7 +23,7 @@ public class GameBoard {
     //properties
     private Tile[][] board;
     private GameBoardBuilder builder;
-    private Tile robber;
+    private StartTile robber;
 
     //constructor
     public GameBoard()
@@ -48,8 +48,8 @@ public class GameBoard {
      * @param y y coordinate of the road
      * @return rotation type of the road
      */
-    public Tile.RotationType rotationType( int x, int y){
-        return board[y][x].getRotation();
+    public RoadTile.RotationType rotationType( int x, int y){
+        return ((RoadTile)board[y][x]).getRotation();
     }
 
     /**
@@ -59,7 +59,7 @@ public class GameBoard {
      * @return return if (x,y) is gametile
      */
     public boolean isGameTile( int x, int y){
-        return board[y][x].isItGameTile();
+        return board[y][x] instanceof StructureTile;
     }
 
     /**
@@ -69,7 +69,7 @@ public class GameBoard {
      * @return the result
      */
     public boolean isInsideTile( int x, int y){
-        return board[y][x].getStartPoints().size() != 0 && !board[y][x].isItGameTile();
+        return board[y][x] instanceof InsideTile;
     }
 
     /**
@@ -79,6 +79,16 @@ public class GameBoard {
     public Tile[][] getBoard()
     {
         return this.board;
+    }
+
+    /**
+     * get specified tile
+     * @param x x coordinate
+     * @param y y coordinate
+     * @return the tile
+     */
+    public Tile getTile( int x, int y){
+        return board[y][x];
     }
 
     /**
@@ -99,17 +109,17 @@ public class GameBoard {
      *          -4 = this tile is occupied by a road, city or other players structure, in this case there is no need to explain anything
      */
     public int checkStructure( Player player, int x, int y, int gameStatus){
-        if( x % 2 == 1 ){ // road
-            if( board[y][x].getStructure() == null )
+        if( board[y][x] instanceof RoadTile ){ // road
+            if( !((RoadTile)board[y][x]).getAvailability() )
                 return isValidForRoad(player,x,y); // return 0 or -1
             else
                 return -4;
         }
         else{ // settlement or city
-            if( board[y][x].getStructure() == null ){
-                return isValidForCity(player, x, y, gameStatus); // return 1, -2 or -3
+            if( !((BuildingTile)board[y][x]).getAvailability() ){
+                return isValidForSettlement(player, x, y, gameStatus); // return 1, -2 or -3
             }
-            else if( isThereStructure(player, x , y) && board[y][x].getStructure().getType() == Structure.Type.SETTLEMENT){ //point value for settlement is 1, but it can be controlled by another way in the future
+            else if( isThereStructure(player, x , y) && ((BuildingTile)board[y][x]).getType() == BuildingTile.BuildingType.SETTLEMENT){
                 return 2;
             }
             else
@@ -152,7 +162,7 @@ public class GameBoard {
      */
     private boolean isThereStructure( Player player, int x, int y){
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && isGameTile(x, y) &&
-                board[y][x].getStructure() != null && board[y][x].getStructure().getOwner() == player;
+                ((StructureTile)board[y][x]).getAvailability() && ((StructureTile)board[y][x]).getOwner() == player;
     }
 
     /**
@@ -163,7 +173,7 @@ public class GameBoard {
      */
     private boolean isThereStructure( int x, int y){
         return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && isGameTile(x, y) &&
-                board[y][x].getStructure() != null;
+                ((StructureTile)board[y][x]).getAvailability();
     }
 
     /**
@@ -176,7 +186,7 @@ public class GameBoard {
      *          -2 = there is no connection for city to build
      *          -3 = there is a building near
      */
-    private int isValidForCity( Player player, int x, int y, int gameStatus){
+    private int isValidForSettlement( Player player, int x, int y, int gameStatus){
         int[][] possibleRoadNeighbors = { // (x,y)
                 {-1,0}, {1,0}, {-1,-1}, {-1,1}, {1,-1}, {1,1}
         };
@@ -219,35 +229,24 @@ public class GameBoard {
      * @param player current player
      * @param x x-coordinate
      * @param y y-coordinate
-     * @param type 0 = road
-     *             1 = settlement
-     *             2 = city
      */
-    public void setStructure(Player player, int x, int y, Structure.Type type){
-        if(type == Structure.Type.ROAD){
-            Structure newRoad = new Road( player, x, y );
-            board[y][x].setStructure(newRoad);
-            player.addStructure(newRoad);
+    public void setStructure(Player player, int x, int y){
+        if( board[y][x] instanceof RoadTile){ // road building
+            ((RoadTile)board[y][x]).setAvailability();
+            ((RoadTile)board[y][x]).setOwner( player);
+            player.addStructure( (RoadTile)board[y][x]);
         }
-        else if(type == Structure.Type.SETTLEMENT){
-            Structure newSettlement = new Settlement( player, x, y );
-            board[y][x].setStructure(newSettlement);
-            player.addStructure(newSettlement);
+        else if( !((BuildingTile)board[y][x]).getAvailability()){ // settlement building
+            ((BuildingTile)board[y][x]).setAvailability();
+            ((BuildingTile)board[y][x]).setOwner( player);
+            player.addStructure( (BuildingTile)board[y][x]);
 
-            if(board[y][x].getPort() != null){
-                player.addPort(board[y][x].getPort());
+            if(((BuildingTile)board[y][x]).getPort() != null){
+                player.addPort(((BuildingTile)board[y][x]).getPort());
             }
         }
-        else{
-            Structure newCity = new City( player, x, y );
-            board[y][x].setStructure(newCity);
-            for(int i = 0 ; i < player.getStructures().size(); i++){
-                if(player.getStructures().get(i).getX() == x && player.getStructures().get(i).getY() == y){
-                    player.getStructures().remove(i);
-                    player.addStructure(newCity);
-                    break;
-                }
-            }
+        else{ // city building
+            ((BuildingTile)board[y][x]).upgradeToCity();
         }
     }
 
@@ -267,42 +266,14 @@ public class GameBoard {
                 {-1,-1}, {-1,-1},
                 {-1,0}
         };
-        Tile startPoint = board[y][x].getStartPoints().get(0);
         ArrayList<Player> ret = new ArrayList<>();
 
-        //find start point by traversing
-        for( int i = 0 ; i <= y ; i++ ) {
-            for (int j = 0; j <= x; j++) {
-                if (startPoint == board[i][j]) {
-                    y = i;
-                    x = j;
-                }
-            }
-        }
-
-        /*  YUSUF PLEASE CHECK MY ALGORITHM IT MAY BE MORE EFFICIENT :)))))))
-        int [][] toDecrease = { {1, -2}, {0, -1 }, { 0, -2}, {0, -3}, { -1, -1}, {-1, -2},
-                                {-1, -3}, {-2, -1}, {-2, -2}, {-2, -3}, {-3, -2} };  // { x, y}
-        for ( int i = 0; i < toDecrease.length; i++ )
-        {
-            int tempX = x + toDecrease[ i][ 0];
-            int tempY = y + toDecrease[ i][ 1];
-            if ( tempX >= 0 && tempY >= 0)
-            {
-                if ( board[ tempY][ tempX].isItStartPoint() )
-                {
-                    x = tempX;
-                    y = tempY;
-                    System.out.println( "Break succesful?");
-                    break;
-                }
-            }
-            System.out.print( "Hexagon index = " + i + " ");
-        } */
+        x = ((InsideTile)board[y][x]).getStartTile().getX();
+        y = ((InsideTile)board[y][x]).getStartTile().getY();
 
         for( int i = 0 ; i < 12 ; i++ ){
-            if( board[y][x].getStructure() != null && board[y][x].getStructure().getOwner() != player && !ret.contains(board[y][x].getStructure().getOwner()) )
-                ret.add( board[y][x].getStructure().getOwner());
+            if( ((StructureTile)board[y][x]).getAvailability() && ((StructureTile)board[y][x]).getOwner() != player && !ret.contains(((StructureTile)board[y][x]).getOwner()) )
+                ret.add( ((StructureTile)board[y][x]).getOwner());
 
             if(i < 11){
                 x += changeNext[i][0];
@@ -317,7 +288,7 @@ public class GameBoard {
      * Returns robber.
      * @return robber
      */
-    public Tile getRobber(){
+    public StartTile getRobber(){
         return robber;
     }
 
@@ -327,7 +298,7 @@ public class GameBoard {
      * @param y y coordinate
      */
     public void changeRobber( int x, int y){
-        robber = board[y][x].getStartPoints().get(0);
+        robber = ((InsideTile)board[y][x]).getStartTile();
     }
 
     /**
@@ -341,15 +312,15 @@ public class GameBoard {
         };
         ArrayList<Integer> distances = new ArrayList<>();
         for(int i = 0 ; i < player.getStructures().size() ; i++){
-            if(player.getStructures().get(i).getType() == Structure.Type.ROAD){
+            if(player.getStructures().get(i) instanceof RoadTile){
                 int [][] markedRoads = new int[HEIGHT][WIDTH];
                 int roadX = player.getStructures().get(i).getX();
                 int roadY = player.getStructures().get(i).getY();
                 int j = 0;
-                while(!board[roadY + possibleNeighbors[j][1]][roadX + possibleNeighbors[j][0]].isItGameTile())
+                while( !(board[roadY + possibleNeighbors[j][1]][roadX + possibleNeighbors[j][0]] instanceof StructureTile))
                     j++;
-                Structure cornerStructure = board[roadY + possibleNeighbors[j][1]][roadX + possibleNeighbors[j][0]].getStructure();
-                if(cornerStructure == null || cornerStructure.getOwner() == player){
+                StructureTile cornerStructure = (StructureTile) board[roadY + possibleNeighbors[j][1]][roadX + possibleNeighbors[j][0]];
+                if(!cornerStructure.getAvailability() || cornerStructure.getOwner() == player){
                     int startX = roadX - possibleNeighbors[j][0];
                     int startY = roadY - possibleNeighbors[j][1];
                     int targetX = roadX + possibleNeighbors[j][0];
@@ -362,8 +333,8 @@ public class GameBoard {
                     distances.add(distance);
                 }
 
-                cornerStructure = board[roadY - possibleNeighbors[j][1]][roadX - possibleNeighbors[j][0]].getStructure();
-                if(cornerStructure == null || cornerStructure.getOwner() == player){
+                cornerStructure = (StructureTile) board[roadY - possibleNeighbors[j][1]][roadX - possibleNeighbors[j][0]];
+                if(!cornerStructure.getAvailability() || cornerStructure.getOwner() == player){
                     int startX = roadX + possibleNeighbors[j][0];
                     int startY = roadY + possibleNeighbors[j][1];
                     int targetX = roadX - possibleNeighbors[j][0];
@@ -397,14 +368,14 @@ public class GameBoard {
         for(int i = 0 ; i < 6 ; i++){
             int targetX = x + possibleNeighbors[i][0];
             int targetY = y + possibleNeighbors[i][1];
-            if( targetY >= 0 && targetY < HEIGHT && targetX >= 0 && targetX < WIDTH && board[targetY][targetX].isItGameTile()){
-                Structure targetStructure = board[targetY][targetX].getStructure();
+            if( targetY >= 0 && targetY < HEIGHT && targetX >= 0 && targetX < WIDTH && (board[targetY][targetX] instanceof StructureTile)){
+                StructureTile targetStructure = (StructureTile) board[targetY][targetX];
                 int roadX = x + possibleNeighbors[i][0] / 2;
                 int roadY = y + possibleNeighbors[i][1] / 2;
-                Structure road = board[roadY][roadX].getStructure();
-                if(road != null && road.getOwner() == player && markedRoads[roadY][roadX] == 0){
+                StructureTile road = (StructureTile) board[roadY][roadX];
+                if(!road.getAvailability() && road.getOwner() == player && markedRoads[roadY][roadX] == 0){
                     neighbor = true;
-                    if(targetStructure == null || targetStructure.getOwner() == player){
+                    if(!targetStructure.getAvailability() || targetStructure.getOwner() == player){
                         markedRoads[roadY][roadX] = 1;
                         int distance = checkLongestRoadFromThatEdge(player, targetX, targetY, markedRoads);
                         markedRoads[roadY][roadX] = 0;
