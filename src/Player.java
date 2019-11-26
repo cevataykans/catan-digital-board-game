@@ -41,7 +41,7 @@ public class Player
 	private int[] resources = { 4, 2, 2, 4, 0};
 	private int totResources;
 
-	private ArrayList<Structure> structures; // needs to be discuessed for finalization;
+	private ArrayList<StructureTile> structures; // needs to be discuessed for finalization;
 	private ArrayList<Card> cards;
 	private ArrayList<Port> ports;
 
@@ -203,9 +203,9 @@ public class Player
 	 */
 	public void buySettlement()
 	{
-		this.payForStructure( Structure.REQUIREMENTS_FOR_SETTLEMENT );
+		this.payForStructure( StructureTile.REQUIREMENTS_FOR_SETTLEMENT );
 
-		this.score += Structure.VICTORY_POINTS_FOR_SETTLEMENT;
+		this.score += StructureTile.VICTORY_POINTS_FOR_SETTLEMENT;
 	}
 
 	/**
@@ -213,9 +213,9 @@ public class Player
 	 */
 	public void buyRoad()
 	{
-		this.payForStructure( Structure.REQUIREMENTS_FOR_ROAD );
+		this.payForStructure( StructureTile.REQUIREMENTS_FOR_ROAD );
 
-		this.score += Structure.VICTORY_POINTS_FOR_ROAD;
+		this.score += StructureTile.VICTORY_POINTS_FOR_ROAD;
 	}
 
 	/**
@@ -223,10 +223,10 @@ public class Player
 	 */
 	public void buyCity()
 	{
-		this.payForStructure( Structure.REQUIREMENTS_FOR_CITY );
+		this.payForStructure( StructureTile.REQUIREMENTS_FOR_CITY );
 
-		this.score -= Structure.VICTORY_POINTS_FOR_SETTLEMENT;
-		this.score += Structure.VICTORY_POINTS_FOR_CITY;
+		this.score -= StructureTile.VICTORY_POINTS_FOR_SETTLEMENT;
+		this.score += StructureTile.VICTORY_POINTS_FOR_CITY;
 	}
 
 	/**
@@ -342,7 +342,7 @@ public class Player
 	 * Gets the player's structures.
 	 * @return player's structures as ArrayList.
 	 */
-	public ArrayList<Structure> getStructures(){
+	public ArrayList<StructureTile> getStructures(){
 		return this.structures;
 	}
 
@@ -350,7 +350,7 @@ public class Player
 	 * Add given structure to the structures ArrayList
 	 * @param structure Given structure that is wanted to add.
 	 */
-	public void addStructure(Structure structure){
+	public void addStructure(StructureTile structure){
 		this.structures.add(structure);
 	}
 

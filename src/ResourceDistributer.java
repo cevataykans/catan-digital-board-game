@@ -5,7 +5,7 @@ public class ResourceDistributer
 	// Private node
 	private class DistributionNode{
 		public Player player;
-		public Tile startPoint;
+		public StartTile startPoint;
 		public int amount;
 	}
 
@@ -26,9 +26,9 @@ public class ResourceDistributer
 
 	public void addHexagonResource( Player player, int x, int y)
 	{
-		ArrayList<Tile> startPoints = board[y][x].getStartPoints();
+		ArrayList<StartTile> startPoints = ((BuildingTile)board[y][x]).getStartTiles();
 		for(int i = 0; i < startPoints.size() ; i++){
-			Tile startPoint = startPoints.get(i);
+			StartTile startPoint = startPoints.get(i);
 			int diceNumber = startPoint.getDiceNumber();
 			DistributionNode newNode = new DistributionNode();
 			newNode.player = player;
