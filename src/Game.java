@@ -39,21 +39,7 @@ public class Game
     private int largestArmy;
     private Player longestRoadPlayer;
     private Player largestArmyPlayer;
-
-    /*
-       -1 = there is no must
-        0 = road need to be built
-        1 = settlement need to be built
-        2 = city need to be built
-        3 = inside tile selection ( for robber selection )
-        4 = resource selection (for monopoly card)
-        5 = resource selection (for year of plenty card)
-        6 = end turn ( we will end the turn automatically, do not wait player to end )
-        7 = roll dice
-        8 = get neighbor players ( after robber is places ) (resource selection for robber placement?)
-     */
-    private Queue<Integer> must;
-
+    private FlowManager flowManager;
     private Stack<Card> devCards;
 
     // Constructors
@@ -69,7 +55,7 @@ public class Game
         board = new GameBoard();
         turnNumber = 0;
         devCards = new Stack<>();
-        must = new LinkedList<>();
+        flowManager = FlowManager.getInstance();
         for( int i = 0; i < TOTAL_DEV_CARDS; i++)
         {
             Card card;
@@ -100,9 +86,9 @@ public class Game
         Collections.shuffle(players);
         Collections.shuffle(devCards);
 
-        must.add(1); // settlement
-        must.add(0); // road
-        must.add(6); // end turn
+        flowManager.addMust(1); // settlement
+        flowManager.addMust(0); // road
+        flowManager.addMust(6); // end turn
 
         return players;
     }
@@ -119,17 +105,17 @@ public class Game
         if( turnNumber == 2*playerCount)
         {
             distributor.collectResources( board.getRobber() );
-            must.add(7); // roll dice
+            flowManager.addMust(7); // roll dice
             gameStatus = 1;
         }
         else if( gameStatus == 0 )
         {
-            must.add(1); // settlement
-            must.add(0); // road
-            must.add(6); // end turn
+            flowManager.addMust(1); // settlement
+            flowManager.addMust(0); // road
+            flowManager.addMust(6); // end turn
         }
         else {
-            must.add(7); // roll dice
+            flowManager.addMust(7); // roll dice
         }
         return false;
     }
@@ -166,8 +152,8 @@ public class Game
             {
                 player.discardHalfOfResources();
             }
-            must.add(3); // inside tile
-            must.add(8); // get neighbors
+            flowManager.addMust(3); // inside tile
+            flowManager.addMust(8);// get neighbors
         }
         else {
             distributor.collectResources( currentDice, board.getRobber() );
@@ -236,22 +222,22 @@ public class Game
     {
         if ( card.getType() == Card.CardType.KNIGHT)
         {
-            must.add(3); // inside tile
-            must.add(8); // get neighbor
+            flowManager.addMust(3); // inside tile
+            flowManager.addMust(8); // get neighbor
             getCurrentPlayer().incrementLargestArmy(); // Add 1 army point to the player.
             this.updateLargestArmy();
         }
         else if ( card.getType() == Card.CardType.MONOPOLY)
         {
-            must.add(4); // monopoly
+            flowManager.addMust(4); // monopoly
         }
         else if ( card.getType() == Card.CardType.ROADBUILDING)
         {
             getCurrentPlayer().addResource(StructureTile.REQUIREMENTS_FOR_ROAD);
             getCurrentPlayer().addResource(StructureTile.REQUIREMENTS_FOR_ROAD);
 
-            must.add(0); //road
-            must.add(0); //road
+            flowManager.addMust(0); //road
+            flowManager.addMust(0); //road
         }
         else if ( card.getType() == Card.CardType.VICTORYPOINT)
         {
@@ -259,12 +245,13 @@ public class Game
         }
         else if ( card.getType() == Card.CardType.YEAROFPLENTY)
         {
-            must.add(5); // year of plenty
+            flowManager.addMust(5); // year of plenty
         }
     }
 
     /**
      * when robber is placed, this method returns the players who have city/settlement at that hexagon
+     * board[y][x] must be an inside tile
      * @param x x-coordinate
      * @param y y-coordinate
      * @return players that have settlement at the hexagon
@@ -307,32 +294,6 @@ public class Game
     public void playYearOfPlenty( int selectedMaterial){
         getCurrentPlayer().collectMaterial( selectedMaterial, 1);
         getCurrentPlayer().collectMaterial( selectedMaterial, 1);
-    }
-
-    /**
-     * return if there is any must operation for this player and its type
-     * @return -1 = there is no must
-     *          0 = road need to be built
-     *          1 = settlement need to be built
-     *          2 = city need to be built
-     *          3 = inside tile selection
-     *          4 = resource selection (for monopoly card)
-     *          5 = resource selection (for year of plenty card)
-     *          6 = end turn
-     *          7 = roll dice
-     *          8 = get neighbor players ( after robber is placed )
-     */
-    public int checkMust(){
-        if( must.size() == 0 )
-            return -1;
-        return must.peek();
-    }
-
-    /**
-     * last-must has been completed
-     */
-    public void doneMust(){
-        must.remove();
     }
 
     /**

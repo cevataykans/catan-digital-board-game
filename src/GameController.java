@@ -56,6 +56,7 @@ public class GameController extends Application {
     private AnchorPane gameBox;
     private Game game; // game added here for function access
     private Label statusText; // To inform user
+    private FlowManager flowManager;
 
     // For function access of player selection and resource selection, I have put them in here
     private AnchorPane selectionBox;
@@ -407,6 +408,7 @@ public class GameController extends Application {
         new Thread(sleeper).start();
 
         game = new Game(players);
+        flowManager = FlowManager.getInstance();
         gameBox = (AnchorPane) scene.lookup("#gameBox");
         ImageView robber = new ImageView("/images/robber.png");
         setupGameBoard(robber);
@@ -417,7 +419,7 @@ public class GameController extends Application {
         gameBox.setOnMouseClicked(mouseEvent -> {
 
             // Allow the action to be processed for game board UI if only game board related must, be done
-            if ( game.checkMust() < 4 )
+            if ( flowManager.checkMust() < 4 )
             {
                 int x = processX(mouseEvent.getX());
                 int y = processY(mouseEvent.getY());
@@ -429,7 +431,7 @@ public class GameController extends Application {
             }
             else
             {
-                informError( game.checkMust() );
+                informError( flowManager.checkMust() );
             }
         });
 
@@ -549,13 +551,13 @@ public class GameController extends Application {
         Button buyDevelopmentCard = (Button) scene.lookup("#buyDevelopmentCard");
         buyDevelopmentCard.setOnMouseClicked(event ->
         {
-            if ( game.checkMust() == -1) {
+            if ( flowManager.checkMust() == -1) {
                 game.addDevelopmentCard();
                 setupDevelopmentCards(cardPlayArea, cardDragLabel, cardBox);
             }
             else
             {
-                informError(game.checkMust());
+                informError(flowManager.checkMust());
             }
         });
 
@@ -834,7 +836,7 @@ public class GameController extends Application {
         diceRollAvailable.setOnMouseClicked(event ->
         {
             // Dice could only be rolled at the beginning of a turn
-            if ( game.checkMust() == 7 )
+            if ( flowManager.checkMust() == 7 )
             {
                 FadeOut animation = new FadeOut(diceRollAvailable);
                 animation.setSpeed(2);
@@ -865,7 +867,7 @@ public class GameController extends Application {
                 animation.play();
 
                 //***** Logic to roll the dice and collect resources, collecting resources could be made in the dice method of game class! *****
-                game.doneMust();
+                flowManager.doneMust();
                 ArrayList<Integer> results = game.rollDice();
                 //game.collectResources();
 
@@ -874,7 +876,7 @@ public class GameController extends Application {
             }
             else
             {
-                informError( game.checkMust() );
+                informError( flowManager.checkMust() );
             }
         });
     }
@@ -889,7 +891,7 @@ public class GameController extends Application {
         // User clicks to robber to move it
         robber.setOnMousePressed(e ->
         {
-            if ( game.checkMust() == 3 )
+            if ( flowManager.checkMust() == 3 )
             {
                 // Save the initial value so that if dropped place is invalid, return to this position
                 initialRobX = robber.getX();
@@ -903,7 +905,7 @@ public class GameController extends Application {
             }
             else
             {
-                informError( game.checkMust() );
+                informError( flowManager.checkMust() );
             }
 
         });
@@ -912,7 +914,7 @@ public class GameController extends Application {
         robber.setOnMouseDragged(e ->
         {
             System.out.println( "Mouse Dragging, coordinateX: "+ processX( e.getX() ) + " y: "+ processY( e.getY() ) );
-            if ( game.checkMust() == 3 )
+            if ( flowManager.checkMust() == 3 )
             {
                 //robber.setTranslateX(robber.getTranslateX() + (e.getX() - xRob.get()));
                 //robber.setTranslateY(robber.getTranslateY() + (e.getY() - yRob.get()));
@@ -923,7 +925,7 @@ public class GameController extends Application {
             }
             else
             {
-                informError( game.checkMust() );
+                informError( flowManager.checkMust() );
             }
         });
 
@@ -932,7 +934,7 @@ public class GameController extends Application {
         {
             System.out.println( "Moude Released, coordinateX: "+ processX( e.getX() ) + " y: "+ processY( e.getY() ) );
             // When user releases the robber, if the robber should not play, this function must not work!
-            if ( game.checkMust() == 3)
+            if ( flowManager.checkMust() == 3)
             {
                 // Get the coordinate and process it (processing and checking tile couldbe made in one line!)
                 int movedX = processX( e.getX() );
@@ -952,7 +954,7 @@ public class GameController extends Application {
                 else
                 {
                     // It is known that place is a inside tile, do must!
-                    game.doneMust();
+                    flowManager.doneMust();
                     robber.setX( getXToDisplay() );
                     robber.setY( movedY * 30 );
                     game.changeRobber( movedX, movedY);
@@ -966,7 +968,7 @@ public class GameController extends Application {
                     else
                     {
                         // As there is not other player, do the must
-                        game.doneMust();
+                        flowManager.doneMust();
                     }
                 }
             }
@@ -1327,7 +1329,7 @@ public class GameController extends Application {
      */
     private void informBoardSelection( Alert alert, int resultCode, int x, int y )
     {
-        int mustCheckCode = game.checkMust();
+        int mustCheckCode = flowManager.checkMust();
 
         // Player tries to build a road
         if ( resultCode == 0 )
@@ -1385,9 +1387,9 @@ public class GameController extends Application {
         if ( result.get() == ButtonType.OK){
 
             // Check if the user obligated to build a settlement
-            if ( game.checkMust() == 1 )
+            if ( flowManager.checkMust() == 1 )
             {
-                game.doneMust();
+                flowManager.doneMust();
             }
 
             game.setTile( x, y);
@@ -1418,9 +1420,9 @@ public class GameController extends Application {
         if ( result.get() == ButtonType.OK){
 
             // Check if the user obligated to build a road
-            if ( game.checkMust() == 0 )
+            if ( flowManager.checkMust() == 0 )
             {
-                game.doneMust();
+                flowManager.doneMust();
             }
 
             game.setTile( x, y);
@@ -1448,7 +1450,7 @@ public class GameController extends Application {
             setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
             setupLongestRoad();
             // If its initial state, player has to immediately end the turn.
-            if ( game.checkMust() == 6 )
+            if ( flowManager.checkMust() == 6 )
             {
                 performEndTurnButtonEvent();
             }
@@ -1470,9 +1472,9 @@ public class GameController extends Application {
         if ( result.get() == ButtonType.OK){
 
             // Check if the user obligated to build a city
-            if ( game.checkMust() == 2 )
+            if ( flowManager.checkMust() == 2 )
             {
-                game.doneMust();
+                flowManager.doneMust();
             }
 
             game.setTile( x, y);
@@ -1623,9 +1625,9 @@ public class GameController extends Application {
             int finalI = i;
             otherPlayer.setOnMousePressed(e -> {
 
-                if ( game.checkMust() == 8 )
+                if ( flowManager.checkMust() == 8 )
                 {
-                    game.doneMust();
+                    flowManager.doneMust();
                 }
                 stealResourceFromPlayer( playersToSelect.get( finalI) );
                 setupCurrentPlayerInfo(anchorPanes.get(0), indicators.get(0), resources);
@@ -1647,9 +1649,9 @@ public class GameController extends Application {
     private void stealResourceFromPlayer( Player stealingFrom)
     {
         // Resource stealing for the selected player must
-        if ( game.checkMust() == 8 )
+        if ( flowManager.checkMust() == 8 )
         {
-            game.doneMust();
+            flowManager.doneMust();
 
             game.getCurrentPlayer().stealResourceFromPlayer( stealingFrom );
         }
@@ -1671,7 +1673,7 @@ public class GameController extends Application {
     private void setupTrade(Player playerToTrade, ArrayList<Label> resources)
     {
         // Tradings can only be done when free of obligations
-        if ( game.checkMust() == -1)
+        if ( flowManager.checkMust() == -1)
         {
             try {
                 // Initialize the trade popup, its a new stage.
@@ -1774,7 +1776,7 @@ public class GameController extends Application {
        }
        else
        {
-           informError( game.checkMust() );
+           informError( flowManager.checkMust() );
        }
     }
 
@@ -1790,13 +1792,13 @@ public class GameController extends Application {
     private void performEndTurnButtonEvent()
     {
         // Check if the user has to do something before ending their turn
-        if ( game.checkMust() == -1 || game.checkMust() == 6 )
+        if ( flowManager.checkMust() == -1 || flowManager.checkMust() == 6 )
         {
             // Check if the user ends the turn because of obligation
-            if ( game.checkMust() == 6 )
+            if ( flowManager.checkMust() == 6 )
             {
                 // Done the must, yeey :)
-                game.doneMust();
+                flowManager.doneMust();
             }
             game.endTurn();
             setupPlayerBoxes();
@@ -1825,7 +1827,7 @@ public class GameController extends Application {
         }
         else
         {
-            informError( game.checkMust() );
+            informError( flowManager.checkMust() );
         }
     }
 }
