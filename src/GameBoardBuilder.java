@@ -22,25 +22,23 @@ public class GameBoardBuilder
 	public GameBoardBuilder()
 	{
 		this.board = new Tile[HEIGHT][WIDTH];
-		/*
-		for( int i = 0 ; i < HEIGHT ; i++ ){
-			for( int j = 0 ; j < WIDTH ; j++ ){
-				board[i][j] = new Tile();
-			}
-		}
-		*/
 		this.robber = null;
 		this.diceNumbers = new ArrayList<>();
 		this.resources = new ArrayList<>();
 		this.ports = new ArrayList<>();
 	}
 
+	/**
+	 * configurates game board
+	 */
 	public void configurate()
 	{
+		//order is important, do not change!
 		this.addDiceNumbers();
 		this.addResources();
 		this.setUpGameBoard();
 		this.setPorts();
+		this.setSeaTiles();
 	}
 
 	/**
@@ -281,6 +279,19 @@ public class GameBoardBuilder
 			int targetY = y + tiles[i][1];
 
 			board[targetY][targetX] = new InsideTile( startTile, x, y);
+		}
+	}
+
+	/**
+	 * Sets sea tiles
+	 * All empty tiles will be sea tiles after we build the gameboard
+	 */
+	private void setSeaTiles(){
+		for( int i = 0 ; i < HEIGHT ; i++ ){
+			for( int j = 0 ; j < WIDTH ; j++ ){
+				if( board[i][j] == null )
+					board[i][j] = new SeaTile( j, i);
+			}
 		}
 	}
 
