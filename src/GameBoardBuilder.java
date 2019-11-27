@@ -205,30 +205,63 @@ public class GameBoardBuilder
 		// keeps the start point of this hexagon
 		StartTile startTile = null;
 
+		// There are 12 tiles to traverse
 		for( int i = 0 ; i < 12 ; i++ ){
-			if( i == 0 ){
-				board[y][x] = new StartTile( BuildingTile.BuildingType.SETTLEMENT, dice, resource, x, y );
-				startTile = (StartTile) board[y][x];
-				((StartTile)board[y][x]).addStartTile( startTile);
+
+			// index 0 is the starting point
+			if( i == 0 )
+			{
+				if ( board[ y][ x] == null ) // if null, create a starting point
+				{
+					board[ y][ x] = new StartTile( BuildingTile.BuildingType.SETTLEMENT, dice, resource, x, y);
+					startTile = ( StartTile) board[ y][ x];
+					( ( StartTile) board[ y][ x]).addStartTile( startTile);
+				}
+				else // if not null, take the existing starting tiles, create a starting tile, add these tiles and
+				// itself to starting tiles
+				{
+					// Get previous starting tiles as it is going to be reset
+					ArrayList<StartTile> startingTiles= ( ( BuildingTile) board[ y][ x]).getStartTiles();
+
+					board[ y][ x] = new StartTile( BuildingTile.BuildingType.SETTLEMENT, dice, resource, x, y);
+					startTile = ( StartTile) board[ y][ x];
+
+					// Copy previous starting tiles
+					for ( int startI = 0; startI < startingTiles.size(); startI++ )
+					{
+						( ( StartTile) board[ y][ x]).addStartTile( startingTiles.get( startI) );
+					}
+					( (StartTile) board[ y] [x]).addStartTile( startTile); // add itself as a starting tile
+				}
 			}
-			else if( i % 6 == 1 )
-				board[y][x] = new RoadTile( RoadTile.RotationType.UPPER_RIGHT_VERTICAL, x, y );
+			else if( i % 6 == 1 ) // road tiles, it does not matter if they are recreated
+				board[ y][ x] = new RoadTile( RoadTile.RotationType.UPPER_RIGHT_VERTICAL, x, y );
 			else if( i % 6 == 3 )
-				board[y][x] =  new RoadTile(RoadTile.RotationType.UPPER_LEFT_VERTICAL, x, y);
+				board[ y][ x] =  new RoadTile( RoadTile.RotationType.UPPER_LEFT_VERTICAL, x, y);
 			else if( i % 6 == 5 )
-				board[y][x] = new RoadTile(RoadTile.RotationType.HORIZONTAL, x, y);
+				board[ y][ x] = new RoadTile( RoadTile.RotationType.HORIZONTAL, x, y);
 			else {
-				board[y][x] = new BuildingTile( BuildingTile.BuildingType.SETTLEMENT, x, y);
-				((BuildingTile)board[y][x]).addStartTile( startTile);
+				// If null, create a buildingtile and add known starting point
+				if ( board[ y] [x] == null )
+				{
+					board[ y][ x] = new BuildingTile( BuildingTile.BuildingType.SETTLEMENT, x, y);
+					( (BuildingTile) board[ y][ x]).addStartTile( startTile);
+				}
+				else // if there is already a building tile constructed, add the known starting point
+				{
+					( (BuildingTile) board[ y][ x]).addStartTile( startTile);
+				}
 			}
 
-
-			if(i < 11){
-				x += changeNext[i][0];
-				y += changeNext[i][1];
+			// Change the location of traverse
+			if( i < 11)
+			{
+				x += changeNext[ i][ 0];
+				y += changeNext[ i][ 1];
 			}
 		}
 
+		// Fill the inside of the hexagon as a reference to this starting tile
 		fillInsideWithStartPoint( startTile);
 	}
 
