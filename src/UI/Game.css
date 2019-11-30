@@ -48,31 +48,55 @@
     -fx-border-color: black;
 }
 
+.x0000ffffCircle {
+    -fx-fill: rgba(0, 28, 255, 0.26);
+    -fx-stroke-width: 3px;
+    -fx-stroke: blue;
+}
+
+.xffffffffCircle {
+    -fx-fill: rgba(253, 248, 255, 0.25);
+    -fx-stroke-width: 3px;
+    -fx-stroke: white;
+}
+
+.xffa500ffCircle {
+    -fx-fill: rgba(255, 116, 0, 0.25);
+    -fx-stroke-width: 3px;
+    -fx-stroke: orange;
+}
+
+.xa52a2affCircle {
+    -fx-fill: rgba(158, 0, 0, 0.25);
+    -fx-stroke-width: 3px;
+    -fx-stroke: brown;
+}
+
 .x0000ffffPlayerBox {
     -fx-border-width: 5px;
     -fx-border-radius: 10px;
-    -fx-background-color: rgba(87, 109, 173, 0.75);
+    -fx-background-color: transparent;
     -fx-border-color: blue;
 }
 
 .xffffffffPlayerBox {
     -fx-border-width: 5px;
     -fx-border-radius: 10px;
-    -fx-background-color: rgba(224, 224, 224, 0.75);
+    -fx-background-color: transparent;
     -fx-border-color: white;
 }
 
 .xffa500ffPlayerBox {
     -fx-border-width: 5px;
     -fx-border-radius: 10px;
-    -fx-background-color: rgba(180, 94, 0, 0.75);
+    -fx-background-color: transparent;
     -fx-border-color: orange;
 }
 
 .xa52a2affPlayerBox {
     -fx-border-width: 5px;
     -fx-border-radius: 10px;
-    -fx-background-color: rgba(156, 9, 9, 0.75);
+    -fx-background-color: transparent;
     -fx-border-color: brown;
 }
 

@@ -18,47 +18,46 @@
     </ImageView>
     <AnchorPane fx:id="currentPlayerInf" layoutX="51.0" layoutY="588.0" prefHeight="200.0" prefWidth="200.0">
       <children>
-        <ProgressIndicator fx:id="currentPlayerProgress" cache="false" disable="false" prefHeight="92.0" prefWidth="105.0" progress="0.0" style="" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="48.0" AnchorPane.rightAnchor="47.0" AnchorPane.topAnchor="56.0" />
-        <ImageView fitHeight="24.88063873196638" fitWidth="17.023594856262207" layoutX="91.0" layoutY="26.0" pickOnBounds="true" preserveRatio="true">
+        <ProgressIndicator fx:id="currentScore" cache="false" disable="false" prefHeight="92.0" prefWidth="105.0" progress="0.0" style="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="48.0" AnchorPane.rightAnchor="47.0" AnchorPane.topAnchor="68.0" />
+        <ImageView fitHeight="24.88063873196638" fitWidth="17.023594856262207" layoutX="92.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@../images/grain.png" />
           </image>
         </ImageView>
-        <ImageView fitHeight="19.03448486328125" fitWidth="29.052634324683993" layoutX="129.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="19.03448486328125" fitWidth="29.052634324683993" layoutX="123.0" layoutY="53.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@../images/Brick.png" />
           </image>
         </ImageView>
-        <ImageView fitHeight="19.03448486328125" fitWidth="29.052634324683993" layoutX="139.0" layoutY="81.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="19.03448486328125" fitWidth="29.052634324683993" layoutX="140.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@../images/Ore.png" />
           </image>
         </ImageView>
-        <ImageView fitHeight="19.03448486328125" fitWidth="29.052634324683993" layoutX="42.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="19.03448486328125" fitWidth="29.052634324683993" layoutX="51.0" layoutY="52.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@../images/Wool.png" />
           </image>
         </ImageView>
-        <ImageView fitHeight="19.03448486328125" fitWidth="29.052634324683993" layoutX="31.0" layoutY="83.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="19.03448486328125" fitWidth="29.052634324683993" layoutX="31.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@../images/Lumber.png" />
           </image>
         </ImageView>
-        <Label fx:id="lumberCount" layoutX="20.0" layoutY="68.0" text="0" textFill="#661800">
+        <Label fx:id="lumberCount" layoutX="14.0" layoutY="81.0" text="0" textFill="#661800">
           <font>
             <Font name="System Bold" size="20.0" fx:id="x3" />
           </font>
         </Label>
-        <Label fx:id="woolCount" font="$x3" layoutX="42.0" layoutY="18.0" text="0" textFill="WHITE" />
-        <Label fx:id="grainCount" font="$x3" layoutX="94.0" layoutY="1.0" text="0" textFill="#fff500" />
-        <Label fx:id="brickCount" font="$x3" layoutX="153.0" layoutY="19.0" text="0" textFill="#cc0000" />
-        <Label fx:id="oreCount" font="$x3" layoutX="167.0" layoutY="68.0" text="0" textFill="#404040" />
-        <Label fx:id="currentPlayer" layoutX="77.0" layoutY="166.0" text="Player 4 " textAlignment="CENTER">
+        <Label fx:id="woolCount" font="$x3" layoutX="36.0" layoutY="30.0" text="0" textFill="WHITE" />
+        <Label fx:id="grainCount" font="$x3" layoutX="95.0" layoutY="5.0" text="0" textFill="#fff500" />
+        <Label fx:id="brickCount" font="$x3" layoutX="154.0" layoutY="30.0" text="0" textFill="#cc0000" />
+        <Label fx:id="oreCount" font="$x3" layoutX="174.0" layoutY="81.0" text="0" textFill="#404040" />
+        <Label fx:id="currentName" layoutY="164.0" text="Player 4 " textAlignment="CENTER" AnchorPane.leftAnchor="62.5" AnchorPane.rightAnchor="61.5">
           <font>
             <Font size="20.0" fx:id="x2" />
           </font>
         </Label>
-        <Label layoutX="82.0" layoutY="144.0" text="Score" />
         <ImageView fx:id="currentLR" fitHeight="53.35257039794669" fitWidth="46.26935857435025" layoutX="9.0" layoutY="117.0" pickOnBounds="true" preserveRatio="true" visible="false">
           <image>
             <Image url="/images/lr.png" />
@@ -71,83 +70,19 @@
         </ImageView>
       </children>
     </AnchorPane>
-    <AnchorPane fx:id="gameBox" layoutX="418.0" layoutY="144.0" opacity="1.0" prefHeight="535.0" prefWidth="701.0" styleClass="gameBox" />
-    <AnchorPane fx:id="cardBox" layoutX="422.0" layoutY="764.0" prefHeight="92.0" prefWidth="686.0" styleClass="cardBox" />
-    <AnchorPane prefHeight="129.0" prefWidth="1496.0" styleClass="infoBox" AnchorPane.leftAnchor="17.0" AnchorPane.rightAnchor="23.0" AnchorPane.topAnchor="6.0">
-      <children>
-        <AnchorPane fx:id="otherPlayer3Box" layoutX="996.0" layoutY="14.0" prefHeight="101.0" prefWidth="486.0">
-          <children>
-            <Label fx:id="otherPlayer3" font="$x2" layoutX="117.0" layoutY="14.0" text="Player 3" />
-            <Button fx:id="otherPlayer3Trade" layoutX="99.0" layoutY="61.0" mnemonicParsing="false" prefWidth="105.0" text="Trade" />
-            <Label layoutX="20.0" layoutY="5.0" text="Score">
-              <font>
-                <Font size="18.0" fx:id="x1" />
-              </font>
-            </Label>
-            <Label font="$x1" layoutX="229.0" layoutY="12.0" text="Longest Road" />
-            <Label font="$x1" layoutX="361.0" layoutY="12.0" text="Largest Army" />
-            <ProgressIndicator fx:id="otherPlayer3Progress" prefHeight="69.0" prefWidth="85.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="401.0" AnchorPane.topAnchor="32.0" />
-            <ImageView fx:id="other3LR" fitHeight="53.35257039794669" fitWidth="46.26935857435025" layoutX="260.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" visible="false">
-              <image>
-                <Image url="/images/lr.png" />
-              </image>
-            </ImageView>
-            <ImageView fx:id="other3LA" fitHeight="53.35257039794669" fitWidth="46.26935857435025" layoutX="390.0" layoutY="40.0" pickOnBounds="true" preserveRatio="true" visible="false">
-              <image>
-                <Image url="/images/la.png" />
-              </image>
-            </ImageView>
-          </children>
-        </AnchorPane>
-        <AnchorPane fx:id="otherPlayer2Box" layoutX="505.0" layoutY="14.0" prefHeight="101.0" prefWidth="486.0">
-          <children>
-            <Label fx:id="otherPlayer2" font="$x2" layoutX="117.0" layoutY="14.0" text="Player 2" />
-            <Button fx:id="otherPlayer2Trade" layoutX="99.0" layoutY="61.0" mnemonicParsing="false" prefWidth="105.0" text="Trade" />
-            <Label font="$x1" layoutX="20.0" layoutY="7.0" text="Score" />
-            <Label font="$x1" layoutX="236.0" layoutY="12.0" text="Longest Road" />
-            <Label font="$x1" layoutX="362.0" layoutY="12.0" text="Largest Army" />
-            <ProgressIndicator fx:id="otherPlayer2Progress" prefHeight="69.0" prefWidth="83.05000000000001" progress="0.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="402.95" AnchorPane.topAnchor="31.0" />
-            <ImageView fx:id="other2LR" fitHeight="53.35257039794669" fitWidth="46.26935857435025" layoutX="261.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" visible="false">
-              <image>
-                <Image url="/images/lr.png" />
-              </image>
-            </ImageView>
-            <ImageView fx:id="other2LA" fitHeight="52.08987508544669" fitWidth="46.26944841480505" layoutX="391.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" visible="false">
-              <image>
-                <Image url="/images/la.png" />
-              </image>
-            </ImageView>
-          </children>
-        </AnchorPane>
-        <AnchorPane fx:id="otherPlayer1Box" layoutX="14.0" layoutY="14.0" prefHeight="98.0" prefWidth="486.0">
-          <children>
-            <ProgressIndicator fx:id="otherPlayer1Progress" prefHeight="67.0" prefWidth="94.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="-4.5" AnchorPane.rightAnchor="396.5" AnchorPane.topAnchor="31.0" />
-            <Label fx:id="otherPlayer1" font="$x2" layoutX="117.0" layoutY="14.0" text="Player 1" />
-            <Button fx:id="otherPlayer1Trade" layoutX="99.0" layoutY="61.0" mnemonicParsing="false" prefWidth="105.0" text="Trade" />
-            <Label font="$x1" layoutX="20.0" layoutY="4.0" text="Score" />
-            <Label font="$x1" layoutX="229.0" layoutY="12.0" text="Longest Road" />
-            <Label font="$x1" layoutX="362.0" layoutY="12.0" text="Largest Army" />
-            <ImageView fx:id="other1LR" fitHeight="53.35257039794669" fitWidth="46.26935857435025" layoutX="261.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true" visible="false">
-              <image>
-                <Image url="/images/lr.png" />
-              </image>
-            </ImageView>
-            <ImageView fx:id="other1LA" fitHeight="53.35257039794669" fitWidth="46.26935857435025" layoutX="391.0" layoutY="39.0" pickOnBounds="true" preserveRatio="true" visible="false">
-              <image>
-                <Image url="/images/la.png" />
-              </image>
-            </ImageView>
-          </children>
-        </AnchorPane>
-      </children>
-    </AnchorPane>
+    <AnchorPane fx:id="gameBox" layoutX="418.0" layoutY="117.0" opacity="1.0" prefHeight="693.0" prefWidth="729.0" styleClass="gameBox" />
+    <AnchorPane fx:id="cardBox" layoutX="422.0" layoutY="868.0" prefHeight="92.0" prefWidth="725.0" styleClass="cardBox" />
     <Rectangle fx:id="cardPlayArea" arcHeight="5.0" arcWidth="5.0" fill="#ffcccc35" height="200.0" layoutX="422.0" layoutY="511.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="686.0" />
     <Label fx:id="cardDragLabel" layoutX="691.0" layoutY="601.0" text="Drag Here To Play" textFill="#292929" visible="false">
       <font>
         <Font name="System Bold Italic" size="20.0" />
       </font>
     </Label>
-    <Button fx:id="endTurn" font="$x1" layoutX="1267.0" layoutY="714.0" mnemonicParsing="false" text="End Turn" />
+    <Button fx:id="endTurn" layoutX="1339.0" layoutY="716.0" mnemonicParsing="false" text="End Turn">
+      <font>
+        <Font size="18.0" fx:id="x1" />
+      </font>
+    </Button>
     <ImageView fx:id="die1Result" fitHeight="40.0" fitWidth="40.0" layoutX="1278.0" layoutY="508.0" pickOnBounds="true" preserveRatio="true" visible="false">
       <image>
         <Image url="@../images/die1.png" />
@@ -158,27 +93,27 @@
         <Image url="@../images/die2.png" />
       </image>
     </ImageView>
-    <ImageView fx:id="diceRollAvailable" fitHeight="65.4366184779576" fitWidth="101.0" layoutX="1274.0" layoutY="495.0" pickOnBounds="true" preserveRatio="true" style="">
+    <ImageView fx:id="diceRollAvailable" fitHeight="65.4366184779576" fitWidth="101.0" layoutX="1339.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true" style="">
       <image>
         <Image url="@../images/diceAvaibleGif.gif" />
       </image>
     </ImageView>
-    <Label fx:id="statusBar" layoutX="1277.0" layoutY="234.0" text="Status" textAlignment="CENTER" textFill="#ffcccc" underline="true">
+    <Label fx:id="statusBar" layoutX="744.0" layoutY="13.0" text="Status" textAlignment="CENTER" textFill="#ffcccc" underline="true">
       <font>
         <Font size="30.0" />
       </font>
     </Label>
-    <Label fx:id="statusText" layoutX="1130.0" layoutY="292.0" prefHeight="32.0" prefWidth="383.0" text="-" textAlignment="CENTER" textFill="WHITE" underline="false">
+    <Label fx:id="statusText" layoutX="594.0" layoutY="61.0" prefHeight="32.0" prefWidth="383.0" text="-" textAlignment="CENTER" textFill="WHITE" underline="false">
       <font>
         <Font name="System Bold" size="14.0" />
       </font>
     </Label>
-    <ImageView fitHeight="267.0" fitWidth="221.72608928915895" layoutX="41.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="267.0" fitWidth="221.72608928915895" layoutX="40.0" layoutY="94.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="@../images/legend.jpg" />
       </image>
     </ImageView>
-    <Button fx:id="buyDevelopmentCard" layoutX="62.0" layoutY="534.0" mnemonicParsing="false" prefHeight="40.000099999997474" text="Buy a Development Card" />
+    <Button fx:id="buyDevelopmentCard" cancelButton="false" layoutX="64.0" layoutY="475.0" mnemonicParsing="false" prefHeight="40.000099999997474" text="Buy a Development Card" />
     <AnchorPane fx:id="selectionBox" layoutX="166.0" layoutY="135.0" prefHeight="585.0" prefWidth="1074.0" styleClass="selectionBox" visible="false">
       <children>
         <Label fx:id="selectionLabel" layoutX="490.0" layoutY="23.0" text="Choose Your Resource">
@@ -188,6 +123,77 @@
         </Label>
       </children>
     </AnchorPane>
-    <Button fx:id="tradeWithPort" layoutX="62.0" layoutY="487.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="191.0" text="Trade With Port" />
+    <Button fx:id="tradeWithPort" layoutX="64.0" layoutY="392.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="191.0" text="Trade With Port" />
+    <Circle fx:id="other1Info" fill="DODGERBLUE" layoutX="1390.0" layoutY="249.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
+    <Circle fx:id="other2Info" fill="DODGERBLUE" layoutX="1390.0" layoutY="360.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
+    <Circle fx:id="other3Info" fill="DODGERBLUE" layoutX="1390.0" layoutY="475.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
+    <AnchorPane fx:id="other1Box" layoutX="1151.0" layoutY="207.0" minHeight="40.0" prefHeight="85.0" prefWidth="200.0" visible="false">
+      <children>
+        <Label fx:id="other1Name" layoutX="83.0" layoutY="0.0" text="Name" />
+        <ProgressIndicator fx:id="other1Score" layoutX="14.0" layoutY="26.0" progress="0.0" />
+        <Label layoutX="50.0" layoutY="59.0" text="Longest Road">
+          <font>
+            <Font size="10.0" fx:id="x4" />
+          </font>
+        </Label>
+        <Label font="$x4" layoutX="123.0" layoutY="59.0" text="Longest Army" />
+        <ImageView fx:id="other1LR" fitHeight="32.0" fitWidth="27.751604817708333" layoutX="67.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../images/lr.png" />
+          </image>
+        </ImageView>
+        <ImageView fx:id="other1LA" fitHeight="32.0" fitWidth="27.751604817708333" layoutX="140.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../images/la.png" />
+          </image>
+        </ImageView>
+      </children>
+    </AnchorPane>
+    <AnchorPane fx:id="other2Box" layoutX="1151.0" layoutY="319.0" minHeight="40.0" prefHeight="85.0" prefWidth="200.0" visible="false">
+      <children>
+        <Label fx:id="other2Name" layoutX="83.0" layoutY="0.0" text="Name" />
+        <ProgressIndicator fx:id="other2Score" layoutX="14.0" layoutY="26.0" progress="0.0" />
+        <Label font="$x4" layoutX="50.0" layoutY="59.0" text="Longest Road" />
+        <Label font="$x4" layoutX="123.0" layoutY="59.0" text="Longest Army" />
+        <ImageView fx:id="other2LR" fitHeight="32.0" fitWidth="27.751604817708333" layoutX="67.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../images/lr.png" />
+          </image>
+        </ImageView>
+        <ImageView fx:id="other2LA" fitHeight="32.0" fitWidth="27.751604817708333" layoutX="140.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../images/la.png" />
+          </image>
+        </ImageView>
+      </children>
+    </AnchorPane>
+    <AnchorPane fx:id="other3Box" layoutX="1151.0" layoutY="433.0" minHeight="40.0" prefHeight="85.0" prefWidth="200.0" visible="false">
+      <children>
+        <Label fx:id="other3Name" layoutX="83.0" layoutY="0.0" text="Name" />
+        <ProgressIndicator fx:id="other3Score" layoutX="14.0" layoutY="26.0" progress="0.0" />
+        <Label font="$x4" layoutX="50.0" layoutY="59.0" text="Longest Road" />
+        <Label font="$x4" layoutX="123.0" layoutY="59.0" text="Longest Army" />
+        <ImageView fx:id="other3LR" fitHeight="32.0" fitWidth="27.751604817708333" layoutX="67.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../images/lr.png" />
+          </image>
+        </ImageView>
+        <ImageView fx:id="other3LA" fitHeight="32.0" fitWidth="27.751604817708333" layoutX="140.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
+          <image>
+            <Image url="@../images/la.png" />
+          </image>
+        </ImageView>
+      </children>
+    </AnchorPane>
+    <Label layoutX="1316.0" layoutY="151.0" text="Other Players" underline="true">
+      <font>
+        <Font size="25.0" />
+      </font>
+    </Label>
+    <ImageView fx:id="devCardsHover" fitHeight="150.0" fitWidth="200.0" layoutX="683.0" layoutY="839.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="/images/devCardsHover.png" />
+      </image>
+    </ImageView>
   </children>
 </AnchorPane>
