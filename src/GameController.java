@@ -190,8 +190,6 @@ public class GameController extends Application {
             }
         });
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true);
-        primaryStage.setMaximized(true);
     }
 
     private void initializeMainMenu(Parent root, Stage primaryStage, Scene scene) throws IOException

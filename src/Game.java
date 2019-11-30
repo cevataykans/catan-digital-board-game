@@ -58,7 +58,7 @@ public class Game
         flowManager = FlowManager.getInstance();
         for( int i = 0; i < TOTAL_DEV_CARDS; i++)
         {
-            Card card;
+            /*Card card;
             if ( i < 14)
                 card = new Card(Card.CardType.KNIGHT);
             else if ( i < 16)
@@ -69,7 +69,7 @@ public class Game
                 card = new Card(Card.CardType.YEAROFPLENTY);
             else
                 card = new Card(Card.CardType.VICTORYPOINT);
-            devCards.push(card);
+            devCards.push(card);*/
         }
     }
 
@@ -220,7 +220,7 @@ public class Game
      */
     public void playDevelopmentCard(Card card)
     {
-        if ( card.getType() == Card.CardType.KNIGHT)
+        /*if ( card.getType() == Card.CardType.KNIGHT)
         {
             flowManager.addMust(3); // inside tile
             flowManager.addMust(8); // get neighbor
@@ -246,7 +246,7 @@ public class Game
         else if ( card.getType() == Card.CardType.YEAROFPLENTY)
         {
             flowManager.addMust(5); // year of plenty
-        }
+        }*/
     }
 
     /**

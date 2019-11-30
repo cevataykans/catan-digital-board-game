@@ -49,6 +49,8 @@ public class FlowManager {
      *          6 = end turn
      *          7 = roll dice
      *          8 = get neighbor players ( after robber is placed )
+     *          9 = get half resources from all players (for perfectly balanced card)
+     *          10 = settlement needs to be selected (for earthquake card)
      */
     public int checkMust(){
         if( must.size() == 0 )
