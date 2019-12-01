@@ -49,13 +49,13 @@ public class GameEngine {
         try {
             // To run the game from the beginning, comment the lines below and uncomment the commented line.
             // This is for faster testing.
-            ArrayList<Player> temp = new ArrayList<>();
+            /*ArrayList<Player> temp = new ArrayList<>();
             temp.add(new Player("xx", Color.BLUE));
             temp.add(new Player("xx", Color.WHITE));
             temp.add(new Player("xx", Color.ORANGE));
             temp.add(new Player("xx", Color.BROWN));
-            controller = new SingleGameController(primaryStage, temp);
-            //controller = new OpeningController(primaryStage);
+            controller = new SingleGameController(primaryStage, temp);*/
+            controller = new OpeningController(primaryStage);
         }
         catch (IOException e)
         {

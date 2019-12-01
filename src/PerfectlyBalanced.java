@@ -14,6 +14,6 @@ public class PerfectlyBalanced extends Card {
      */
     @Override
     public void play() {
-        FlowManager.getInstance().addMust(9);
+        getFlowManager().addMust(9);
     }
 }

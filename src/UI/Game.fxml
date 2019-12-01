@@ -98,12 +98,12 @@
         <Image url="@../images/diceAvaibleGif.gif" />
       </image>
     </ImageView>
-    <Label fx:id="statusBar" layoutX="744.0" layoutY="13.0" text="Status" textAlignment="CENTER" textFill="#ffcccc" underline="true">
+    <Label fx:id="statusBar" layoutX="745.0" layoutY="14.0" text="Status" textAlignment="CENTER" textFill="#ffcccc" underline="true">
       <font>
         <Font size="30.0" />
       </font>
     </Label>
-    <Label fx:id="statusText" layoutX="594.0" layoutY="61.0" prefHeight="32.0" prefWidth="383.0" text="-" textAlignment="CENTER" textFill="WHITE" underline="false">
+    <Label fx:id="statusText" layoutX="591.0" layoutY="71.0" prefHeight="32.0" prefWidth="383.0" text="-" textAlignment="CENTER" textFill="WHITE" underline="false">
       <font>
         <Font name="System Bold" size="14.0" />
       </font>
@@ -123,7 +123,7 @@
         </Label>
       </children>
     </AnchorPane>
-    <Button fx:id="tradeWithPort" layoutX="64.0" layoutY="392.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="191.0" text="Trade With Port" />
+    <Button fx:id="tradeWithPort" layoutX="64.0" layoutY="392.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="191.0" text="Trade With Harbor" />
     <Circle fx:id="other1Info" fill="DODGERBLUE" layoutX="1390.0" layoutY="249.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
     <Circle fx:id="other2Info" fill="DODGERBLUE" layoutX="1390.0" layoutY="360.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
     <Circle fx:id="other3Info" fill="DODGERBLUE" layoutX="1390.0" layoutY="475.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
