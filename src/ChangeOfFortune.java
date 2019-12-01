@@ -11,7 +11,7 @@ public class ChangeOfFortune extends Card {
 
     // Methods
     /**
-     * This function plays the Knight card, which allows player to re-roll the dice after its initially rolled.
+     * This function plays the Change of Fortune card, which allows player to re-roll the dice after its initially rolled.
      */
     @Override
     public void play() {

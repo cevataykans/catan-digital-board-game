@@ -13,19 +13,24 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SingleGameController extends Controller {
+/**
+ * This scene controller manages all of the Single-Game screen and all of its logic with itself and its sub-controllers.
+ * @author Talha Şen
+ * @version 29.11.2019
+ */
+
+
+public class SingleGameController extends SceneController {
     private static int hexIndex = -1;
     private static int tileIndex = -1;
     HashMap<Point2D, Integer> settlementMap = new HashMap<>();
@@ -35,6 +40,7 @@ public class SingleGameController extends Controller {
     ArrayList<Player> players;
     Game game;
     AnchorPane gameBox;
+    Button buyDevelopmentCard;
     Button endTurn;
 
     // Sub Controllers
@@ -64,12 +70,19 @@ public class SingleGameController extends Controller {
     }
 
     // Methods
+    /**
+     * This initialize method initializes every component of the scene and logic of components directly corrolated with the
+     * game box (or game board area).
+     * @param stage is the primary stage that will take the controller's scene.
+     * @throws IOException is the file-not-found exception.
+     */
     @Override
     public void initialize(Stage stage) throws IOException {
         scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/UI/Game.css").toExternalForm());
         scene.setRoot(root);
 
+        // Wait 10 milliseconds to load the scene. After that, play the scene animation.
         root.setVisible(false);
         Parent finalRoot = root;
         Task<Void> sleeper = new Task<Void>() {
@@ -85,6 +98,7 @@ public class SingleGameController extends Controller {
         sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
+                // Make the root visible and play the animation on with 3.5x the normal speed.
                 finalRoot.setVisible(true);
                 FadeIn animation = new FadeIn(finalRoot);
                 animation.setSpeed(3.5);
@@ -93,30 +107,36 @@ public class SingleGameController extends Controller {
         });
         new Thread(sleeper).start();
 
+        // Initializing game and Flow Manager. Getting playable game area and robber from single-game's fxml file.
+        // Calling game board and robber setup functions that will add logic to game board and robber.
         game = new Game(players);
         flowManager = FlowManager.getInstance();
         gameBox = (AnchorPane) scene.lookup("#gameBox");
-        robber = new javafx.scene.image.ImageView("/images/robber.png");
+        robber = new ImageView("/images/robber.png");
         setupGameBoard();
         setupRobber();
 
+        // Initializing all the sub controllers that will handle the game's other logic.
         infoController = new PlayerInfoController(scene, this);
         statusController = new StatusController(scene, this);
         devCardController = new DevCardController(scene, this);
         selectionController = new SelectionController(scene, this);
         diceController = new DiceController(scene, this);
 
+        // Adding listener to make the game board intractable.
         gameBox.setOnMouseClicked(mouseEvent -> {
             System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
             // Allow the action to be processed for game board UI if only game board related must, be done
             if ( flowManager.checkMust() < 4 )
             {
+                // Getting the mouse coordinates.
                 int x = processX(mouseEvent.getX());
                 int y = processY(mouseEvent.getY());
 
                 System.out.print("X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY()); /********************************************************/
                 System.out.println(" X' is: " + x + " | Y' is: " + y); /********************************************************/
 
+                // Checking if the clicked coordinate is a game tile
                 createDialog(game.checkTile(x, y), x, y);
             }
             else
@@ -125,12 +145,28 @@ public class SingleGameController extends Controller {
             }
         });
 
+        // Getting the development card button from the single-game fxml file and adding the buy card logic to its click listener.
+        buyDevelopmentCard = (Button) scene.lookup("#buyDevelopmentCard");
+        buyDevelopmentCard.setOnMouseClicked(event ->
+        {
+            game.addDevelopmentCard();
+        });
+
+        // Getting the end turn button from the single-game fxml file and adding the end turn logic to its click listener.
         endTurn = (Button) scene.lookup( "#endTurn");
         endTurn.setOnMouseReleased(mouseEvent ->
         {
             performEndTurnButtonEvent();
         });
 
+        /**
+         *  This is a key listener used to add shortcuts to the game, done via keyboard.
+         *  ---- CURRENT SHORTCUTS ----
+         *  Key E -> End Turn
+         *  ---- PLANNED SHORTCUTS ----
+         *  Key D or C -> Buy Development Card
+         *  If you want to add a shortcut, add the key to the switch case with its functionality.
+        */
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case E: performEndTurnButtonEvent();
@@ -140,6 +176,9 @@ public class SingleGameController extends Controller {
         stage.setScene(scene);
     }
 
+    /**
+     * This functions sets up the game board in the game are (anchor) in UI, its robber and all the game board logic.
+     */
     public void setupGameBoard() {
         // Initialize the controller
         game.configureGame();
@@ -212,6 +251,10 @@ public class SingleGameController extends Controller {
         }
     }
 
+    /**
+     * This function sets up the robber logic and adds the robber logic as a listener. Robber works as a drag and drop
+     * unit when dice is 7 or Knight is played. If the dropped hexagon is valid with valid players, a steal scenario happens.
+     */
     public void setupRobber() {
         // User clicks to robber to move it
         robber.setOnMousePressed(e ->
@@ -281,7 +324,7 @@ public class SingleGameController extends Controller {
                     // It is known that place is a inside tile, do must!
                     flowManager.doneMust();
                     robber.setX( getXToDisplay() );
-                    robber.setY( movedY * 30 );
+                    robber.setY( movedY * 30 + 35 );
                     game.changeRobber( movedX, movedY);
 
                     // Now get the neighbors of that hexagon and display player selection to do the must
@@ -320,14 +363,22 @@ public class SingleGameController extends Controller {
                 flowManager.doneMust();
             }
 
+            // Make the corresponding game tile in the given index a road.
             game.setTile( x, y);
+            // Initializing road image to be shown on the UI.
             ImageView structure = new ImageView("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
+            // Setting city image's coordinates.
             structure.setX( getXToDisplay() );
-            structure.setY( y * 30);
+            structure.setY( y * 30 + 35);
+            // Playing a zoom in animation for the settlement.
             new ZoomIn(structure).play();
+            // Adding settlement image to the game area in UI.
             gameBox.getChildren().add(structure);
+            // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
+            // city images when the player upgrades settlement to city.
             settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
 
+            // Refresh current player information.
             infoController.setupCurrentPlayer();
             infoController.setupLongestRoad();
         }
@@ -353,8 +404,11 @@ public class SingleGameController extends Controller {
                 flowManager.doneMust();
             }
 
+            // Make the corresponding game tile in the given index a road.
             game.setTile( x, y);
+            // Initializing road image to be shown on the UI.
             ImageView structure = new ImageView("/images/road" + game.getCurrentPlayer().getColor() + ".png");
+            // Determining its rotation type corresponding to the hexagon side. Setting the road image's coordinates.
             RoadTile.RotationType rotationType = game.rotationType(x, y);
             switch (rotationType)
             {
@@ -371,12 +425,15 @@ public class SingleGameController extends Controller {
                     structure.setX( getXToDisplay() - 5);
                     break;
             }
-            structure.setY( y * 30 - 5);
+            structure.setY( y * 30 + 30);
             new ZoomIn(structure).play();
+            // Adding the road image to the game area in UI.
             gameBox.getChildren().add(structure);
 
+            // Refreshing current player information
             infoController.setupCurrentPlayer();
             infoController.setupLongestRoad();
+
             // If its initial state, player has to immediately end the turn.
             if ( flowManager.checkMust() == 6 )
             {
@@ -405,14 +462,23 @@ public class SingleGameController extends Controller {
                 flowManager.doneMust();
             }
 
+            // Make the corresponding game tile in the given index a city.
             game.setTile( x, y);
+
+            // Initializing road image to be shown on the UI.
             ImageView structure = new ImageView("/images/city" + game.getCurrentPlayer().getColor() + ".png");
+
+            // Setting city image's coordinates.
             structure.setX( getXToDisplay() );
-            structure.setY( y * 30);
+            structure.setY( y * 30 + 35);
+
+            // Switching the corresponding settlement image with city image via an out-in animation.
             ImageView settlement = (ImageView) gameBox.getChildren().get(settlementMap.get(new Point2D(x, y)));
+            // Initializing and playing a zoom out animation for the settlement image.
             ZoomOut settlementOut = new ZoomOut(settlement);
             settlementOut.setOnFinished(event ->
             {
+                // When the settlement out animation finishes, a zoom in animation for city is played.
                 gameBox.getChildren().remove(settlement);
                 ZoomIn cityIn = new ZoomIn(structure);
                 cityIn.play();
@@ -432,13 +498,13 @@ public class SingleGameController extends Controller {
     private int processX( double x)
     {
         // Threshold for eliminating 0 index bug
-        if (  x < 20 )
+        if (  x < 35 )
         {
             return -1;
         }
         else
         {
-            x = x - 30; // Omit threshold
+            x = x - 45; // Omit threshold
 
             hexIndex = 0;
             while ( (int) (x / 170) > 0 ) // Find the right index of the hexagon.
@@ -517,7 +583,12 @@ public class SingleGameController extends Controller {
      */
     private int processY( double y)
     {
+        if ( y < 35)
+        {
+            return -1;
+        }
         // How beautiful everything is when each tile has the same height ;/
+        y -= 35;
         return (int) y / 30;
     }
 
@@ -531,32 +602,32 @@ public class SingleGameController extends Controller {
         int x = hexIndex * 120;
         if ( tileIndex == 0 )
         {
-            x += 20;
+            x += 40;
         }
         else if ( tileIndex == 1 )
         {
-            x += 40;
+            x += 60;
         }
         else if ( tileIndex == 2 )
         {
-            x += 60;
+            x += 80;
         }
         else if ( tileIndex == 3 )
         {
-            x += 90;
+            x += 110;
         }
         else if ( tileIndex == 4 )
         {
-            x += 130;
+            x += 150;
         }
         else if ( tileIndex == 5)
 
         {
-            x += 160;
+            x += 180;
         }
         else
         {
-            x += 180;
+            x += 200;
         }
 
         return x;
@@ -575,6 +646,7 @@ public class SingleGameController extends Controller {
             }
             game.endTurn();
             infoController.setupOtherPlayers();
+            infoController.setupCurrentPlayer();
             infoController.setupLargestArmy();
             infoController.setupLongestRoad();
             diceController.setupDiceRoll();
@@ -675,6 +747,10 @@ public class SingleGameController extends Controller {
         }
     }
 
+    /**
+     * Returns the game.
+     * @return the game.
+     */
     public Game getGame() {
         return game;
     }

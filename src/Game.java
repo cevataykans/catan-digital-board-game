@@ -58,18 +58,18 @@ public class Game
         flowManager = FlowManager.getInstance();
         for( int i = 0; i < TOTAL_DEV_CARDS; i++)
         {
-            /*Card card;
+            Card card;
             if ( i < 14)
-                card = new Card(Card.CardType.KNIGHT);
+                card = new Knight();
             else if ( i < 16)
-                card = new Card(Card.CardType.MONOPOLY);
+                card = new Monopoly();
             else if ( i < 18)
-                card = new Card(Card.CardType.ROADBUILDING);
+                card = new RoadBuilding();
             else if ( i < 20)
-                card = new Card(Card.CardType.YEAROFPLENTY);
+                card = new YearOfPlenty();
             else
-                card = new Card(Card.CardType.VICTORYPOINT);
-            devCards.push(card);*/
+                card = new VictoryPoint();
+            devCards.push(card);
         }
     }
 

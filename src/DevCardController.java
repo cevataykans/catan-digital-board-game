@@ -1,21 +1,23 @@
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
 import javafx.animation.TranslateTransition;
-import javafx.concurrent.Task;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class DevCardController {
+/**
+ * This controller manages all the development card logic. It has association with the Single-Game controller.
+ * @author Talha Şen
+ * @version 29.11.2019
+ */
 
+public class DevCardController {
     // Properties
     private SingleGameController controller;
     private Scene scene;
@@ -26,8 +28,8 @@ public class DevCardController {
     private ArrayList<Card> cards;
     private ArrayList<ImageView> uiCards;
 
-    private boolean movedUp = false;
-    private boolean movedDown = true;
+    private double cardBoxHideLocation;
+    private double cardBoxShownLocation;
 
     // Constructor
     public DevCardController(Scene scene, SingleGameController controller)
@@ -38,24 +40,41 @@ public class DevCardController {
     }
 
     // Methods
+    /**
+     * This method initializes the UI components (taken from the game's fxml) related to the development cards and it
+     * adds the logic as a listener to the components.
+     */
     private void initialize() {
         devCardsHover = (ImageView) scene.lookup("#devCardsHover");
         cardPlayableArea = (Rectangle) scene.lookup("#cardPlayArea");
         cardDragLabel = (Label) scene.lookup("#cardDragLabel");
         cardBox = (AnchorPane) scene.lookup("#cardBox");
+        cardBoxHideLocation = cardBox.getTranslateY();
+        cardBoxShownLocation = cardBoxHideLocation - 75;
         setupDevelopmentCards();
     }
 
+    /**
+     * This method adds the development card logic to the UI components as listener. Development cards are contained
+     * int a box that is shown when player hovers over it. When the box is shown and player drags a development card to
+     * the playable area, the card is played.
+     */
     public void setupDevelopmentCards() {
+        // Initialize out animation for the previous player's development card box with 3x the normal speed.
         FadeOut cardBoxOut = new FadeOut(cardBox);
         cardBoxOut.setSpeed(3);
         cardBoxOut.setOnFinished(event ->
         {
+            // Clear all the previous UI (important distinction) development cards from the card container.
             cardBox.getChildren().clear();
+            // Get the development cards (logical unit ones) from the current player.
             ArrayList<Card> cards = controller.getGame().getCurrentPlayer().getCards();
+            // Initialize an ArrayList for the UI development cards.
             ArrayList<ImageView> cardsInUI = new ArrayList<>();
             for (int i = 0; i < cards.size(); i++) {
+                // Get the card image corresponding to the current one in the player.
                 ImageView temp = new ImageView("/images/" + cards.get(i).getName() + ".png");
+                // Place the UI development card in the container.
                 if (i == 0) {
                     temp.setX(50);
                 } else {
@@ -67,6 +86,7 @@ public class DevCardController {
                 AtomicReference<Double> y = new AtomicReference<>((double) 0);
                 temp.setOnMousePressed(e ->
                 {
+                    // When the card is picked and drag, show where the user can drop the card to play it.
                     cardPlayableArea.setVisible(true);
                     cardDragLabel.setVisible(true);
                     new FadeIn(cardPlayableArea).play();
@@ -76,12 +96,14 @@ public class DevCardController {
                 });
                 temp.setOnMouseDragged(e ->
                 {
+                    // Add drag functionality to the card by adding the delta of the mouse to the card's coordinates.
                     temp.setTranslateX(temp.getTranslateX() + (e.getX() - x.get()));
                     temp.setTranslateY(temp.getTranslateY() + (e.getY() - y.get()));
                 });
                 int finalI = i;
                 temp.setOnMouseReleased(e ->
                 {
+                    // When the card is dropped, initialize out animation for the "play the card here" area of the UI.
                     FadeOut animation = new FadeOut(cardPlayableArea);
                     FadeOut animation2 = new FadeOut(cardDragLabel);
                     animation.setOnFinished(event1 ->
@@ -94,8 +116,11 @@ public class DevCardController {
                     });
                     animation.play();
                     animation2.play();
+                    // Get the dropped location of the card
                     Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
                     Bounds playAreaPosition = cardPlayableArea.localToScene(cardPlayableArea.getBoundsInLocal());
+                    // Check if the dropped location of the card is inside the playable area, if it is play the card.
+                    // If not, send the card to its original location.
                     if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
@@ -108,13 +133,16 @@ public class DevCardController {
                         temp.setTranslateY(0);
                     }
                 });
+                // Add the card image to the ArrayList.
                 cardsInUI.add(temp);
             }
 
+            // Add every UI card in the ArrayList to the game's UI.
             for (ImageView card : cardsInUI) {
                 cardBox.getChildren().add(card);
             }
 
+            // Play in animation for the current player's development card components in UI.
             FadeIn cardBoxIn = new FadeIn(cardBox);
             cardBoxIn.setSpeed(3);
             cardBoxIn.play();
@@ -123,28 +151,34 @@ public class DevCardController {
 
         devCardsHover.setOnMouseEntered(event ->
         {
-            if ( movedDown && !movedUp) {
+            // If current player hovers of the "Development Card" part of the box in UI, show the card container to user.
+            if ( cardBox.getTranslateY() == cardBoxHideLocation) {
                 TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
                 TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);
                 hoverTT.setByY(-75);
                 boxTT.setByY(-75);
                 hoverTT.play();
                 boxTT.play();
-                movedUp = true;
-                movedDown = false;
+                boxTT.setOnFinished(event1 ->
+                {
+                    cardBox.setTranslateY( -75);
+                });
             }
         });
         cardBox.setOnMouseExited(event ->
         {
-            if ( movedUp && !movedDown) {
+            // If the container is already shown and player's mouse exits the container, hide the container.
+            if ( cardBox.getTranslateY() == cardBoxShownLocation) {
                 TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
                 TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);
                 hoverTT.setByY(75);
                 boxTT.setByY(75);
                 hoverTT.play();
                 boxTT.play();
-                movedUp = false;
-                movedDown = true;
+                boxTT.setOnFinished(event1 ->
+                {
+                    cardBox.setTranslateY( 0);
+                });
             }
         });
     }
