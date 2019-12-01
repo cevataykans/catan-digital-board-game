@@ -1,9 +1,13 @@
+import java.util.concurrent.Flow;
+
 public class VictoryPoint extends Card {
     // Properties
+    FlowManager flowManager;
 
     // Constructor
     public VictoryPoint()
     {
+        flowManager = FlowManager.getInstance();
         setName("Victory Point");
         setInformation("This special card increases your score by 1 point.");
     }
@@ -14,7 +18,6 @@ public class VictoryPoint extends Card {
      */
     @Override
     public void play() {
-        FlowManager.getInstance().addMust(3);
-        FlowManager.getInstance().addMust(8);
+        flowManager.addMust(10);
     }
 }

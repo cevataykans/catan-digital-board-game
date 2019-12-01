@@ -15,15 +15,19 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class DevCardController {
+
     // Properties
-    SingleGameController controller;
-    Scene scene;
-    ImageView devCardsHover;
-    Rectangle cardPlayableArea;
-    Label cardDragLabel;
-    AnchorPane cardBox;
-    ArrayList<Card> cards;
-    ArrayList<ImageView> uiCards;
+    private SingleGameController controller;
+    private Scene scene;
+    private ImageView devCardsHover;
+    private Rectangle cardPlayableArea;
+    private Label cardDragLabel;
+    private AnchorPane cardBox;
+    private ArrayList<Card> cards;
+    private ArrayList<ImageView> uiCards;
+
+    private boolean movedUp = false;
+    private boolean movedDown = true;
 
     // Constructor
     public DevCardController(Scene scene, SingleGameController controller)
@@ -48,7 +52,7 @@ public class DevCardController {
         cardBoxOut.setOnFinished(event ->
         {
             cardBox.getChildren().clear();
-            ArrayList<Card> cards = controller.game.getCurrentPlayer().getCards();
+            ArrayList<Card> cards = controller.getGame().getCurrentPlayer().getCards();
             ArrayList<ImageView> cardsInUI = new ArrayList<>();
             for (int i = 0; i < cards.size(); i++) {
                 ImageView temp = new ImageView("/images/" + cards.get(i).getName() + ".png");
@@ -96,7 +100,7 @@ public class DevCardController {
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                        controller.game.playDevelopmentCard(cards.get(finalI));
+                        controller.getGame().playDevelopmentCard(cards.get(finalI));
                         controller.infoController.setupLargestArmy();
                         cardBox.getChildren().remove(temp);
                     } else {
@@ -119,21 +123,29 @@ public class DevCardController {
 
         devCardsHover.setOnMouseEntered(event ->
         {
-            TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
-            TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);
-            hoverTT.setByY(-75);
-            boxTT.setByY(-75);
-            hoverTT.play();
-            boxTT.play();
+            if ( movedDown && !movedUp) {
+                TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
+                TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);
+                hoverTT.setByY(-75);
+                boxTT.setByY(-75);
+                hoverTT.play();
+                boxTT.play();
+                movedUp = true;
+                movedDown = false;
+            }
         });
         cardBox.setOnMouseExited(event ->
         {
-            TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
-            TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);
-            hoverTT.setByY(75);
-            boxTT.setByY(75);
-            hoverTT.play();
-            boxTT.play();
+            if ( movedUp && !movedDown) {
+                TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
+                TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);
+                hoverTT.setByY(75);
+                boxTT.setByY(75);
+                hoverTT.play();
+                boxTT.play();
+                movedUp = false;
+                movedDown = true;
+            }
         });
     }
 }

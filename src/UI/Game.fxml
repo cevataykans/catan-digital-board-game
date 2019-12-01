@@ -70,8 +70,8 @@
         </ImageView>
       </children>
     </AnchorPane>
-    <AnchorPane fx:id="gameBox" layoutX="418.0" layoutY="117.0" opacity="1.0" prefHeight="693.0" prefWidth="729.0" styleClass="gameBox" />
-    <AnchorPane fx:id="cardBox" layoutX="422.0" layoutY="868.0" prefHeight="92.0" prefWidth="725.0" styleClass="cardBox" />
+    <AnchorPane fx:id="gameBox" layoutX="418.0" layoutY="117.0" opacity="1.0" prefHeight="671.0" prefWidth="729.0" styleClass="gameBox" />
+    <AnchorPane fx:id="cardBox" layoutX="423.0" layoutY="869.0" prefHeight="67.22509765625" prefWidth="725.0" styleClass="cardBox" />
     <Rectangle fx:id="cardPlayArea" arcHeight="5.0" arcWidth="5.0" fill="#ffcccc35" height="200.0" layoutX="422.0" layoutY="511.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="686.0" />
     <Label fx:id="cardDragLabel" layoutX="691.0" layoutY="601.0" text="Drag Here To Play" textFill="#292929" visible="false">
       <font>
@@ -83,17 +83,17 @@
         <Font size="18.0" fx:id="x1" />
       </font>
     </Button>
-    <ImageView fx:id="die1Result" fitHeight="40.0" fitWidth="40.0" layoutX="1278.0" layoutY="508.0" pickOnBounds="true" preserveRatio="true" visible="false">
+    <ImageView fx:id="die1Result" fitHeight="40.0" fitWidth="40.0" layoutX="1390.0" layoutY="610.0" pickOnBounds="true" preserveRatio="true" visible="true">
       <image>
         <Image url="@../images/die1.png" />
       </image>
     </ImageView>
-    <ImageView fx:id="die2Result" fitHeight="40.0" fitWidth="40.0" layoutX="1328.0" layoutY="508.0" pickOnBounds="true" preserveRatio="true" visible="false">
+    <ImageView fx:id="die2Result" fitHeight="40.0" fitWidth="40.0" layoutX="1350.0" layoutY="610.0" pickOnBounds="true" preserveRatio="true" visible="true">
       <image>
         <Image url="@../images/die2.png" />
       </image>
     </ImageView>
-    <ImageView fx:id="diceRollAvailable" fitHeight="65.4366184779576" fitWidth="101.0" layoutX="1339.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true" style="">
+    <ImageView fx:id="diceRollAvailable" fitHeight="65.4366184779576" fitWidth="101.0" layoutX="1339.0" layoutY="599.0" pickOnBounds="true" preserveRatio="true" style="">
       <image>
         <Image url="@../images/diceAvaibleGif.gif" />
       </image>
@@ -129,7 +129,7 @@
     <Circle fx:id="other3Info" fill="DODGERBLUE" layoutX="1390.0" layoutY="475.0" radius="32.0" stroke="BLACK" strokeType="INSIDE" />
     <AnchorPane fx:id="other1Box" layoutX="1151.0" layoutY="207.0" minHeight="40.0" prefHeight="85.0" prefWidth="200.0" visible="false">
       <children>
-        <Label fx:id="other1Name" layoutX="83.0" layoutY="0.0" text="Name" />
+        <Label fx:id="other1Name" layoutX="91.0" layoutY="4.0" text="Name" />
         <ProgressIndicator fx:id="other1Score" layoutX="14.0" layoutY="26.0" progress="0.0" />
         <Label layoutX="50.0" layoutY="59.0" text="Longest Road">
           <font>
@@ -151,7 +151,7 @@
     </AnchorPane>
     <AnchorPane fx:id="other2Box" layoutX="1151.0" layoutY="319.0" minHeight="40.0" prefHeight="85.0" prefWidth="200.0" visible="false">
       <children>
-        <Label fx:id="other2Name" layoutX="83.0" layoutY="0.0" text="Name" />
+        <Label fx:id="other2Name" layoutX="91.0" layoutY="4.0" text="Name" />
         <ProgressIndicator fx:id="other2Score" layoutX="14.0" layoutY="26.0" progress="0.0" />
         <Label font="$x4" layoutX="50.0" layoutY="59.0" text="Longest Road" />
         <Label font="$x4" layoutX="123.0" layoutY="59.0" text="Longest Army" />
@@ -169,7 +169,7 @@
     </AnchorPane>
     <AnchorPane fx:id="other3Box" layoutX="1151.0" layoutY="433.0" minHeight="40.0" prefHeight="85.0" prefWidth="200.0" visible="false">
       <children>
-        <Label fx:id="other3Name" layoutX="83.0" layoutY="0.0" text="Name" />
+        <Label fx:id="other3Name" layoutX="91.0" layoutY="4.0" text="Name" />
         <ProgressIndicator fx:id="other3Score" layoutX="14.0" layoutY="26.0" progress="0.0" />
         <Label font="$x4" layoutX="50.0" layoutY="59.0" text="Longest Road" />
         <Label font="$x4" layoutX="123.0" layoutY="59.0" text="Longest Army" />

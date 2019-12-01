@@ -1,7 +1,4 @@
-import animatefx.animation.FadeIn;
-import animatefx.animation.FadeInRight;
-import animatefx.animation.FadeOut;
-import animatefx.animation.FadeOutLeft;
+import animatefx.animation.*;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -25,6 +22,9 @@ public class PlayerInfoController {
     ArrayList<ProgressIndicator> playerScores;
     ArrayList<ImageView> longestRoads;
     ArrayList<ImageView> largestArmies;
+    boolean other1Shown = false;
+    boolean other2Shown = false;
+    boolean other3Shown = false;
 
     // Constructor
     public PlayerInfoController(Scene scene, SingleGameController controller)
@@ -42,16 +42,27 @@ public class PlayerInfoController {
 
         other1.setOnMouseEntered(event ->
         {
-            showPlayer(1);
+            if ( !other1Shown)
+            {
+                other1Shown = true;
+                showPlayer(1);
+            }
         });
         other1.setOnMouseExited(event ->
         {
-            hidePlayer(1);
+            if ( other1Shown)
+            {
+                hidePlayer(1);
+            }
         });
 
         other2.setOnMouseEntered(event ->
         {
-            showPlayer(2);
+            if ( !other2Shown)
+            {
+                other2Shown = true;
+                showPlayer(2);
+            }
         });
         other2.setOnMouseExited(event ->
         {
@@ -60,7 +71,11 @@ public class PlayerInfoController {
 
         other3.setOnMouseEntered(event ->
         {
-            showPlayer(3);
+            if ( !other3Shown)
+            {
+                other3Shown = true;
+                showPlayer(3);
+            }
         });
         other3.setOnMouseExited(event ->
         {
@@ -156,13 +171,13 @@ public class PlayerInfoController {
         {
             FadeIn animation1In = new FadeIn(otherPlayers.get(0));
             otherPlayers.get(0).getStyleClass().clear();
-            otherPlayers.get(0).getStyleClass().add(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 1) % 4)
+            otherPlayers.get(0).getStyleClass().add(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 1) % 4)
                     .getColor().toString().substring(1) + "Circle");
             playerAnchors.get(1).getStyleClass().clear();
-            playerAnchors.get(1).getStyleClass().add(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 1) % 4)
+            playerAnchors.get(1).getStyleClass().add(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 1) % 4)
                     .getColor().toString().substring(1) + "PlayerBox");
-            playerNames.get(1).setText(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 1) % 4).getName());
-            playerScores.get(1).setProgress(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 1) % 4).getScore() * 1.0 / 10);
+            playerNames.get(1).setText(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 1) % 4).getName());
+            playerScores.get(1).setProgress(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 1) % 4).getScore() * 1.0 / 10);
             animation1In.setSpeed(3);
             animation1In.play();
         });
@@ -170,13 +185,13 @@ public class PlayerInfoController {
         {
             FadeIn animation2In = new FadeIn(otherPlayers.get(1));
             otherPlayers.get(1).getStyleClass().clear();
-            otherPlayers.get(1).getStyleClass().add(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 2) % 4)
+            otherPlayers.get(1).getStyleClass().add(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 2) % 4)
                     .getColor().toString().substring(1) + "Circle");
             playerAnchors.get(2).getStyleClass().clear();
-            playerAnchors.get(2).getStyleClass().add(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 2) % 4)
+            playerAnchors.get(2).getStyleClass().add(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 2) % 4)
                     .getColor().toString().substring(1) + "PlayerBox");
-            playerNames.get(2).setText(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 2) % 4).getName());
-            playerScores.get(2).setProgress(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 2) % 4).getScore() * 1.0 / 10);
+            playerNames.get(2).setText(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 2) % 4).getName());
+            playerScores.get(2).setProgress(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 2) % 4).getScore() * 1.0 / 10);
             animation2In.setSpeed(3);
             animation2In.play();
         });
@@ -184,13 +199,13 @@ public class PlayerInfoController {
         {
             FadeIn animation3In = new FadeIn(otherPlayers.get(2));
             otherPlayers.get(2).getStyleClass().clear();
-            otherPlayers.get(2).getStyleClass().add(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 3) % 4)
+            otherPlayers.get(2).getStyleClass().add(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 3) % 4)
                     .getColor().toString().substring(1) + "Circle");
             playerAnchors.get(3).getStyleClass().clear();
-            playerAnchors.get(3).getStyleClass().add(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 3) % 4)
+            playerAnchors.get(3).getStyleClass().add(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 3) % 4)
                     .getColor().toString().substring(1) + "PlayerBox");
-            playerNames.get(3).setText(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 3) % 4).getName());
-            playerScores.get(3).setProgress(controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + 3) % 4).getScore() * 1.0/ 10);
+            playerNames.get(3).setText(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 3) % 4).getName());
+            playerScores.get(3).setProgress(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 3) % 4).getScore() * 1.0/ 10);
             animation3In.setSpeed(3);
             animation3In.play();
         });
@@ -203,12 +218,12 @@ public class PlayerInfoController {
         {
             FadeIn infoIn = new FadeIn(playerAnchors.get(0));
             playerAnchors.get(0).getStyleClass().clear();
-            playerAnchors.get(0).getStyleClass().add(controller.game.getCurrentPlayer().getColor().toString().substring(1) + "PlayerBox");
-            playerNames.get(0).setText(controller.game.getCurrentPlayer().getName());
+            playerAnchors.get(0).getStyleClass().add(controller.getGame().getCurrentPlayer().getColor().toString().substring(1) + "PlayerBox");
+            playerNames.get(0).setText(controller.getGame().getCurrentPlayer().getName());
             infoIn.setSpeed(3);
 
-            playerScores.get(0).setProgress(controller.game.getCurrentPlayer().getScore() * 1.0 / 10);
-            int playercurrPlayerResources[] = controller.game.getCurrentPlayer().getResources();
+            playerScores.get(0).setProgress(controller.getGame().getCurrentPlayer().getScore() * 1.0 / 10);
+            int playercurrPlayerResources[] = controller.getGame().getCurrentPlayer().getResources();
 
             for ( int i = 0; i < currPlayerResources.size(); i++)
             {
@@ -222,17 +237,23 @@ public class PlayerInfoController {
 
     private void showPlayer(int otherIndex)
     {
-        FadeInRight showAnim = new FadeInRight(playerAnchors.get(otherIndex));
-        showAnim.play();
         playerAnchors.get(otherIndex).setVisible(true);
+        ZoomIn showAnim = new ZoomIn(playerAnchors.get(otherIndex));
+        showAnim.play();
     }
 
     private void hidePlayer(int otherIndex)
     {
-        FadeOutLeft hideAnim = new FadeOutLeft(playerAnchors.get(otherIndex));
+        ZoomOut hideAnim = new ZoomOut(playerAnchors.get(otherIndex));
         hideAnim.setOnFinished(event ->
         {
             playerAnchors.get(otherIndex).setVisible(false);
+            switch (otherIndex)
+            {
+                case 1: other1Shown = false; break;
+                case 2: other2Shown = false; break;
+                case 3: other3Shown = false; break;
+            }
         });
         hideAnim.play();
     }
@@ -240,7 +261,7 @@ public class PlayerInfoController {
     public void setupLongestRoad() {
         for ( int i = 0; i < 4; i++)
         {
-            if ( controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + i) % 4) == controller.game.getLongestRoadPlayer())
+            if ( controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + i) % 4) == controller.getGame().getLongestRoadPlayer())
             {
                 longestRoads.get(i).setVisible(true);
                 FadeIn laIn = new FadeIn(longestRoads.get(i));
@@ -265,7 +286,7 @@ public class PlayerInfoController {
     public void setupLargestArmy() {
         for ( int i = 0; i < 4; i++)
         {
-            if ( controller.game.getPlayer((controller.game.getCurrentPlayerIndex() + i) % 4) == controller.game.getLargestArmyPlayer())
+            if ( controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + i) % 4) == controller.getGame().getLargestArmyPlayer())
             {
                 largestArmies.get(i).setVisible(true);
                 FadeIn laIn = new FadeIn(largestArmies.get(i));

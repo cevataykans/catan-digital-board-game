@@ -14,7 +14,7 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 
-public class OpeningController implements Controller{
+public class OpeningController extends Controller{
     // Properties
     Parent root;
     Scene scene;

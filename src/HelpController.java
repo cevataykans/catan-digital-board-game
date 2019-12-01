@@ -12,10 +12,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class HelpController implements Controller{
+public class HelpController extends Controller{
     // Properties
-    Parent root;
-    Scene scene;
     ImageView goBack;
 
     // Constructor

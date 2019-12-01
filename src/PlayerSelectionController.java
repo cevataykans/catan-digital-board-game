@@ -14,10 +14,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PlayerSelectionController implements Controller{
+public class PlayerSelectionController extends Controller{
     // Properties
-    Parent root;
-    Scene scene;
     ImageView goBack;
     Button startButton;
     TextField player1Name;

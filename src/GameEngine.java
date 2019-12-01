@@ -20,11 +20,17 @@ public class GameEngine {
 
     //Singleton Instance
     private static GameEngine gameEngine = null;
-    private static Stage primaryStage = null;
-    private static ArrayList<Player> players = null;
 
     // Properties
     private Controller controller;
+    private Stage primaryStage;
+    private ArrayList<Player> players;
+
+    // Constructor
+    private GameEngine() {
+        primaryStage = null;
+        players = null;
+    }
 
     // Methods
     /**
@@ -42,11 +48,7 @@ public class GameEngine {
         this.primaryStage = primaryStage;
         try {
             ArrayList<Player> temp = new ArrayList<>();
-            temp.add(new Player("xx", Color.BLUE));
-            temp.add(new Player("xx", Color.WHITE));
-            temp.add(new Player("xx", Color.ORANGE));
-            temp.add(new Player("xx", Color.BROWN));
-            controller = new SingleGameController(primaryStage, temp);
+            controller = new OpeningController(primaryStage);
         }
         catch (IOException e)
         {
