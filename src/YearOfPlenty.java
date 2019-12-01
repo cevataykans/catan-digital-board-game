@@ -14,6 +14,6 @@ public class YearOfPlenty extends Card {
      */
     @Override
     public void play() {
-        FlowManager.getInstance().addMust(5);
+        getFlowManager().addMust(5);
     }
 }

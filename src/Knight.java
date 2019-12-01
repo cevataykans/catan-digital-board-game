@@ -17,7 +17,7 @@ public class Knight extends Card{
      */
     @Override
     public void play() {
-        FlowManager.getInstance().addMust(3);
-        FlowManager.getInstance().addMust(8);
+        getFlowManager().addMust(3);
+        getFlowManager().addMust(8);
     }
 }

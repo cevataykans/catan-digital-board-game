@@ -15,6 +15,6 @@ public class ChangeOfFortune extends Card {
      */
     @Override
     public void play() {
-        FlowManager.getInstance().addMust(7);
+        getFlowManager().addMust(7);
     }
 }

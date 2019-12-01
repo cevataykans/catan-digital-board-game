@@ -15,6 +15,6 @@ public class Monopoly extends Card {
      */
     @Override
     public void play() {
-        FlowManager.getInstance().addMust(4);
+        getFlowManager().addMust(4);
     }
 }

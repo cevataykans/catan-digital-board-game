@@ -12,11 +12,13 @@ public abstract class Card
     private String name;
     private String information;
     private boolean isPlayable;
+    private FlowManager flowManager;
 
     // Constructor
     public Card()
     {
         isPlayable = false;
+        flowManager = FlowManager.getInstance();
     }
 
     // Functions
@@ -68,5 +70,13 @@ public abstract class Card
      */
     public void setPlayable(boolean playable) {
         isPlayable = playable;
+    }
+
+    /**
+     * Gets the flow manager.
+     * @return flow manager.
+     */
+    public FlowManager getFlowManager() {
+        return flowManager;
     }
 }

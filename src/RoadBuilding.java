@@ -14,7 +14,7 @@ public class RoadBuilding extends Card {
      */
     @Override
     public void play() {
-        FlowManager.getInstance().addMust(0);
-        FlowManager.getInstance().addMust(0);
+        getFlowManager().addMust(0);
+        getFlowManager().addMust(0);
     }
 }
