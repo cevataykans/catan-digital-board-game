@@ -38,5 +38,65 @@
         <Image url="@../images/goBackToMain.png" />
       </image>
     </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="128.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/settlement0x0000ffff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="128.0" layoutY="399.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/road0x0000ffff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="128.0" layoutY="591.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/city0x0000ffff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="544.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/settlement0xffffffff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="544.0" layoutY="399.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/road0xffffffff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="544.0" layoutY="591.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/city0xffffffff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="981.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/settlement0xffa500ff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="981.0" layoutY="399.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/road0xffa500ff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="981.0" layoutY="591.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/city0xffa500ff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="1386.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/settlement0xa52a2aff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="1386.0" layoutY="399.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/road0xa52a2aff.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="1386.0" layoutY="591.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/city0xa52a2aff.png" />
+      </image>
+    </ImageView>
   </children>
 </AnchorPane>

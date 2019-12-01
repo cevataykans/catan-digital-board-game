@@ -13,10 +13,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class MainMenuController implements Controller{
+public class MainMenuController extends Controller{
     // Properties
-    Parent root;
-    Scene scene;
     Button playButton;
     Button helpButton;
     Button exitButton;

@@ -25,14 +25,12 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SingleGameController implements Controller {
+public class SingleGameController extends Controller {
     private static int hexIndex = -1;
     private static int tileIndex = -1;
     HashMap<Point2D, Integer> settlementMap = new HashMap<>();
 
     // Properties
-    Parent root;
-    Scene scene;
     FlowManager flowManager;
     ArrayList<Player> players;
     Game game;
@@ -109,7 +107,7 @@ public class SingleGameController implements Controller {
         diceController = new DiceController(scene, this);
 
         gameBox.setOnMouseClicked(mouseEvent -> {
-
+            System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
             // Allow the action to be processed for game board UI if only game board related must, be done
             if ( flowManager.checkMust() < 4 )
             {
@@ -675,5 +673,9 @@ public class SingleGameController implements Controller {
                 statusController.informStatus(mustCheckCode);
             }
         }
+    }
+
+    public Game getGame() {
+        return game;
     }
 }

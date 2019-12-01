@@ -31,6 +31,7 @@ public class SelectionController {
     }
 
     public void showPlayerSelection(ArrayList<Player> playersToSelect) {
+        selectionBox.getChildren().clear();
         controller.statusController.informStatus(8);
         selectionLabel.setText( "Choose Your Player");
         ArrayList<Rectangle> players = new ArrayList<>();
@@ -72,6 +73,7 @@ public class SelectionController {
     }
 
     public void showResourceSelection(String id) {
+        selectionBox.getChildren().clear();
         if ( id == "MONOPOLY")
         {
             controller.statusController.informStatus(5);

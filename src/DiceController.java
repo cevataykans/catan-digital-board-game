@@ -83,7 +83,7 @@ public class DiceController {
 
                 //***** Logic to roll the dice and collect resources, collecting resources could be made in the dice method of game class! *****
                 FlowManager.getInstance().doneMust();
-                ArrayList<Integer> results = controller.game.rollDice();
+                ArrayList<Integer> results = controller.getGame().rollDice();
                 //game.collectResources();
 
                 die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
