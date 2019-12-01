@@ -1,7 +1,15 @@
-import animatefx.animation.FadeInLeft;
-import animatefx.animation.FadeOutRight;
+import animatefx.animation.*;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.effect.Glow;
+import javafx.util.Duration;
+
+/**
+ * This controller manages all the player andd resource selection logic. It has association with the Single-Game controller.
+ * @author Talha Şen
+ * @version 29.11.2019
+ */
 
 public class StatusController {
     // Properties
@@ -18,17 +26,29 @@ public class StatusController {
     }
 
     // Methods
+    /**
+     * This method initializes the UI components (taken from the game's fxml) related to the status and it
+     * adds the logic as a listener to the components.
+     */
     private void initialize()
     {
         statusText = (Label) scene.lookup("#statusText");
+        statusText.setText("-");
+        statusText.setAlignment(Pos.CENTER);
     }
 
+    /**
+     * This method changes the status of the game corresponding to the code given as a parameter.
+     * @param resultCode is the code of the current status.
+     */
     public void informStatus(int resultCode)
     {
+        // Initialize an out animation for the previous status.
         FadeOutRight animation = new FadeOutRight(statusText);
         animation.setSpeed(3);
         animation.setOnFinished(event ->
         {
+            // Check the status code given, change the status text corresponding to the code.
             if ( resultCode == -1 )
             {
                 statusText.setText( controller.getGame().getCurrentPlayer().getName() + ", there is no connection for a road to build");
@@ -105,6 +125,7 @@ public class StatusController {
             {
                 statusText.setText( "Function could not detect the error, lol, exploded!");
             }
+            // Initialize an in animation for the new status.
             FadeInLeft animation2 = new FadeInLeft(statusText);
             animation2.setSpeed(3);
             animation2.play();
