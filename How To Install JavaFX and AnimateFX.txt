@@ -22,7 +22,7 @@ on bottom right and then you are done with modules.
 
 Edit Configurations:
 
-For the files you want to run (In our case the GameStart, but you may have Test UI files you want to run) go to Run > Edit Configurations
+For the files you want to run (In our case the SceneManagement.GameStart, but you may have Test UI files you want to run) go to Run > Edit Configurations
 and select your main class. For its VM Options, copy paste this in there (except change the part I marked below):
 --module-path **PATH TO YOUR JAVAFX FOLDER**\javafx-sdk-11.0.2\lib --add-modules javafx.controls,javafx.fxml
 and click Apply then OK. You are done with JavaFx
