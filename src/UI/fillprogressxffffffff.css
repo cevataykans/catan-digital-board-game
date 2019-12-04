@@ -1,0 +1,17 @@
+.fillindicator{
+	-fx-inner-radius: 50.0;
+}
+.fillindicator-border-circle {
+	-fx-opacity: 0.6;
+	-fx-stroke:  circleindicatorxffffffff-color;
+	-fx-stroke-width: 3.0px;
+	-fx-fill: transparent;
+}
+.fillindicator-filler-circle {
+	-fx-opacity: 0.25;
+	-fx-stroke-width: 0.0px;
+	-fx-fill:  circleindicatorxffffffff-color;
+}
+.fillindicator-filler-cover {
+	-fx-fill: transparent;
+}
