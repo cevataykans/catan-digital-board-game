@@ -15,7 +15,7 @@
         <Image url="@../images/dark-red.jpg" />
       </image>
     </ImageView>
-    <Label layoutX="614.0" prefHeight="67.0" prefWidth="357.0" text="Player Selection" textAlignment="CENTER" textFill="#7200cc" AnchorPane.topAnchor="7.0">
+    <Label layoutX="614.0" prefHeight="67.0" prefWidth="357.0" text="GameFlow.Player Selection" textAlignment="CENTER" textFill="#7200cc" AnchorPane.topAnchor="7.0">
       <font>
         <Font size="50.0" />
       </font>
