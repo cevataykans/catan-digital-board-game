@@ -96,15 +96,9 @@ public class SelectionController {
      */
     private void stealResourceFromPlayer( Player stealingFrom)
     {
-        // Check if the action is to be selecting player then stealing a resource.
-        if ( FlowManager.getInstance().checkMust() == 8 )
-        {
-            // If it is, then clear the action from the Flow Manager.
-            FlowManager.getInstance().doneMust();
+        // Steal one of the player's resources and add it to the current player.
+        controller.getGame().getCurrentPlayer().stealResourceFromPlayer( stealingFrom );
 
-            // Steal one of the player's resources and add it to the current player.
-            controller.getGame().getCurrentPlayer().stealResourceFromPlayer( stealingFrom );
-        }
         // Play an out animation for the selection screen after user selects a player.
         new FadeOutRight( selectionBox).play();
         selectionBox.setVisible(false);

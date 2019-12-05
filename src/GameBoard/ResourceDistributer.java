@@ -14,22 +14,25 @@ public class ResourceDistributer
 
 	// Attributes
 	private ArrayList<DistributionNode>[] resourceDistributionList;
-	private Tile[][] board;
 
-	public ResourceDistributer( Tile[][] board)
+	public ResourceDistributer()
 	{
 		resourceDistributionList = new ArrayList[11];
+
 		// There are 11 resource dice denotion in range: 2-3-4-5-6-7-8-9-10-11-12
 		for(int i = 0; i < 11; i++){
 			resourceDistributionList[i] = new ArrayList<>();
 		}
-
-		this.board = board;
 	}
 
-	public void addHexagonResource(Player player, int x, int y)
+	/**
+	 * This function adds a resource node to distribute to the player
+	 * @param player player who puchases the building tile.
+	 * @param tile is board[ y][ x] for getting start points.
+	 */
+	public void addHexagonResource( Player player, Tile tile )
 	{
-		ArrayList<StartTile> startPoints = ((BuildingTile)board[y][x]).getStartTiles();
+		ArrayList<StartTile> startPoints = ( (BuildingTile) tile).getStartTiles();
 		for(int i = 0; i < startPoints.size() ; i++){
 			StartTile startPoint = startPoints.get(i);
 			int diceNumber = startPoint.getDiceNumber();

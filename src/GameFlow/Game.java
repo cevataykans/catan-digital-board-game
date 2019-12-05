@@ -27,11 +27,12 @@ public class Game
 {
     // Constants
     private final int TOTAL_DEV_CARDS = 25;
+    public static final int DICE_SEVEN = 7;
 
     // Attributes
     private GameBoard board;
     private ArrayList<Player> players;
-    private ResourceDistributer distributor;
+    private ResourceManager resManager;
 
     private int turnNumber;
     private int playerCount;
@@ -73,6 +74,8 @@ public class Game
                 card = new VictoryPoint();
             devCards.push(card);
         }
+
+        resManager = new ResourceManager( this);
     }
 
     // Functions
@@ -83,7 +86,6 @@ public class Game
     {
         // The order must not be changed!
         board.configurate();
-        distributor = new ResourceDistributer( board.getBoard() );
 
         Collections.shuffle(players);
         Collections.shuffle(devCards);
@@ -106,7 +108,7 @@ public class Game
         turnNumber++;
         if( turnNumber == 2*playerCount)
         {
-            distributor.collectResources( board.getRobber() );
+            resManager.collectResources( board.getRobber() );
             flowManager.addMust(7); // roll dice
             gameStatus = 1;
         }
@@ -158,7 +160,7 @@ public class Game
             flowManager.addMust(8);// get neighbors
         }
         else {
-            distributor.collectResources( currentDice, board.getRobber() );
+            resManager.collectResources( currentDice, board.getRobber() );
         }
     }
 
@@ -378,13 +380,13 @@ public class Game
         }
         else if( !(((StructureTile)board.getTile( x, y)).getAvailability()) ){
             board.setStructure( cp, x ,y );
-            distributor.addHexagonResource( cp, x, y);
+            resManager.addHexagonResource( cp, board.getTile( x, y) );
             cp.buySettlement();
             updateLongestRoad();
         }
         else{
             board.setStructure( cp, x ,y);
-            distributor.addHexagonResource( cp, x, y);
+            resManager.addHexagonResource( cp, board.getTile( x, y) );
             cp.buyCity();
         }
     }
@@ -452,8 +454,8 @@ public class Game
      * @param portType is the type of port wanted to check
      * @return true if the current player has this particular port, false otherwise
      */
-    public boolean selectPort(Port.PortType portType){
-        return getCurrentPlayer().hasPort( portType);
+    public boolean selectHarbor( Harbor.HarborType portType){
+        return getCurrentPlayer().hasHarbor( portType);
     }
 
     /**
@@ -463,34 +465,34 @@ public class Game
      * @param discardedMaterial is the material wanted to be given by the player
      * @param collectedMaterial is the material wanted to be taken by the player
      */
-    public void usePort(Port.PortType portType, int discardedMaterial, int collectedMaterial){
+    public void useHarbor(Harbor.HarborType portType, int discardedMaterial, int collectedMaterial){
         Player player = getCurrentPlayer();
-        if(portType == Port.PortType.THREE_TO_ONE){
+        if(portType == Harbor.HarborType.THREE_TO_ONE){
             player.discardMaterial(discardedMaterial, 3);
             player.collectMaterial(collectedMaterial, 1);
         }
 
-        else if(portType == Port.PortType.TWO_TO_ONE_LUMBER){
-            player.discardMaterial(Materials.LUMBER, 2);
+        else if(portType == Harbor.HarborType.TWO_TO_ONE_LUMBER){
+            player.discardMaterial(ResourceManager.LUMBER, 2);
             player.collectMaterial(collectedMaterial, 1);
         }
 
-        else if(portType == Port.PortType.TWO_TO_ONE_WOOL){
-            player.discardMaterial(Materials.WOOL, 2);
+        else if(portType == Harbor.HarborType.TWO_TO_ONE_WOOL){
+            player.discardMaterial(ResourceManager.WOOL, 2);
             player.collectMaterial(collectedMaterial, 1);
         }
 
-        else if(portType == Port.PortType.TWO_TO_ONE_GRAIN){
-            player.discardMaterial(Materials.GRAIN, 2);
+        else if(portType == Harbor.HarborType.TWO_TO_ONE_GRAIN){
+            player.discardMaterial(ResourceManager.GRAIN, 2);
             player.collectMaterial(collectedMaterial, 1);
         }
-        else if(portType == Port.PortType.TWO_TO_ONE_BRICK){
-            player.discardMaterial(Materials.BRICK, 2);
+        else if(portType == Harbor.HarborType.TWO_TO_ONE_BRICK){
+            player.discardMaterial(ResourceManager.BRICK, 2);
             player.collectMaterial(collectedMaterial, 1);
         }
 
-        else if(portType == Port.PortType.TWO_TO_ONE_ORE){
-            player.discardMaterial(Materials.ORE, 2);
+        else if(portType == Harbor.HarborType.TWO_TO_ONE_ORE){
+            player.discardMaterial(ResourceManager.ORE, 2);
             player.collectMaterial(collectedMaterial, 1);
         }
     }
@@ -509,6 +511,15 @@ public class Game
             return true;
         }
         return false;
+    }
+
+    /**
+     * Return the player arraylist for manager to manipulate & use
+     * @return the player array in the game.
+     */
+    public ArrayList<Player> getPlayers()
+    {
+        return this.players;
     }
 
 
