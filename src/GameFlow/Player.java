@@ -1,11 +1,10 @@
 package GameFlow;
 
 import DevelopmentCards.Card;
-import GameBoard.Port;
+import GameBoard.Harbor;
 import GameBoard.StructureTile;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
-import GameBoard.Port;
 
 /**
  * The player class that represents the player in catan gameboard.
@@ -39,7 +38,6 @@ public class Player
 	// Constants
 	private static final int TOT_CARDS = 20; // Array or array list implementation?
 	private static final int TOT_STRUCTURES = 20;
-	private static final int DICE_SEVEN = 7;
 
 	// GameFlow.Player Attributes
 	private String name;
@@ -50,7 +48,7 @@ public class Player
 
 	private ArrayList<StructureTile> structures; // needs to be discuessed for finalization;
 	private ArrayList<Card> cards;
-	private ArrayList<Port> ports;
+	private ArrayList<Harbor> ports;
 
 	// GameFlow.Player Attributes related to score and board
 	private int score;
@@ -106,7 +104,7 @@ public class Player
 	 * A function to enable players steal a random material from other players when the robber is changed.
 	 * @param other other player whose resource is being stolen by this player
 	 */
-	public void stealResourceFromPlayer( Player other )
+	public void stealResourceFromPlayer( Player other ) // implemented in resource Manager
 	{
 		// Other player must have at least one resource
 		if ( other.totResources > 0 )
@@ -134,7 +132,7 @@ public class Player
 	/**
 	 * Gives the player the amount of material stated by the material constant.
 	 * @param material is one of the index of resource array:
-	 *                 GameBoard.Materials.LUMBER, GameBoard.Materials.WOOL, GameBoard.Materials.GRAIN, GameBoard.Materials.BRICK, GameBoard.Materials.ORE.
+	 *                 ResourceManager.LUMBER, ResourceManager.WOOL, ResourceManager.GRAIN, ResourceManager.BRICK, ResourceManager.ORE.
 	 * @param amount is the number of materials to give to this player.
 	 */
 	public void collectMaterial( int material, int amount)
@@ -146,7 +144,7 @@ public class Player
 	/**
 	 * Takes from the player the amount of material stated by the material constant.
 	 * @param material is one of the index of resource array:
-	 *                 GameBoard.Materials.LUMBER, GameBoard.Materials.WOOL, GameBoard.Materials.GRAIN, GameBoard.Materials.BRICK, GameBoard.Materials.ORE.
+	 *                 ResourceManager.LUMBER, ResourceManager.WOOL, ResourceManager.GRAIN, ResourceManager.BRICK, ResourceManager.ORE.
 	 * @param amount is the number of materials to discard from this player.
 	 */
 	public void discardMaterial( int material, int amount)
@@ -160,7 +158,7 @@ public class Player
 	 * @param resourceToCheck resources array to check if player has more than argument resources.
 	 * @return true if the player has enough resources for the given argument, else false.
 	 */
-	public boolean hasEnoughResources( int[] resourceToCheck )
+	public boolean hasEnoughResources( int[] resourceToCheck ) // implemented in resource Manager
 	{
 		// iterate over resources to check if player has sufficient resources;
 		for ( int i = 0; i < resourceToCheck.length; i++ )
@@ -191,10 +189,10 @@ public class Player
 	/**
 	 * Randomly discards half of the resources if the player has more than 7 resources!
 	 */
-	public void discardHalfOfResources()
+	public void discardHalfOfResources() // implemented in resource Manager
 	{
 		// Check if the player has more than 7 resources.
-		if ( this.totResources > DICE_SEVEN)
+		if ( this.totResources > Game.DICE_SEVEN)
 		{
 			int discardCount = this.totResources / 2; // take the floor to discard
 			this.totResources -= discardCount; // update the after resource count
@@ -337,14 +335,6 @@ public class Player
 		score += scoreAmount;
 	}
 
-	/*
-	******Open to discussion*******
-
-	public void tradeWithWord() // 4:1
-	public void tradeWithPort() // 3:1
-	public void tradeWithSpecialPort // 2:1 and material
-	 */
-
 	/**
 	 * A private function for the player to purchase a structure.
 	 * @param resources is the amount of resources to be given to the bank.
@@ -384,14 +374,6 @@ public class Player
 	}
 
 	/**
-	 * Sets the player name to the given name.
-	 * @param name The name that will be set as player's name.
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	/**
 	 * Gets the player's color.
 	 * @return player's color.
 	 */
@@ -411,22 +393,7 @@ public class Player
 		return resources;
 	}
 
-	public void setResources(int[] resources) {
-		this.resources = resources;
-	}
-
-	public void addResource( int[] resources ){
-		this.resources[0] += resources[0];
-		this.resources[1] += resources[1];
-		this.resources[2] += resources[2];
-		this.resources[3] += resources[3];
-		this.resources[4] += resources[4];
-		this.totResources += resources[ 0] + resources[ 1] + resources[ 2] + resources[3] + resources[4];
-	}
-
 	public ArrayList<Card> getCards() {return cards;}
-
-	public void setCards(ArrayList<Card> cards) { this.cards = cards;}
 
 	/**
 	 * Returns the total settlement count of the player.
@@ -456,21 +423,30 @@ public class Player
 	 * Add a new port to the player's ports ArrayList
 	 * @param port is the portType wanted to add
 	 */
-	public void addPort(Port.PortType port){
-		ports.add(new Port(port));
+	public void addHarbor( Harbor.HarborType port){
+		ports.add( new Harbor(port));
 	}
 
 	/**
 	 * Return player's port list
 	 * @return ports which is player's port list
 	 */
-	public boolean hasPort(Port.PortType port){
+	public boolean hasHarbor( Harbor.HarborType port){
 
 		boolean result = false;
 		for(int i = 0 ; i < ports.size() ; i++){
-			if(ports.get(i).getPortType() == port)
+			if( ports.get(i).getHarborType() == port)
 				result = true;
 		}
 		return result;
+	}
+
+	/**
+	 * Return the total resource count of the player.
+	 * @return int - the number of total resource count.
+	 */
+	public int getTotalResCount()
+	{
+		return this.totResources;
 	}
 }

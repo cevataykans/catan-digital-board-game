@@ -244,8 +244,8 @@ public class GameBoard {
             ((BuildingTile)board[y][x]).setOwner( player);
             player.addStructure( (BuildingTile)board[y][x]);
 
-            if(((BuildingTile)board[y][x]).getPort() != null){
-                player.addPort(((BuildingTile)board[y][x]).getPort());
+            if(((BuildingTile)board[y][x]).getHarbor() != null){
+                player.addHarbor(((BuildingTile)board[y][x]).getHarbor());
             }
         }
         else{ // city building

@@ -16,7 +16,7 @@ public class BuildingTile extends StructureTile {
 
     //properties
     private BuildingTile.BuildingType type;
-    private Port.PortType port;
+    private Harbor.HarborType port;
     private ArrayList<StartTile> startTiles;
 
     //constructor
@@ -46,7 +46,7 @@ public class BuildingTile extends StructureTile {
      * get port type
      * @return port type
      */
-    public Port.PortType getPort(){
+    public Harbor.HarborType getHarbor(){
         return port;
     }
 
@@ -54,7 +54,7 @@ public class BuildingTile extends StructureTile {
      * sets the port type of this hexagon
      * @param port port type
      */
-    public void setPort( Port.PortType port){
+    public void setHarbor( Harbor.HarborType port){
         this.port = port;
     }
 

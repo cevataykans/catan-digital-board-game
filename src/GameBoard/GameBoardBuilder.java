@@ -19,7 +19,7 @@ public class GameBoardBuilder
 	private StartTile robber;
 	private ArrayList<Integer> diceNumbers;
 	private ArrayList<Integer> resources;
-	private ArrayList<Port.PortType> ports;
+	private ArrayList<Harbor.HarborType> ports;
 
 	public GameBoardBuilder()
 	{
@@ -39,7 +39,7 @@ public class GameBoardBuilder
 		this.addDiceNumbers();
 		this.addResources();
 		this.setUpGameBoard();
-		this.setPorts();
+		this.setHarbors();
 		this.setSeaTiles();
 	}
 
@@ -80,14 +80,14 @@ public class GameBoardBuilder
 	/**
 	 * distrubutes ports to exact positions randomly
 	 */
-	private void setPorts(){
+	private void setHarbors(){
 		int[][] positions={ // (x,y,x,y)
 				{10,0,12,0},{4,4,6,2},{0,10,2,8},{0,14,2,16},{6,18,8,18},{14,18,16,18},{20,16,22,14},{20,8,22,10},{16,2,18,4}
 		};
 		int[] portTypes={4,1,1,1,1,1};
 
 		int ii = 0;
-		for( Port.PortType pt : Port.PortType.values() ){
+		for( Harbor.HarborType pt : Harbor.HarborType.values() ){
 			for( int j = 0 ; j < portTypes[ii] ; j++ ){
 				ports.add(pt);
 			}
@@ -99,8 +99,8 @@ public class GameBoardBuilder
 		for( int i = 0 ; i < ports.size(); i++ )
 		{
 			System.out.println( i);
-			((BuildingTile)board[positions[i][1]][positions[i][0]]).setPort(ports.get(i));
-			((BuildingTile)board[positions[i][3]][positions[i][2]]).setPort(ports.get(i));
+			((BuildingTile)board[positions[i][1]][positions[i][0]]).setHarbor( ports.get(i));
+			((BuildingTile)board[positions[i][3]][positions[i][2]]).setHarbor( ports.get(i));
 		}
 	}
 

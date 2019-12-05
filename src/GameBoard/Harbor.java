@@ -7,18 +7,18 @@ package GameBoard;
  * Class is created and functions are implemented.
  */
 
-public class Port{
+public class Harbor{
 
-	public enum PortType{
+	public enum HarborType{
 	    THREE_TO_ONE, TWO_TO_ONE_LUMBER, TWO_TO_ONE_WOOL, TWO_TO_ONE_GRAIN, TWO_TO_ONE_BRICK, TWO_TO_ONE_ORE
     }
 
     // Attributes
-    private PortType portType;
+    private HarborType harborType;
 
     // Constructor
-    public Port(PortType portType){
-	    this.portType = portType;
+    public Harbor( HarborType harborType){
+	    this.harborType = harborType;
     }
 
     // Methods
@@ -26,7 +26,7 @@ public class Port{
      * Returns the port type.
      * @return the type of the port.
      */
-    public PortType getPortType(){
-	    return this.portType;
+    public HarborType getHarborType(){
+	    return this.harborType;
     }
 }

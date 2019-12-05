@@ -126,7 +126,7 @@ public class DevCardController {
                     Bounds playAreaPosition = cardPlayableArea.localToScene(cardPlayableArea.getBoundsInLocal());
                     // Check if the dropped location of the card is inside the playable area, if it is play the card.
                     // If not, send the card to its original location.
-                    if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
+                    /*if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
@@ -136,7 +136,7 @@ public class DevCardController {
                     } else {
                         temp.setTranslateX(0);
                         temp.setTranslateY(0);
-                    }
+                    }*/
                 });
                 // Add the card image to the ArrayList.
                 cardsInUI.add(temp);
