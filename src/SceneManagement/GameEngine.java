@@ -106,18 +106,6 @@ public class GameEngine {
             case 3:
                 controller = new SingleGameController(primaryStage, players);
                 break;
-            // 4 is the code for Login Controller.
-            case 4:
-                controller = new LoginController(primaryStage);
-                break;
-            // 5 is the code for Register Controller.
-            case 5:
-                controller = new RegisterController(primaryStage);
-                break;
-            // 6 is the coded for Matchmaking Controller.
-            case 6:
-                controller = new MatchmakingController(primaryStage);
-                break;
             /* More will be added when new controllers are implemented alongside with multi-player */
         }
     }
