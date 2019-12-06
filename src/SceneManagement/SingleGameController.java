@@ -107,6 +107,7 @@ public class SingleGameController extends SceneController {
                 FadeIn animation = new FadeIn(finalRoot);
                 animation.setSpeed(3.5);
                 animation.play();
+                SoundManager.getInstance().playBacktrack(SoundManager.Backtrack.GAME);
             }
         });
         new Thread(sleeper).start();
@@ -357,6 +358,7 @@ public class SingleGameController extends SceneController {
                 yRob.set( e.getY());
                 distXRob = xRob.get() - robber.getX();
                 distYRob = yRob.get() - robber.getY();
+                SoundManager.getInstance().playEffect(SoundManager.Effect.ROBBER);
             }
             else
             {
@@ -413,6 +415,7 @@ public class SingleGameController extends SceneController {
                     robber.setX( getXToDisplay() );
                     robber.setY( movedY * 30 + 35 );
                     game.changeRobber( movedX, movedY);
+                    SoundManager.getInstance().playEffect(SoundManager.Effect.ROBBER);
 
                     // Now get the neighbors of that hexagon and display player selection to do the must
                     ArrayList<Player> neighbors = game.getNeighborPlayers( movedX, movedY);
@@ -468,6 +471,7 @@ public class SingleGameController extends SceneController {
             // Refresh current player information.
             infoController.setupCurrentPlayer();
             infoController.setupLongestRoad();
+            SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
         }
     }
 
@@ -505,6 +509,7 @@ public class SingleGameController extends SceneController {
             // Refreshing current player information
             infoController.setupCurrentPlayer();
             infoController.setupLongestRoad();
+            SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
 
             // If its initial state, player has to immediately end the turn.
             if ( flowManager.checkMust() == 6 )
@@ -586,6 +591,7 @@ public class SingleGameController extends SceneController {
             settlementOut.play();
 
             infoController.setupCurrentPlayer();
+            SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
         }
     }
 
@@ -744,6 +750,7 @@ public class SingleGameController extends SceneController {
                 flowManager.doneMust();
             }
             game.endTurn();
+            SoundManager.getInstance().playEffect(SoundManager.Effect.END_TURN);
             infoController.setupOtherPlayers();
             infoController.setupCurrentPlayer();
             infoController.setupLargestArmy();

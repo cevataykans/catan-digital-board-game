@@ -43,6 +43,7 @@ public class OpeningController extends SceneController{
      */
     @Override
     public void initialize(Stage stage) throws IOException {
+        SoundManager.getInstance().playBacktrack(SoundManager.Backtrack.OPENING);
         scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/UI/Intro1.css").toExternalForm());
 

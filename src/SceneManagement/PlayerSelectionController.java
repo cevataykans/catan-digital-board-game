@@ -73,6 +73,7 @@ public class PlayerSelectionController extends SceneController{
                 FadeIn animation = new FadeIn(finalRoot);
                 animation.setSpeed(3.5);
                 animation.play();
+                SoundManager.getInstance().playBacktrack(SoundManager.Backtrack.PLAYER_SELECTION);
             }
         });
         new Thread(sleeper).start();
