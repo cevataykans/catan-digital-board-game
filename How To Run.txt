@@ -46,8 +46,8 @@ You are done with installing AnimateFX.
 
 How to add javafx.media:
 
-Open edit configuration.
-At VM options after --add-modules include javafx.media
+Open edit configuration of GameApplication.
+At VM options, add javafx.media to the end of the line.
 Click OK. It is done!
 
 AFTER YOU HAVE DONE BOTH, YOU CAN RUN THE MAIN UI CLASSES OF THE PROJECT!
