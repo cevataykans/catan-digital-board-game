@@ -23,7 +23,8 @@ import java.io.IOException;
 
 public class MainMenuController extends SceneController{
     // Properties
-    Button playButton;
+    Button playLocalButton;
+    Button playOnlineButton;
     Button helpButton;
     Button exitButton;
 
@@ -68,17 +69,20 @@ public class MainMenuController extends SceneController{
                 finalRoot.setVisible(true);
                 FadeIn animation = new FadeIn(finalRoot);
                 animation.play();
+                SoundManager.getInstance().playEffect(SoundManager.Effect.BUGLE);
+                SoundManager.getInstance().playBacktrack(SoundManager.Backtrack.MAIN_MENU);
             }
         });
         new Thread(sleeper).start();
 
         // Get the 3 main buttons of the main menu from its fxml file.
-        playButton = (Button) scene.lookup("#playButton");
+        playLocalButton = (Button) scene.lookup("#playLocalButton");
+        playOnlineButton = (Button) scene.lookup("#playOnlineButton");
         helpButton = (Button) scene.lookup("#helpButton");
         exitButton = (Button) scene.lookup("#exitButton");
 
-        // Play button changes scene to GameFlow.Player Selection
-        playButton.setOnMouseClicked(event -> {
+        // Play Local button changes scene to Player Selection
+        playLocalButton.setOnMouseClicked(event -> {
             // Initialize closing animation for main menu with 3.5x the normal speed.
             FadeOut animation2 = new FadeOut(finalRoot);
             animation2.setSpeed(3.5);
@@ -87,9 +91,31 @@ public class MainMenuController extends SceneController{
                 try
                 {
                     // When animation is done, make this scene invisible and change the controller to player selection
-                    // from SceneManagement.GameEngine.
+                    // from GameEngine.
                     finalRoot.setVisible(false);
                     GameEngine.getInstance().setController(2);
+                }
+                catch (IOException e)
+                {
+                    System.out.println(e);
+                }
+            });
+            animation2.play();
+        });
+
+        // Play Online button changes scene to Login.
+        playOnlineButton.setOnMouseClicked(event -> {
+            // Initialize closing animation for main menu with 3.5x the normal speed.
+            FadeOut animation2 = new FadeOut(finalRoot);
+            animation2.setSpeed(3.5);
+            animation2.setOnFinished(event1 ->
+            {
+                try
+                {
+                    // When animation is done, make this scene invisible and change the controller to login
+                    // from GameEngine.
+                    finalRoot.setVisible(false);
+                    GameEngine.getInstance().setController(4);
                 }
                 catch (IOException e)
                 {

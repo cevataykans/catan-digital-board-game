@@ -1,6 +1,7 @@
 package SceneManagement.GameManagement;
 
 import SceneManagement.SingleGameController;
+import SceneManagement.SoundManager;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
 import javafx.concurrent.Task;
@@ -103,6 +104,7 @@ public class DiceController {
                     new Thread(sleeper).start();
                 });
                 animation.play();
+                SoundManager.getInstance().playEffect(SoundManager.Effect.ROLL_DICE);
 
                 // Clear the roll action from the Flow Manager as it is already done, roll the dice in the logic itself
                 // and distribute resources to the players that needs to collect resources from the hexagons.

@@ -52,13 +52,14 @@ public class GameEngine {
         try {
             // To run the game from the beginning, comment the lines below and uncomment the commented line.
             // This is for faster testing.
-            ArrayList<Player> temp = new ArrayList<>();
+           /* ArrayList<Player> temp = new ArrayList<>();
             temp.add(new Player("Talha", Color.BLUE));
             temp.add(new Player("Hakan", Color.WHITE));
             temp.add(new Player("Rafi", Color.ORANGE));
             temp.add(new Player("Cevat", Color.BROWN));
-            controller = new SingleGameController(primaryStage, temp);
+            controller = new SingleGameController(primaryStage, temp);*/
             //controller = new SceneManagement.OpeningController(primaryStage);
+            controller = new MainMenuController(primaryStage);
         }
         catch (IOException e)
         {
@@ -97,13 +98,25 @@ public class GameEngine {
             case 1:
                 controller = new HelpController(primaryStage);
                 break;
-            // 2 is the code for GameFlow.Player Selection Controller.
+            // 2 is the code for Player Selection Controller.
             case 2:
                 controller = new PlayerSelectionController(primaryStage);
                 break;
-            // 3 is the code for Single GameFlow.Game Controller.
+            // 3 is the code for Single Game Controller.
             case 3:
                 controller = new SingleGameController(primaryStage, players);
+                break;
+            // 4 is the code for Login Controller.
+            case 4:
+                controller = new LoginController(primaryStage);
+                break;
+            // 5 is the code for Register Controller.
+            case 5:
+                controller = new RegisterController(primaryStage);
+                break;
+            // 6 is the coded for Matchmaking Controller.
+            case 6:
+                controller = new MatchmakingController(primaryStage);
                 break;
             /* More will be added when new controllers are implemented alongside with multi-player */
         }
