@@ -1,13 +1,5 @@
 package SceneManagement.GameManagement;
 
-import GameFlow.Player;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-
-import java.util.ArrayList;
-
 public class MultiGameController {
     // Properties
 

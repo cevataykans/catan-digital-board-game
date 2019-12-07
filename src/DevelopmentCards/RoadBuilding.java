@@ -1,5 +1,7 @@
 package DevelopmentCards;
 
+import GameFlow.Game;
+
 public class RoadBuilding extends Card {
     // Properties
 
@@ -16,7 +18,8 @@ public class RoadBuilding extends Card {
      */
     @Override
     public void play() {
-        getFlowManager().addMust(0);
-        getFlowManager().addMust(0);
+
+        Game.getInstance().addMust(0);
+        Game.getInstance().addMust(0);
     }
 }

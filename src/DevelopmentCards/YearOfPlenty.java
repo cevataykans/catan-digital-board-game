@@ -1,5 +1,7 @@
 package DevelopmentCards;
 
+import GameFlow.Game;
+
 public class YearOfPlenty extends Card {
     // Properties
 
@@ -16,6 +18,7 @@ public class YearOfPlenty extends Card {
      */
     @Override
     public void play() {
-        getFlowManager().addMust(5);
+
+        Game.getInstance().addMust(5);
     }
 }

@@ -1,7 +1,11 @@
-package GameBoard;
+package GameFlow;
 
 import java.util.ArrayList;
-import GameFlow.Player;
+
+import GameBoard.BuildingTile;
+import GameBoard.StartTile;
+import GameBoard.Tile;
+import Player.Player;
 
 public class ResourceDistributer
 {
@@ -12,10 +16,12 @@ public class ResourceDistributer
 		public int amount;
 	}
 
+	private static ResourceDistributer distributor = null;
+
 	// Attributes
 	private ArrayList<DistributionNode>[] resourceDistributionList;
 
-	public ResourceDistributer()
+	private ResourceDistributer()
 	{
 		resourceDistributionList = new ArrayList[11];
 
@@ -23,6 +29,16 @@ public class ResourceDistributer
 		for(int i = 0; i < 11; i++){
 			resourceDistributionList[i] = new ArrayList<>();
 		}
+	}
+
+	public static ResourceDistributer getInstance()
+	{
+		if ( distributor == null )
+		{
+			distributor = new ResourceDistributer();
+			return distributor;
+		}
+		return distributor;
 	}
 
 	/**

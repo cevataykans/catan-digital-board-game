@@ -2,7 +2,8 @@ package GameBoard;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import GameFlow.*;
+
+import Player.Player;
 
 /**
  * Gameboard class that is used to represent the board of Catan game.
@@ -261,24 +262,27 @@ public class GameBoard {
      * @return neighbor players except the current players
      */
     public ArrayList<Player> getNeighborPlayers(Player player, int x, int y){
+
+        // There are 6 building tiles to traverse while ignoring roads
         int[][] changeNext = {
-                {-1,1}, {-1,1},
-                {1,1}, {1,1},
-                {1,0}, {1,0},
-                {1,-1}, {1,-1},
-                {-1,-1}, {-1,-1},
-                {-1,0}
+                { -2, 2},
+                { 2, 2},
+                { 2, 0},
+                { 2, -2},
+                { -2, -2}
         };
         ArrayList<Player> ret = new ArrayList<>();
 
         x = ((InsideTile)board[y][x]).getStartTile().getX();
         y = ((InsideTile)board[y][x]).getStartTile().getY();
 
-        for( int i = 0 ; i < 12 ; i++ ){
-            if( ((StructureTile)board[y][x]).getAvailability() && ((StructureTile)board[y][x]).getOwner() != player && !ret.contains(((StructureTile)board[y][x]).getOwner()) )
-                ret.add( ((StructureTile)board[y][x]).getOwner());
+        // Traverse each building tile
+        for( int i = 0 ; i < 6 ; i++ ){
+            if( ((BuildingTile)board[y][x]).getAvailability() && ((BuildingTile)board[y][x]).getOwner() != player && !ret.contains(((BuildingTile)board[y][x]).getOwner()) )
+                ret.add( ((BuildingTile)board[y][x]).getOwner());
 
-            if(i < 11){
+            // change to the next building tile, ignore roads!
+            if( i < 5){
                 x += changeNext[i][0];
                 y += changeNext[i][1];
             }

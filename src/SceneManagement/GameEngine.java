@@ -1,12 +1,11 @@
 package SceneManagement;
 
 import javafx.scene.input.KeyCombination;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import GameFlow.Player;
+import Player.Player;
 
 /**
  * Flow manager is used to control required controllers and their transitions throughout the game.

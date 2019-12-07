@@ -1,7 +1,5 @@
 package DevelopmentCards;
 
-import GameFlow.FlowManager;
-
 /**
  * The DevelopmentCards.Card class that represents the special cards in catan gameboard.
  * @author Talha Şen
@@ -16,13 +14,11 @@ public abstract class Card
     private String name;
     private String information;
     private boolean isPlayable;
-    private FlowManager flowManager;
 
     // Constructor
     public Card()
     {
         isPlayable = false;
-        flowManager = FlowManager.getInstance();
     }
 
     // Functions
@@ -69,18 +65,10 @@ public abstract class Card
     }
 
     /**
-     * Sets the card's playability to the given status.
-     * @param playable The status of playability that will be set as card's playable status.
+     * Makes the card playable, isPlayable = true
      */
-    public void setPlayable(boolean playable) {
-        isPlayable = playable;
+    public void makePlayable() {
+        isPlayable = true;
     }
 
-    /**
-     * Gets the flow manager.
-     * @return flow manager.
-     */
-    public FlowManager getFlowManager() {
-        return flowManager;
-    }
 }

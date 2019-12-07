@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import GameFlow.Game;
 import SceneManagement.SingleGameController;
 import animatefx.animation.*;
 import javafx.fxml.FXMLLoader;
@@ -24,28 +25,29 @@ import External.*;
  */
 
 public class PlayerInfoController {
-    // Properties
-    SingleGameController controller;
-    Scene scene;
 
-    ArrayList<FillProgressIndicator> otherPlayers;
-    ArrayList<Label> currPlayerResources;
-    boolean otherInfoShown = false;
-    AnchorPane otherInfoBox;
-    AnchorPane otherPlayerBox;
-    AnchorPane currentPlayerBox;
-    Label currentPlayerName;
-    Label otherPlayerName;
-    ImageView currentLR;
-    ImageView currentLA;
-    ImageView otherLR;
-    ImageView otherLA;
-    ImageView otherSettlementImage;
-    ImageView otherRoadImage;
-    ImageView otherCityImage;
-    Label otherSettlementCount;
-    Label otherRoadCount;
-    Label otherCityCount;
+    // Properties
+    private SingleGameController controller;
+    private Scene scene;
+
+    private ArrayList<FillProgressIndicator> otherPlayers;
+    private ArrayList<Label> currPlayerResources;
+    private boolean otherInfoShown = false;
+    private AnchorPane otherInfoBox;
+    private AnchorPane otherPlayerBox;
+    private AnchorPane currentPlayerBox;
+    private Label currentPlayerName;
+    private Label otherPlayerName;
+    private ImageView currentLR;
+    private ImageView currentLA;
+    private ImageView otherLR;
+    private ImageView otherLA;
+    private ImageView otherSettlementImage;
+    private ImageView otherRoadImage;
+    private ImageView otherCityImage;
+    private Label otherSettlementCount;
+    private Label otherRoadCount;
+    private Label otherCityCount;
 
     // Constructor
     public PlayerInfoController(Scene scene, SingleGameController controller)
@@ -123,6 +125,10 @@ public class PlayerInfoController {
      * This function refreshes/sets up the information of the other players.
      */
     public void setupOtherPlayers() {
+
+        // Get the game for access
+        Game game = Game.getInstance();
+
         // Clear the box that contains the progress representations.
         otherInfoBox.getChildren().clear();
 
@@ -141,10 +147,10 @@ public class PlayerInfoController {
             FadeIn animationIn = new FadeIn(otherInfoBox);
             // Initialize other1 player's representation in the UI.
             FillProgressIndicator otherPlayer1;
-            otherPlayer1 = new FillProgressIndicator(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 1) % 4)
+            otherPlayer1 = new FillProgressIndicator( game.getPlayer(( game.getCurrentPlayerIndex() + 1) % 4)
                     .getColor().toString().substring(1));
             otherPlayer1.setInnerCircleRadius(10);
-            otherPlayer1.setProgress(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 1) % 4).getScore() * 10);
+            otherPlayer1.setProgress( game.getPlayer(( game.getCurrentPlayerIndex() + 1) % 4).getScore() * 10);
             otherPlayer1.setOnMouseEntered(event1 ->
             {
                 // If the player information container is not already shown, show it.
@@ -170,9 +176,9 @@ public class PlayerInfoController {
 
             // Initialize other2 player's representation in the UI.
             FillProgressIndicator otherPlayer2;
-            otherPlayer2 = new FillProgressIndicator(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 2) % 4)
+            otherPlayer2 = new FillProgressIndicator( game.getPlayer(( game.getCurrentPlayerIndex() + 2) % 4)
                     .getColor().toString().substring(1));
-            otherPlayer2.setProgress(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 2) % 4).getScore() * 10);
+            otherPlayer2.setProgress( game.getPlayer(( game.getCurrentPlayerIndex() + 2) % 4).getScore() * 10);
             otherPlayer2.setTranslateY(otherPlayers.get(0).getTranslateY() + 150);
             otherPlayer2.setOnMouseEntered(event1 ->
             {
@@ -198,9 +204,9 @@ public class PlayerInfoController {
 
             // Initialize other3 player's representation in the UI.
             FillProgressIndicator otherPlayer3;
-            otherPlayer3 = new FillProgressIndicator(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 3) % 4)
+            otherPlayer3 = new FillProgressIndicator( game.getPlayer(( game.getCurrentPlayerIndex() + 3) % 4)
                     .getColor().toString().substring(1));
-            otherPlayer3.setProgress(controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + 3) % 4).getScore() * 10);
+            otherPlayer3.setProgress( game.getPlayer(( game.getCurrentPlayerIndex() + 3) % 4).getScore() * 10);
             otherPlayer3.setTranslateY(otherPlayers.get(1).getTranslateY() + 150);
             otherPlayer3.setOnMouseEntered(event1 ->
             {
@@ -233,6 +239,10 @@ public class PlayerInfoController {
      * This function refreshes/sets up the information of the current player.
      */
     public void setupCurrentPlayer() {
+
+        // Get game for accessing data
+        Game game = Game.getInstance();
+
         // Initialize out animation for previous representation of current player with 3x the normal speed.
         FadeOut infoOut = new FadeOut(currentPlayerBox);
         infoOut.setSpeed(3);
@@ -241,13 +251,13 @@ public class PlayerInfoController {
             FadeIn infoIn = new FadeIn(currentPlayerBox);
             // Sets current player's container's style to the current player's color.
             currentPlayerBox.getStyleClass().clear();
-            currentPlayerBox.getStyleClass().add(controller.getGame().getCurrentPlayer().getColor().toString().substring(1) + "PlayerBox");
+            currentPlayerBox.getStyleClass().add( game.getCurrentPlayer().getColor().toString().substring(1) + "PlayerBox");
             // Set current player's name in information container to current player's name.
-            currentPlayerName.setText(controller.getGame().getCurrentPlayer().getName());
+            currentPlayerName.setText( game.getCurrentPlayer().getName());
             // Set current player's score in information container to current player's score.
-            //playerScores.get(0).setProgress(controller.getGame().getCurrentPlayer().getScore() * 1.0 / 10);
+            //playerScores.get(0).setProgress( game.getCurrentPlayer().getScore() * 1.0 / 10);
             // Get the resources of the current player.
-            int playercurrPlayerResources[] = controller.getGame().getCurrentPlayer().getResources();
+            int playercurrPlayerResources[] =  game.getCurrentPlayer().getResources();
 
             // Set each of the current player's resource representations in UI to current player's actual resource counts.
             for ( int i = 0; i < currPlayerResources.size(); i++)
@@ -267,28 +277,31 @@ public class PlayerInfoController {
      */
     private void showPlayer(int otherIndex)
     {
+        // Get game for accessing data
+        Game game = Game.getInstance();
+
         otherPlayerBox.getStyleClass().clear();
-        otherPlayerBox.getStyleClass().add(controller.getGame()
-                .getPlayer((controller.getGame().getCurrentPlayerIndex() + otherIndex) % 4)
+        otherPlayerBox.getStyleClass().add( game
+                .getPlayer(( game.getCurrentPlayerIndex() + otherIndex) % 4)
                 .getColor().toString().substring(1) + "PlayerBox");
-        otherPlayerName.setText(controller.getGame()
-                .getPlayer((controller.getGame().getCurrentPlayerIndex() + otherIndex) % 4).getName());
+        otherPlayerName.setText( game
+                .getPlayer(( game.getCurrentPlayerIndex() + otherIndex) % 4).getName());
 
-        otherSettlementImage.setImage(new Image("/images/settlement" + controller.getGame()
-                .getPlayer((controller.getGame().getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
-        otherRoadImage.setImage(new Image("/images/road" + controller.getGame()
-                .getPlayer((controller.getGame().getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
-        otherCityImage.setImage(new Image("/images/city" + controller.getGame()
-                .getPlayer((controller.getGame().getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
+        otherSettlementImage.setImage(new Image("/images/settlement" +  game
+                .getPlayer(( game.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
+        otherRoadImage.setImage(new Image("/images/road" +  game
+                .getPlayer(( game.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
+        otherCityImage.setImage(new Image("/images/city" +  game
+                .getPlayer(( game.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
 
-        otherSettlementCount.setText("" + controller.getGame()
-                .getPlayer((controller.getGame().getCurrentPlayerIndex() + otherIndex) % 4).getSettlementCount());
+        otherSettlementCount.setText("" +  game
+                .getPlayer(( game.getCurrentPlayerIndex() + otherIndex) % 4).getSettlementCount());
 
-        otherRoadCount.setText("" + controller.getGame()
-                .getPlayer((controller.getGame().getCurrentPlayerIndex() + otherIndex) % 4).getRoadCount());
+        otherRoadCount.setText("" +  game
+                .getPlayer(( game.getCurrentPlayerIndex() + otherIndex) % 4).getRoadCount());
 
-        otherCityCount.setText("" + controller.getGame()
-                .getPlayer((controller.getGame().getCurrentPlayerIndex() + otherIndex) % 4).getCityCount());
+        otherCityCount.setText("" +  game
+                .getPlayer(( game.getCurrentPlayerIndex() + otherIndex) % 4).getCityCount());
 
         // Initialize in animation for the other player's information box.
         otherPlayerBox.setVisible(true);
@@ -347,11 +360,15 @@ public class PlayerInfoController {
      * is shown in the UI.
      */
     public void setupLongestRoad() {
+
+        // Get game for accessing data
+        Game game = Game.getInstance();
+
         // For each player in the game
         for ( int i = 0; i < 4; i++)
         {
             // See if he/she is the current holder of the longest road card.
-            if ( controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + i) % 4) == controller.getGame().getLongestRoadPlayer())
+            if (  game.getPlayer(( game.getCurrentPlayerIndex() + i) % 4) ==  game.getLongestRoadPlayer())
             {
                 // If he/she is, sets its longest road card image visibility as true and show it via an in animation.
                 otherLR.setVisible(true);
@@ -380,11 +397,15 @@ public class PlayerInfoController {
      * is shown in the UI.
      */
     public void setupLargestArmy() {
+
+        // Get game for accessing data
+        Game game = Game.getInstance();
+
         // For each player in the game
         for ( int i = 0; i < 4; i++)
         {
             // See if he/she is the current holder of the largest army card.
-            if ( controller.getGame().getPlayer((controller.getGame().getCurrentPlayerIndex() + i) % 4) == controller.getGame().getLargestArmyPlayer())
+            if (  game.getPlayer(( game.getCurrentPlayerIndex() + i) % 4) ==  game.getLargestArmyPlayer())
             {
                 // If he/she is, sets its largest army card image visibility as true and show it via an in animation.
                 otherLA.setVisible(true);

@@ -1,6 +1,6 @@
 package SceneManagement.GameManagement;
 
-import SceneManagement.GameManagement.PlayerInfoController;
+import GameFlow.Game;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
@@ -73,7 +73,7 @@ public class DevCardController {
             // Clear all the previous UI (important distinction) development cards from the card container.
             cardBox.getChildren().clear();
             // Get the development cards (logical unit ones) from the current player.
-            ArrayList<Card> cards = controller.getGame().getCurrentPlayer().getCards();
+            ArrayList<Card> cards = Game.getInstance().getCurrentPlayer().getCards();
             // Initialize an ArrayList for the UI development cards.
             ArrayList<ImageView> cardsInUI = new ArrayList<>();
             for (int i = 0; i < cards.size(); i++) {
@@ -130,13 +130,13 @@ public class DevCardController {
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                        controller.getGame().playDevelopmentCard(cards.get(finalI));
+                        controller.getGame().playDevelopmentCard( cards.get(finalI) );
                         controller.getInfoController().setupLargestArmy();
                         cardBox.getChildren().remove(temp);
                     } else {
                         temp.setTranslateX(0);
                         temp.setTranslateY(0);
-                    }*/
+                    } */
                 });
                 // Add the card image to the ArrayList.
                 cardsInUI.add(temp);

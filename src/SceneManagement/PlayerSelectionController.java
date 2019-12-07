@@ -15,10 +15,10 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
-import GameFlow.Player;
+import Player.Player;
 
 /**
- * This scene controller manages all of the GameFlow.Player Selection screen.
+ * This scene controller manages all of the Player.Player Selection screen.
  * @author Talha Şen
  * @version 29.11.2019
  */

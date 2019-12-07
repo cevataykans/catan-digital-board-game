@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import GameFlow.Game;
 import SceneManagement.SingleGameController;
 import SceneManagement.SoundManager;
 import animatefx.animation.FadeIn;
@@ -9,7 +10,6 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.util.ArrayList;
-import GameFlow.FlowManager;
 
 /**
  * This controller manages all the dice logic. It has association with the Single-GameFlow.Game controller.
@@ -18,12 +18,13 @@ import GameFlow.FlowManager;
  */
 
 public class DiceController {
+
     // Properties
-    SingleGameController controller;
-    Scene scene;
-    ImageView die1;
-    ImageView die2;
-    ImageView diceAvailable;
+    private SingleGameController controller;
+    private Scene scene;
+    private ImageView die1;
+    private ImageView die2;
+    private ImageView diceAvailable;
 
     // Constructor
     public DiceController(Scene scene, SingleGameController controller)
@@ -71,8 +72,10 @@ public class DiceController {
         die2Out.play();
         diceAvailable.setOnMouseClicked(event ->
         {
+            Game game = Game.getInstance();
+
             // Dice could only be rolled at the beginning of a turn
-            if ( FlowManager.getInstance().checkMust() == 7 )
+            if ( game.checkMust() == 7 )
             {
                 // Initialize an out animation for the roll gif when its clicked with 2x the normal speed.
                 FadeOut animation = new FadeOut(diceAvailable);
@@ -108,8 +111,8 @@ public class DiceController {
 
                 // Clear the roll action from the Flow Manager as it is already done, roll the dice in the logic itself
                 // and distribute resources to the players that needs to collect resources from the hexagons.
-                FlowManager.getInstance().doneMust();
-                ArrayList<Integer> results = controller.getGame().rollDice();
+                game.doneMust();
+                ArrayList<Integer> results = Game.getInstance().rollDice();
 
                 // Set die result images taken from the logic.
                 die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
@@ -118,7 +121,7 @@ public class DiceController {
             else
             {
                 // If the current action should not be rolling dice, inform the current player.
-                controller.getStatusController().informStatus( FlowManager.getInstance().checkMust() );
+                controller.getStatusController().informStatus( game.checkMust() );
             }
         });
     }

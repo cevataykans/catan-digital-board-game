@@ -1,5 +1,7 @@
 package DevelopmentCards;
 
+import GameFlow.Game;
+
 public class VictoryPoint extends Card {
     // Properties
 
@@ -16,6 +18,7 @@ public class VictoryPoint extends Card {
      */
     @Override
     public void play() {
-        getFlowManager().addMust(10);
+
+        Game.getInstance().getCurrentPlayer().increaseScore( 1);
     }
 }

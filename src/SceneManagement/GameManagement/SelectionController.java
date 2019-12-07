@@ -1,6 +1,7 @@
 package SceneManagement.GameManagement;
 
-import GameFlow.FlowManager;
+import GameFlow.Game;
+import GameFlow.ResourceManager;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeInLeft;
 import animatefx.animation.FadeOutRight;
@@ -11,7 +12,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
-import GameFlow.Player;
+import Player.Player;
 
 /**
  * This controller manages all the player andd resource selection logic. It has association with the Single-GameFlow.Game controller.
@@ -21,10 +22,10 @@ import GameFlow.Player;
 
 public class SelectionController {
     // Properties
-    SingleGameController controller;
-    Scene scene;
-    AnchorPane selectionBox;
-    Label selectionLabel;
+    private SingleGameController controller;
+    private Scene scene;
+    private AnchorPane selectionBox;
+    private Label selectionLabel;
 
     // Constructor
     public SelectionController(Scene scene, SingleGameController controller)
@@ -52,11 +53,17 @@ public class SelectionController {
      * @param playersToSelect is the players to be shown.
      */
     public void showPlayerSelection(ArrayList<Player> playersToSelect) {
+
+        // Get the game for must management
+        Game game = Game.getInstance();
+
         // Clear old players contained in the selection container.
         selectionBox.getChildren().clear();
+
         // Inform the current player that he/she needs to select a player to steal a resource.
         controller.getStatusController().informStatus(8);
-        selectionLabel.setText( "Choose Your GameFlow.Player");
+        selectionLabel.setText( "Choose Your Player.Player");
+
         // Initialize rectangle list for UI. Rectangles represent the players with their corresponding colors.
         ArrayList<Rectangle> players = new ArrayList<>();
         for ( int i = 0; i < playersToSelect.size(); i++ )
@@ -68,10 +75,10 @@ public class SelectionController {
             otherPlayer.setOnMousePressed(e -> {
                 // Check if the action is to select a player. This is to prevent background action that current player
                 // may do and interrupt the game's flow.
-                if ( FlowManager.getInstance().checkMust() == 8 )
+                if ( game.checkMust() == 8 )
                 {
                     // Clear the action of selecting a user from the Flow Manager.
-                    FlowManager.getInstance().doneMust();
+                    game.doneMust();
                 }
                 // Call stealing function with the selected player.
                 stealResourceFromPlayer( playersToSelect.get( finalI) );
@@ -97,7 +104,7 @@ public class SelectionController {
     private void stealResourceFromPlayer( Player stealingFrom)
     {
         // Steal one of the player's resources and add it to the current player.
-        controller.getGame().getCurrentPlayer().stealResourceFromPlayer( stealingFrom );
+        new ResourceManager().stealResourceFromPlayer( Game.getInstance().getCurrentPlayer(), stealingFrom );
 
         // Play an out animation for the selection screen after user selects a player.
         new FadeOutRight( selectionBox).play();

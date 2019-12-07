@@ -1,5 +1,7 @@
 package DevelopmentCards;
 
+import GameFlow.Game;
+
 public class PerfectlyBalanced extends Card {
     // Properties
 
@@ -16,6 +18,7 @@ public class PerfectlyBalanced extends Card {
      */
     @Override
     public void play() {
-        getFlowManager().addMust(9);
+
+
     }
 }
