@@ -1,9 +1,7 @@
 package GameFlow;
 
-import GameBoard.BuildingTile;
-import GameBoard.ResourceDistributer;
-import GameBoard.StartTile;
-import GameBoard.Tile;
+import GameBoard.Harbor;
+import Player.Player;
 
 import java.util.ArrayList;
 
@@ -22,24 +20,11 @@ public class ResourceManager
 	public static final int BRICK = 3;
 	public static final int ORE = 4;
 
-	// Properties
-	private ArrayList<Player> players;
-	private Game game; // yusuf change this to single ton reference in the constructore after you make game single ton, change reference!
-	private ResourceDistributer distributor;
-
-	// Constructors
-	public ResourceManager( Game game)
-	{
-		this.game = game; // Yusuf this has to be deleted!
-		this.players = game.getPlayers();
-		this.distributor = new ResourceDistributer();
-	}
-
 	// Methods
 	/**
 	 * This method makes wanted trade between two users. Think this method from the point of view of current player!
-	 * @param current is the GameFlow.Player make the trade request
-	 * @param other is the GameFlow.Player accept the trade request
+	 * @param current is the Player.Player make the trade request
+	 * @param other is the Player.Player accept the trade request
 	 * @param toGive is the list of materials the offeree wants to give
 	 * @param toTake is the list of materials the offerer wants to give
 	 */
@@ -115,11 +100,13 @@ public class ResourceManager
 	}
 
 	/**
-	 * A private function for the player to purchase a structure.
+	 * A private function for the CURRENT player to purchase a structure.
 	 * @param resources is the amount of resources to be given to the bank.
 	 */
-	private void payForStructure( int[] resources)
+	public void payForStructure( int[] resources)
 	{
+		Game game = Game.getInstance();
+
 		// Pay for the resources
 		for ( int i = 0; i < resources.length; i++ )
 		{
@@ -158,6 +145,9 @@ public class ResourceManager
 	 */
 	public void discardHalfOfResources()
 	{
+		Game game = Game.getInstance();
+		ArrayList<Player> players = game.getPlayers();
+
 		// Traverse the player array to try discarding resources!
 		for ( int i = 0; i < players.size(); i++ )
 		{
@@ -165,38 +155,47 @@ public class ResourceManager
 		}
 	}
 
-
-	//******************************************************************************************************************
-	//
-	//*  Functions related to resource distributer
-	//
-	//*  Wrapping the Resource Distributor?
-	//
-	//******************************************************************************************************************
 	/**
-	 * This function adds a resource node to distribute to the player
-	 * @param player player who puchases the building tile.
-	 * @param tile is board[ y][ x] for getting start points.
+	 * todo
+	 * This method makes wanted trade by using port
+	 * @param portType is the type of port wanted to check
+	 * @param discardedMaterial is the material wanted to be given by the player
+	 * @param collectedMaterial is the material wanted to be taken by the player
 	 */
-	public void addHexagonResource( Player player, Tile tile )
+	public void tradeWithHarbor(Harbor.HarborType portType, int discardedMaterial, int collectedMaterial)
 	{
-		this.distributor.addHexagonResource( player, tile);
-	}
+		Game game = Game.getInstance();
+		Player player = game.getCurrentPlayer();
 
-	/**
-	 * Collect resources for each player before the game starts.
-	 */
-	public void collectResources( Tile robber){
+		if( portType == Harbor.HarborType.THREE_TO_ONE ){
 
-		this.distributor.collectResources( robber);
-	}
+			player.discardMaterial( discardedMaterial, 3);
+			player.collectMaterial( collectedMaterial, 1);
+		}
+		else if( portType == Harbor.HarborType.TWO_TO_ONE_LUMBER ){
 
-	/**
-	 * Collect resources for each player that belongs to hexagons related to given dice number.
-	 * @param diceNumber is given dice number
-	 */
-	public void collectResources( int diceNumber, Tile robber)
-	{
-		this.distributor.collectResources( diceNumber, robber);
+			player.discardMaterial( ResourceManager.LUMBER, 2);
+			player.collectMaterial( collectedMaterial, 1);
+		}
+		else if( portType == Harbor.HarborType.TWO_TO_ONE_WOOL){
+
+			player.discardMaterial(ResourceManager.WOOL, 2);
+			player.collectMaterial(collectedMaterial, 1);
+		}
+		else if( portType == Harbor.HarborType.TWO_TO_ONE_GRAIN){
+
+			player.discardMaterial(ResourceManager.GRAIN, 2);
+			player.collectMaterial(collectedMaterial, 1);
+		}
+		else if( portType == Harbor.HarborType.TWO_TO_ONE_BRICK){
+
+			player.discardMaterial(ResourceManager.BRICK, 2);
+			player.collectMaterial(collectedMaterial, 1);
+		}
+		else if( portType == Harbor.HarborType.TWO_TO_ONE_ORE){
+
+			player.discardMaterial(ResourceManager.ORE, 2);
+			player.collectMaterial(collectedMaterial, 1);
+		}
 	}
 }

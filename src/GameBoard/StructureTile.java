@@ -1,5 +1,5 @@
 package GameBoard;
-import GameFlow.Player;
+import Player.Player;
 
 /**
  * Represents a structure tile

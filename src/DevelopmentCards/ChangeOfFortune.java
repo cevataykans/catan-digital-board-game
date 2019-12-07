@@ -1,5 +1,7 @@
 package DevelopmentCards;
 
+import GameFlow.Game;
+
 public class ChangeOfFortune extends Card {
     // Properties
 
@@ -17,6 +19,6 @@ public class ChangeOfFortune extends Card {
      */
     @Override
     public void play() {
-        getFlowManager().addMust(7);
+        Game.getInstance().addMust(7);
     }
 }

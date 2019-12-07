@@ -1,8 +1,10 @@
-package GameFlow;
+package Player;
 
 import DevelopmentCards.Card;
 import GameBoard.Harbor;
 import GameBoard.StructureTile;
+import GameFlow.Game;
+import GameFlow.ResourceManager;
 import javafx.scene.paint.Color;
 import java.util.ArrayList;
 
@@ -35,11 +37,7 @@ import java.util.ArrayList;
  */
 public class Player
 {
-	// Constants
-	private static final int TOT_CARDS = 20; // Array or array list implementation?
-	private static final int TOT_STRUCTURES = 20;
-
-	// GameFlow.Player Attributes
+	// Player.Player Attributes
 	private String name;
 	private javafx.scene.paint.Color color; // needs to be discussed for finalization;
 
@@ -50,7 +48,7 @@ public class Player
 	private ArrayList<Card> cards;
 	private ArrayList<Harbor> ports;
 
-	// GameFlow.Player Attributes related to score and board
+	// Player.Player Attributes related to score and board
 	private int score;
 	private int settlementCount;
 	private int roadCount;
@@ -80,54 +78,6 @@ public class Player
 		this.armyCount = 0;
 	}
 
-	// Functions
-	/**
-	 * Makes the player trade resources with another player.
-	 * @param other The player that the trading is offered to.
-	 * @param toGive The resources offered to the other player by this player.
-	 * @param toTake The resources requested from the other player by this player.
-	 */
-	public void tradeWithPlayer( Player other, int[] toGive, int[] toTake )
-	{
-		// For each material on the toGive and toTake resource arrays, update player resources
-		for ( int i = 0; i < toGive.length; i++ )
-		{
-			this.resources[i] -= (toGive[i] - toTake[i]);
-			this.totResources -= (toGive[i] - toTake[i]);
-
-			other.resources[i] -= (toTake[i] - toGive[i]);
-			other.totResources -= (toTake[i] - toGive[i]);
-		}
-	}
-
-	/**
-	 * A function to enable players steal a random material from other players when the robber is changed.
-	 * @param other other player whose resource is being stolen by this player
-	 */
-	public void stealResourceFromPlayer( Player other ) // implemented in resource Manager
-	{
-		// Other player must have at least one resource
-		if ( other.totResources > 0 )
-		{
-			// There is one resource to steal, find a suitable index until stealing can be performed
-			int leftToSteal = 1;
-			while ( leftToSteal > 0 )
-			{
-				int randomStealIndex = (int)(Math.random() * 5);
-				if ( other.resources[ randomStealIndex] > 0 ) // steal
-				{
-					// Adjust total resources
-					this.totResources++;
-					other.totResources--;
-
-					// Adjust the stolen resource material
-					this.resources[ randomStealIndex]++;
-					other.resources[ randomStealIndex]--;
-					leftToSteal = 0;
-				}
-			}
-		}
-	}
 
 	/**
 	 * Gives the player the amount of material stated by the material constant.
@@ -154,24 +104,6 @@ public class Player
 	}
 
 	/**
-	 * Checks if the player has enough resources for a given resource requirement.
-	 * @param resourceToCheck resources array to check if player has more than argument resources.
-	 * @return true if the player has enough resources for the given argument, else false.
-	 */
-	public boolean hasEnoughResources( int[] resourceToCheck ) // implemented in resource Manager
-	{
-		// iterate over resources to check if player has sufficient resources;
-		for ( int i = 0; i < resourceToCheck.length; i++ )
-		{
-			if ( resourceToCheck[ i] > this.resources[ i] )
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-
-	/**
 	 * Buys a development card from the bank and the card is chosen randomly.
 	 * @param requirements is the required resources player needs to give to buy a development card.
 	 * @param card is the development card player buys.
@@ -183,30 +115,7 @@ public class Player
 		resources[2] -= requirements[2];
 		resources[3] -= requirements[3];
 		resources[4] -= requirements[4];
-		cards.add(card);
-	}
-
-	/**
-	 * Randomly discards half of the resources if the player has more than 7 resources!
-	 */
-	public void discardHalfOfResources() // implemented in resource Manager
-	{
-		// Check if the player has more than 7 resources.
-		if ( this.totResources > Game.DICE_SEVEN)
-		{
-			int discardCount = this.totResources / 2; // take the floor to discard
-			this.totResources -= discardCount; // update the after resource count
-			while ( discardCount > 0)
-			{
-				// Find a valid random index to discard resource
-				int discardIndex = ( int)( Math.random() * 5);
-				if ( this.resources[ discardIndex] > 0)
-				{
-					this.resources[ discardIndex] -= 1;
-					discardCount--;
-				}
-			}
-		}
+		cards.add( card);
 	}
 
 	/**
@@ -215,7 +124,8 @@ public class Player
 	public void buySettlement()
 	{
 		// Discard resources from the player required for a settlement.
-		this.payForStructure( StructureTile.REQUIREMENTS_FOR_SETTLEMENT );
+		//this.payForStructure( StructureTile.REQUIREMENTS_FOR_SETTLEMENT );
+		new ResourceManager().payForStructure( StructureTile.REQUIREMENTS_FOR_SETTLEMENT);
 
 		// Increase the score of the player by 1 and increase the player's settlement count by 1.
 		this.score += StructureTile.VICTORY_POINTS_FOR_SETTLEMENT;
@@ -228,7 +138,8 @@ public class Player
 	public void buyRoad()
 	{
 		// Discard resources from the player required for a road.
-		this.payForStructure( StructureTile.REQUIREMENTS_FOR_ROAD );
+		//this.payForStructure( StructureTile.REQUIREMENTS_FOR_ROAD );
+		new ResourceManager().payForStructure( StructureTile.REQUIREMENTS_FOR_ROAD);
 
 		// Increase the score of the player by 0 and increase the player's road count by 1.
 		this.score += StructureTile.VICTORY_POINTS_FOR_ROAD;
@@ -241,22 +152,12 @@ public class Player
 	public void buyCity()
 	{
 		// Discard resources from the player required for a city.
-		this.payForStructure( StructureTile.REQUIREMENTS_FOR_CITY );
+		//this.payForStructure( StructureTile.REQUIREMENTS_FOR_CITY );
+		new ResourceManager().payForStructure( StructureTile.REQUIREMENTS_FOR_CITY);
 
 		// Increase the score of the player by 2 and increase the player's city count by 1.
 		this.score += StructureTile.VICTORY_POINTS_FOR_CITY;
 		this.cityCount += 1;
-	}
-
-	/**
-	 * Call this function at the beginning turn of a player to allow the player to play previously bought special cards.
-	 */
-	public void makeCardsPlayable()
-	{
-		for ( int i = 0; i < cards.size(); i++ )
-		{
-			cards.get( i).setPlayable( true);
-		}
 	}
 
 	/**
@@ -268,17 +169,6 @@ public class Player
 		// Get the current score with the addition of if the player has the largest army and the longest road titles.
 		return this.score + (this.hasLargestArmy ? 2 : 0) + (this.hasLongestRoad ? 2 : 0);
 	}
-
-	/**
-	 * ------------------DEPRECATED---------------------------
-	 * GameFlow.Player plays the special card stated by the card index.
-	 * @param cardIndex is the index of the special card to play.
-
-	public void playSpecialCard( int cardIndex)
-	{
-		//cards.remove( cardIndex).play(); to be implemented after card class is implemented.
-	}
-	  */
 
 	/**
 	 * Gets the largest army count of the player.
@@ -330,23 +220,9 @@ public class Player
 	 * Increases the score of the player by the given amount.
 	 * @param scoreAmount is the amount of score that will be added to the player.
 	 */
-	public void increaseScore(int scoreAmount)
+	public void increaseScore( int scoreAmount)
 	{
 		score += scoreAmount;
-	}
-
-	/**
-	 * A private function for the player to purchase a structure.
-	 * @param resources is the amount of resources to be given to the bank.
-	 */
-	private void payForStructure( int[] resources)
-	{
-		// Pay for the resources
-		for ( int i = 0; i < resources.length; i++ )
-		{
-			this.resources[ i] -= resources[ i];
-			this.totResources -= resources[ i];
-		}
 	}
 
 	/**
@@ -361,7 +237,7 @@ public class Player
 	 * Add given structure to the structures ArrayList
 	 * @param structure Given structure that is wanted to add.
 	 */
-	public void addStructure(StructureTile structure){
+	public void addStructure( StructureTile structure){
 		this.structures.add(structure);
 	}
 
@@ -385,7 +261,7 @@ public class Player
 	 * Sets the player color to the given color.
 	 * @param color The color that will be set as player's color.
 	 */
-	public void setColor(javafx.scene.paint.Color color) {
+	public void setColor( javafx.scene.paint.Color color) {
 		this.color = color;
 	}
 
@@ -431,12 +307,15 @@ public class Player
 	 * Return player's port list
 	 * @return ports which is player's port list
 	 */
-	public boolean hasHarbor( Harbor.HarborType port){
-
+	public boolean hasHarbor( Harbor.HarborType port)
+	{
 		boolean result = false;
-		for(int i = 0 ; i < ports.size() ; i++){
-			if( ports.get(i).getHarborType() == port)
+		for( Harbor harbor : ports)
+		{
+			if( harbor.getHarborType() == port) {
 				result = true;
+				break;
+			}
 		}
 		return result;
 	}

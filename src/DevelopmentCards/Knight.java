@@ -1,5 +1,7 @@
 package DevelopmentCards;
 
+import GameFlow.Game;
+
 public class Knight extends Card{
     // Properties
 
@@ -19,7 +21,8 @@ public class Knight extends Card{
      */
     @Override
     public void play() {
-        getFlowManager().addMust(3);
-        getFlowManager().addMust(8);
+
+        Game.getInstance().addMust(3);
+        Game.getInstance().addMust(8);
     }
 }

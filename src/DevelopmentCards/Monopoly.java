@@ -1,5 +1,7 @@
 package DevelopmentCards;
 
+import GameFlow.Game;
+
 public class Monopoly extends Card {
     // Properties
 
@@ -17,6 +19,7 @@ public class Monopoly extends Card {
      */
     @Override
     public void play() {
-        getFlowManager().addMust(4);
+
+        Game.getInstance().addMust(4);
     }
 }

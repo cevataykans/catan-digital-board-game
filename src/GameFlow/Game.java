@@ -3,6 +3,7 @@ package GameFlow;
 import java.util.*;
 import DevelopmentCards.*;
 import GameBoard.*;
+import Player.Player;
 
 /**
  * GameFlow.Game class combines logic of the game board and players to enable users to play the game.
@@ -19,46 +20,55 @@ import GameBoard.*;
  * Added function templates.
  * Implemented some functions.
  * -----------------------
+ * @version 07.12.2019
+ *  This is a milestone in our project!
+ *  Software architecture Yusuf has designed a system to rule all designs!
+ *  Game design is changed into singleton and game now controls the data access by managers.
  */
-
-// todo port
-
 public class Game
 {
+    // Game Singleton
+    private static Game game = null;
+
+    private Queue<Integer> must;
+
     // Constants
     private final int TOTAL_DEV_CARDS = 25;
     public static final int DICE_SEVEN = 7;
 
     // Attributes
     private GameBoard board;
-    private ArrayList<Player> players;
-    private ResourceManager resManager;
 
+    // Game related data
     private int turnNumber;
-    private int playerCount;
     private int gameStatus;
     private int currentDice;
+
+    // Player Related data
+    private ArrayList<Player> players;
+    private int playerCount;
     private int longestRoad;
     private int largestArmy;
     private Player longestRoadPlayer;
     private Player largestArmyPlayer;
-    private FlowManager flowManager;
+
+    // Dev card related data
     private Stack<Card> devCards;
 
     // Constructors
-    public Game( ArrayList<Player> players )
+    private Game( ArrayList<Player> players )
     {
         longestRoadPlayer = null;
         longestRoad = 4; // minumum requierement to get this card
-        this.largestArmy = 2; // minumum req to earn the army title
-        this.largestArmyPlayer = null;
-        gameStatus = 0; // setup mode
+        largestArmy = 2; // minumum req to earn the army title
+        largestArmyPlayer = null;
+        gameStatus = 0; // initial phase ( setup mode )
         this.players = players;
         playerCount = players.size();
         board = new GameBoard();
         turnNumber = 0;
         devCards = new Stack<>();
-        flowManager = FlowManager.getInstance();
+
         for( int i = 0; i < TOTAL_DEV_CARDS; i++)
         {
             Card card;
@@ -75,14 +85,42 @@ public class Game
             devCards.push(card);
         }
 
-        resManager = new ResourceManager( this);
+        this.must = new LinkedList<>();
+    }
+
+    /**
+     *
+     * @param players
+     * @return
+     */
+    public static Game getInstance( ArrayList<Player> players )
+    {
+        if ( game == null )
+        {
+            game = new Game( players);
+            return game;
+        }
+        return game;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public static Game getInstance()
+    {
+        if ( game != null )
+        {
+            return game;
+        }
+        return null;
     }
 
     // Functions
     /**
      * Initializes the game via initializing gameboard, players, robber and the turn.
      */
-    public ArrayList<Player> configureGame()
+    public void configureGame()
     {
         // The order must not be changed!
         board.configurate();
@@ -90,11 +128,9 @@ public class Game
         Collections.shuffle(players);
         Collections.shuffle(devCards);
 
-        flowManager.addMust(1); // settlement
-        flowManager.addMust(0); // road
-        flowManager.addMust(6); // end turn
-
-        return players;
+        this.must.add( 1); // settlement
+        this.must.add( 0); // road
+        this.must.add( 6); // end turn
     }
 
     /**
@@ -106,20 +142,20 @@ public class Game
             return true;
 
         turnNumber++;
-        if( turnNumber == 2*playerCount)
+        if( turnNumber == 2 * playerCount )
         {
-            resManager.collectResources( board.getRobber() );
-            flowManager.addMust(7); // roll dice
-            gameStatus = 1;
+            ResourceDistributer.getInstance().collectResources( board.getRobber() );
+            must.add( 7); // roll dice
+            gameStatus = 1; // game play phase
         }
         else if( gameStatus == 0 )
         {
-            flowManager.addMust(1); // settlement
-            flowManager.addMust(0); // road
-            flowManager.addMust(6); // end turn
+            this.must.add( 1); // settlement
+            this.must.add( 0); // road
+            this.must.add( 6); // end turn
         }
         else {
-            flowManager.addMust(7); // roll dice
+            must.add( 7); // roll dice // roll dice
         }
         return false;
     }
@@ -129,19 +165,20 @@ public class Game
      * @return dice numbers for both dice
      */
     public ArrayList<Integer> rollDice(){
-        int firstDice =  (int)(Math.random()*6+1);
-        int secondDice =  (int)(Math.random()*6+1);
+        int firstDice =  ( int)( Math.random() * 6 + 1 );
+        int secondDice =  ( int)( Math.random() * 6 + 1 );
 
         currentDice = firstDice + secondDice;
 
         ArrayList<Integer> ret = new ArrayList<>();
-        ret.add(firstDice);
-        ret.add(secondDice);
+        ret.add( firstDice);
+        ret.add( secondDice);
 
         // After the dice is rolled, players must collect resource and current player must be able to play previously
         // bought development cards!
         collectResources();
-        getCurrentPlayer().makeCardsPlayable();
+
+        new CardManager().makeCardsPlayable();
 
         return ret;
     }
@@ -150,20 +187,34 @@ public class Game
      * collect resources after dice has been rolled or moves robber
      */
     private void collectResources(){
+
         if( currentDice == 7 )
         {
-            for( Player player : players )
-            {
-                player.discardHalfOfResources();
-            }
-            flowManager.addMust(3); // inside tile
-            flowManager.addMust(8);// get neighbors
+            new ResourceManager().discardHalfOfResources();
+
+            must.add( 3); // inside tile
+            must.add( 8); // get neighbors
         }
-        else {
-            resManager.collectResources( currentDice, board.getRobber() );
+        else
+        {
+            ResourceDistributer.getInstance().collectResources( currentDice, board.getRobber() );
         }
     }
 
+    //*****************************************************************************************************************
+    //
+    // Data access
+    //
+    //*****************************************************************************************************************
+
+    /**
+     * Returns the development card stack data for processing.
+     * @return Stack<Card> - development cards
+     */
+    public Stack<Card> getCardStack()
+    {
+        return devCards;
+    }
 
     /**
      * Returns a specific player given in the player index.
@@ -172,7 +223,7 @@ public class Game
      */
     public Player getPlayer(int playerIndex)
     {
-        return players.get(playerIndex);
+        return players.get( playerIndex);
     }
 
     /**
@@ -182,15 +233,16 @@ public class Game
     public Player getCurrentPlayer()
     {
         // If the game is at its construction stage and each player plays 2 turns at total
-        if(gameStatus == 0 && turnNumber >= playerCount)
-            return players.get(2 * playerCount - turnNumber - 1);
-        return players.get(turnNumber % playerCount); // If the game has started and turns are in a loop, return the player with associated turn number.
+        if( gameStatus == 0 && turnNumber >= playerCount)
+            return players.get( 2 * playerCount - turnNumber - 1);
+
+        return players.get( turnNumber % playerCount); // If the game has started and turns are in a loop, return the player with associated turn number.
     }
 
     public int getCurrentPlayerIndex()
     {
         // If the game is at its construction stage and each player plays 2 turns at total
-        if(gameStatus == 0 && turnNumber >= playerCount)
+        if( gameStatus == 0 && turnNumber >= playerCount)
             return 2 * playerCount - turnNumber - 1;
         return turnNumber % playerCount; // If the game has started and turns are in a loop, return the player index with associated turn number.
     }
@@ -205,196 +257,18 @@ public class Game
     }
 
     /**
-     * Adds a development card taken out from the stack to the current player.
+     * Gets the current status of the game, 0 - Initial phase, 1 - Game phase
+     * @return int - the current game status
      */
-    public void addDevelopmentCard()
+    public int getGameStatus()
     {
-        Player cp = getCurrentPlayer();
-
-        Card tmp = devCards.peek();
-        devCards.pop();
-
-        cp.buyDevelopmentCard( Card.REQUIREMENTS_FOR_CARD , tmp);
-    }
-
-    /**
-     * Plays a development card specified from the current player. The effect of the card will take place depending on
-     * the type. must will be loaded. actions will take place after input is taken at other specified functions
-     * @param card is the development card that will be played with its effect.
-     */
-    public void playDevelopmentCard(Card card)
-    {
-        /*if ( card.getType() == DevelopmentCards.Card.CardType.KNIGHT)
-        {
-            flowManager.addMust(3); // inside tile
-            flowManager.addMust(8); // get neighbor
-            getCurrentPlayer().incrementLargestArmy(); // Add 1 army point to the player.
-            this.updateLargestArmy();
-        }
-        else if ( card.getType() == DevelopmentCards.Card.CardType.MONOPOLY)
-        {
-            flowManager.addMust(4); // monopoly
-        }
-        else if ( card.getType() == DevelopmentCards.Card.CardType.ROADBUILDING)
-        {
-            getCurrentPlayer().addResource(GameBoard.StructureTile.REQUIREMENTS_FOR_ROAD);
-            getCurrentPlayer().addResource(GameBoard.StructureTile.REQUIREMENTS_FOR_ROAD);
-
-            flowManager.addMust(0); //road
-            flowManager.addMust(0); //road
-        }
-        else if ( card.getType() == DevelopmentCards.Card.CardType.VICTORYPOINT)
-        {
-            getCurrentPlayer().increaseScore(1); // Add 1 score to the player.
-        }
-        else if ( card.getType() == DevelopmentCards.Card.CardType.YEAROFPLENTY)
-        {
-            flowManager.addMust(5); // year of plenty
-        }*/
-    }
-
-    /**
-     * when robber is placed, this method returns the players who have city/settlement at that hexagon
-     * board[y][x] must be an inside tile
-     * @param x x-coordinate
-     * @param y y-coordinate
-     * @return players that have settlement at the hexagon
-     */
-    public ArrayList<Player> getNeighborPlayers(int x, int y){
-        return board.getNeighborPlayers( getCurrentPlayer(), x, y);
-    }
-
-    /**
-     * change robber position
-     * @param x x coordinate
-     * @param y y coordinate
-     */
-    public void changeRobber( int x, int y){
-        board.changeRobber( x, y);
-    }
-
-    /**
-     * after user picked a material this method takes all materials from other players and add to the current player
-     * @param selectedMaterial selected material to play monopoly
-     */
-    public void playMonopoly( int selectedMaterial){
-        for ( int i = 0; i < playerCount; i++) // Loop through every player
-        {
-            if ( players.get(i) != getCurrentPlayer()) // If the looped player isn't the one stealing, start the steal loop.
-            {
-                for ( int p = 0; p < players.get(p).getResources()[selectedMaterial]; p++) // Steal the material until the player no longer has any.
-                {
-                    getCurrentPlayer().collectMaterial(selectedMaterial, 1);
-                    players.get(p).discardMaterial(selectedMaterial, 1);
-                }
-            }
-        }
-    }
-
-    /**
-     * after user selected a material, this method gives two selected material to the current user
-     * @param selectedMaterial selected material to give
-     */
-    public void playYearOfPlenty( int selectedMaterial){
-        getCurrentPlayer().collectMaterial( selectedMaterial, 1);
-        getCurrentPlayer().collectMaterial( selectedMaterial, 1);
-    }
-
-    /**
-     * This method returns all possibilities for any tile
-     * @param x x coordinate
-     * @param y y coordinate
-     * @return 0 = road can be built here
-     *         1 = settlement can be built here
-     *         2 = city can be built here
-     *         3 = this tile is an inside tile
-     *         4 = this tile is a sea tile
-     *         errors
-     *         -1 = there is no connection for road to build
-     *         -2 = there is no connection for city to build
-     *         -3 = there is a building near
-     *         -4 = this tile is occupied by a road, city or other players structure, in this case there is no need to explain anything
-     *         -5 = there is no enough resource for road
-     *         -6 = there is no enough resource for settlement
-     *         -7 = there is no enough resource for city
-     */
-    public int checkTile( int x, int y){
-        Player cp = getCurrentPlayer();
-        if( board.isGameTile(x,y) ){
-            int structureStatus = board.checkStructure( cp, x, y, gameStatus);
-
-            if( structureStatus >= -4 && structureStatus <= -1 ) // return error because of gameboard
-                return structureStatus;
-
-            else if( structureStatus == 0 ){ // road can be built in terms of gameboard
-                if( cp.hasEnoughResources( StructureTile.REQUIREMENTS_FOR_ROAD ) )
-                    return structureStatus;
-                else
-                    return -5; // error because of resource
-            }
-            else if( structureStatus == 1 ){ // settlement can be built in terms of gameboard
-                if( cp.hasEnoughResources( StructureTile.REQUIREMENTS_FOR_SETTLEMENT ) )
-                    return structureStatus;
-                else
-                    return -6; // error because of resource
-            }
-            else if( structureStatus == 2 ){ // city can be built in terms of gameboard
-                if( cp.hasEnoughResources( StructureTile.REQUIREMENTS_FOR_CITY ) )
-                    return structureStatus;
-                else
-                    return -7; // error because of resource
-            }
-        }
-        else{
-            if( board.isInsideTile(x,y)){
-                return 3; // means inside tile
-            }
-            else
-                return 4;// means sea
-        }
-        return 5; // never work this return, this return is just for IDE
-    }
-
-    /**
-     * return rotation type of the road
-     * @param x x coordinate of the road
-     * @param y y coordinate of the road
-     * @return rotation type of the road
-     */
-    public RoadTile.RotationType rotationType( int x, int y){
-        return board.rotationType( x, y);
-    }
-
-    /**
-     * sets a structrure to (x,y) with the given type
-     * (value of type can be directed from checkTile method)
-     * @param x x coordinate
-     * @param y y coordinate
-     */
-    public void setTile( int x, int y){
-        Player cp = getCurrentPlayer();
-        if( board.getTile( x, y) instanceof RoadTile ){
-            board.setStructure( cp, x ,y );
-            cp.buyRoad();
-            updateLongestRoad( cp);
-        }
-        else if( !(((StructureTile)board.getTile( x, y)).getAvailability()) ){
-            board.setStructure( cp, x ,y );
-            resManager.addHexagonResource( cp, board.getTile( x, y) );
-            cp.buySettlement();
-            updateLongestRoad();
-        }
-        else{
-            board.setStructure( cp, x ,y);
-            resManager.addHexagonResource( cp, board.getTile( x, y) );
-            cp.buyCity();
-        }
+        return gameStatus;
     }
 
     /**
      * updates longest road by looking all players
      */
-    private void updateLongestRoad(){
+    public void updateLongestRoad(){
 
         for( int i = 0 ; i < playerCount ; i++ ){
             updateLongestRoad( players.get(i));
@@ -405,7 +279,7 @@ public class Game
      * updates longest road by looking at the specified player
      * @param player is the player who has just build a road, in building a city scenario, it is every player.
      */
-    private void updateLongestRoad( Player player ){
+    public void updateLongestRoad( Player player ){
 
         int curRoadLength = board.longestRoadOfPlayer( player);
         player.setRoadLength( curRoadLength);
@@ -440,77 +314,21 @@ public class Game
     }
 
     /**
-     * return gameBoard for UI
-     * @return gameboard
+     * Retuns GameBoard for board related data flow.
+     * @return GameBoard board.
      */
-    public Tile[][] getBoard()
+    public GameBoard getGameBoard()
+    {
+        return board;
+    }
+
+    /**
+     * Returns the tile board[][] 2D array for UI processing.
+     * @return Tile[][] board.
+     */
+    public Tile[][] getTileBoard()
     {
         return board.getBoard();
-    }
-
-    /**
-     * todo
-     * This method checks whether the player has this particular port
-     * @param portType is the type of port wanted to check
-     * @return true if the current player has this particular port, false otherwise
-     */
-    public boolean selectHarbor( Harbor.HarborType portType){
-        return getCurrentPlayer().hasHarbor( portType);
-    }
-
-    /**
-     * todo
-     * This method makes wanted trade by using port
-     * @param portType is the type of port wanted to check
-     * @param discardedMaterial is the material wanted to be given by the player
-     * @param collectedMaterial is the material wanted to be taken by the player
-     */
-    public void useHarbor(Harbor.HarborType portType, int discardedMaterial, int collectedMaterial){
-        Player player = getCurrentPlayer();
-        if(portType == Harbor.HarborType.THREE_TO_ONE){
-            player.discardMaterial(discardedMaterial, 3);
-            player.collectMaterial(collectedMaterial, 1);
-        }
-
-        else if(portType == Harbor.HarborType.TWO_TO_ONE_LUMBER){
-            player.discardMaterial(ResourceManager.LUMBER, 2);
-            player.collectMaterial(collectedMaterial, 1);
-        }
-
-        else if(portType == Harbor.HarborType.TWO_TO_ONE_WOOL){
-            player.discardMaterial(ResourceManager.WOOL, 2);
-            player.collectMaterial(collectedMaterial, 1);
-        }
-
-        else if(portType == Harbor.HarborType.TWO_TO_ONE_GRAIN){
-            player.discardMaterial(ResourceManager.GRAIN, 2);
-            player.collectMaterial(collectedMaterial, 1);
-        }
-        else if(portType == Harbor.HarborType.TWO_TO_ONE_BRICK){
-            player.discardMaterial(ResourceManager.BRICK, 2);
-            player.collectMaterial(collectedMaterial, 1);
-        }
-
-        else if(portType == Harbor.HarborType.TWO_TO_ONE_ORE){
-            player.discardMaterial(ResourceManager.ORE, 2);
-            player.collectMaterial(collectedMaterial, 1);
-        }
-    }
-
-    /**
-     * This method makes wanted trade between two users
-     * @param offerer is the GameFlow.Player make the trade request
-     * @param offeree is the GameFlow.Player accept the trade request
-     * @param toOfferer is the list of materials the offeree wants to give
-     * @param toOfferee is the list of materials the offerer wants to give
-     */
-    public boolean tradeWithPlayer(Player offerer, Player offeree, int[] toOfferer, int[] toOfferee){
-        if ( offeree.hasEnoughResources(toOfferer))
-        {
-            offerer.tradeWithPlayer(offeree, toOfferee, toOfferer);
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -522,12 +340,53 @@ public class Game
         return this.players;
     }
 
-
     public Player getLongestRoadPlayer() {
         return longestRoadPlayer;
     }
 
     public Player getLargestArmyPlayer() {
         return largestArmyPlayer;
+    }
+
+    //*****************************************************************************************************************
+    //
+    // Must Control
+    //
+    //*****************************************************************************************************************
+
+    /**
+     * adds a new must
+     * @param m must type
+     */
+    public void addMust( int m){
+        must.add( m);
+    }
+
+    /**
+     * return if there is any must operation for this player and its type
+     * @return -1 = there is no must
+     *          0 = road need to be built
+     *          1 = settlement need to be built
+     *          2 = city need to be built
+     *          3 = inside tile selection
+     *          4 = resource selection (for monopoly card)
+     *          5 = resource selection (for year of plenty card)
+     *          6 = end turn
+     *          7 = roll dice
+     *          8 = get neighbor players ( after robber is placed )
+     *         --- 9 = get half resources from all players (for perfectly balanced card) *** can be implemented in card play function
+     *         --- 10 = player gets a point (for victory point card) *** can be implemented in card play function
+     */
+    public int checkMust(){
+        if( must.size() == 0 )
+            return -1;
+        return must.peek();
+    }
+
+    /**
+     * last-must has been completed
+     */
+    public void doneMust(){
+        must.remove();
     }
 }
