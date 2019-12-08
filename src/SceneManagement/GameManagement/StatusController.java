@@ -45,6 +45,8 @@ public class StatusController {
      */
     public void informStatus(int resultCode)
     {
+        FlowManager flowManager = new FlowManager();
+
         // Initialize an out animation for the previous status.
         FadeOutRight animation = new FadeOutRight(statusText);
         animation.setSpeed(3);
@@ -55,31 +57,31 @@ public class StatusController {
             // Check the status code given, change the status text corresponding to the code.
             if ( resultCode == -1 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", there is no connection for a road to build");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", there is no connection for a road to build");
             }
             else if ( resultCode == -2 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", there is no connection for a settlement to build");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", there is no connection for a settlement to build");
             }
             else if ( resultCode == -3 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", there is another building near");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", there is another building near");
             }
             else if ( resultCode == -4 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", this spot is occupied by a player");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", this spot is occupied by a player");
             }
             else if ( resultCode == -5 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", not enough resources for a road");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resources for a road");
             }
             else if ( resultCode == -6 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", not enough resources for a settlement");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resources for a settlement");
             }
             else if ( resultCode == -7 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", not enough resources for a city");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resources for a city");
             }
             else if ( resultCode == -8 )
             {
@@ -91,39 +93,39 @@ public class StatusController {
             }
             else if ( resultCode == 0 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", build road first!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", build road first!");
             }
             else if ( resultCode == 1 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", build settlement first!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", build settlement first!");
             }
             else if ( resultCode == 2 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", build city first!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", build city first!");
             }
             else if ( resultCode == 3 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", move the robber first by clicking and dragging!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", move the robber first by clicking and dragging!");
             }
             else if ( resultCode == 4 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", select a resource for monopoly card!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", select a resource for monopoly card!");
             }
             else if ( resultCode == 5 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", select two resources for year of plenty card!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", select two resources for year of plenty card!");
             }
             else if ( resultCode == 6 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", END YOUR TURN RIGHT NOW!!!!!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", END YOUR TURN RIGHT NOW!!!!!");
             }
             else if ( resultCode == 7 )
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", but first, lets roll the dice!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", but first, lets roll the dice!");
             }
             else if ( resultCode == 8)
             {
-                statusText.setText( game.getCurrentPlayer().getName() + ", choose a neighbor player first to steal a resource!");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", choose a neighbor player first to steal a resource!");
             }
             else
             {

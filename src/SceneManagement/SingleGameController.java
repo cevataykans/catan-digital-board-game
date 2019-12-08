@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import GameFlow.*;
 import GameBoard.*;
+import org.controlsfx.dialog.Wizard;
 
 /**
  * This scene controller manages all of the Single-GameFlow.Game screen and all of its logic with itself and its sub-controllers.
@@ -120,11 +121,12 @@ public class SingleGameController extends SceneController
         game = Game.getInstance( players);
         BoardManager boardManager = new BoardManager();
         CardManager cardManager = new CardManager();
+        FlowManager flowManager = new FlowManager();
 
         gameBox = (AnchorPane) scene.lookup("#gameBox");
         robber = new ImageView("/images/robber.png");
 
-        setupGameBoard(); // Game is configured here
+        setupGameBoard( game.getTileBoard()); // Game is configured here
         setupRobber(); // Robber is configured here
 
         // Initializing all the sub controllers that will handle the game's other logic.
@@ -138,7 +140,7 @@ public class SingleGameController extends SceneController
         gameBox.setOnMouseClicked(mouseEvent -> {
             System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
             // Allow the action to be processed for game board UI if only game board related must, be done
-            if ( game.checkMust() < 4 )
+            if ( flowManager.checkMust() < 4 )
             {
                 // Getting the mouse coordinates.
                 int x = PixelProcessor.processX(mouseEvent.getX());
@@ -152,7 +154,7 @@ public class SingleGameController extends SceneController
             }
             else
             {
-                statusController.informStatus( game.checkMust() );
+                statusController.informStatus( flowManager.checkMust() );
             }
         });
 
@@ -160,7 +162,7 @@ public class SingleGameController extends SceneController
         gameBox.setOnMouseMoved(mouseEvent2 ->
         {
             // Allow the action to be processed for game board UI if only game board related must, be done
-            if ( game.checkMust() < 4 && !highlightOn)
+            if ( flowManager.checkMust() < 4 && !highlightOn)
             {
                 // Getting the mouse coordinates.
                 int x = PixelProcessor.processX(mouseEvent2.getX());
@@ -172,7 +174,7 @@ public class SingleGameController extends SceneController
                 if ( structureCheck == 0)
                 {
                     // Get the road image with the current player's color.
-                    ImageView roadHighlight = new ImageView("/images/road" + game.getCurrentPlayer().getColor()
+                    ImageView roadHighlight = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor()
                                                             + ".png");
                     // Set its rotation depending on the hexagon side and sets its x depending on rotation.
                     setRoadRotation(roadHighlight, x, y);
@@ -206,7 +208,7 @@ public class SingleGameController extends SceneController
                 else if ( structureCheck == 1)
                 {
                     // Get the settlement image with the current player's color.
-                    ImageView settlementHighlight = new ImageView("/images/settlement" + game.getCurrentPlayer()
+                    ImageView settlementHighlight = new ImageView("/images/settlement" + flowManager.getCurrentPlayer()
                             .getColor() + ".png");
                     // Set its x depending on the hexagin corner.
                     settlementHighlight.setX( PixelProcessor.getXToDisplay() );
@@ -275,11 +277,11 @@ public class SingleGameController extends SceneController
     /**
      * This functions sets up the game board in the game are (anchor) in UI, its robber and all the game board logic.
      */
-    public void setupGameBoard()
+    public void setupGameBoard( Tile[][] board)
     {
         // Initialize the controller
-        game.configureGame();
-        Tile[][] board = game.getTileBoard();
+        //game.configureGame();
+        //Tile[][] board = game.getTileBoard();
         ImageView hexagon;
 
         // For each GameBoard.Tile in the game board ( this method could be optimized with increased i, j index increment)
@@ -354,10 +356,12 @@ public class SingleGameController extends SceneController
      * unit when dice is 7 or DevelopmentCards.Knight is played. If the dropped hexagon is valid with valid players, a steal scenario happens.
      */
     public void setupRobber() {
+        FlowManager flowManager = new FlowManager();
+
         // User clicks to robber to move it
         robber.setOnMousePressed(e ->
         {
-            if ( game.checkMust() == 3 )
+            if ( flowManager.checkMust() == 3 )
             {
                 // Save the initial value so that if dropped place is invalid, return to this position
                 initialRobX = robber.getX();
@@ -372,7 +376,7 @@ public class SingleGameController extends SceneController
             }
             else
             {
-                statusController.informStatus( game.checkMust() );
+                statusController.informStatus( flowManager.checkMust() );
             }
 
         });
@@ -382,7 +386,7 @@ public class SingleGameController extends SceneController
         {
             System.out.println( "Mouse Dragging, coordinateX: "+ PixelProcessor.processX( e.getX() ) + " y: "
                     + PixelProcessor.processY( e.getY() ) );
-            if ( game.checkMust() == 3 )
+            if ( flowManager.checkMust() == 3 )
             {
                 //robber.setTranslateX(robber.getTranslateX() + (e.getX() - xRob.get()));
                 //robber.setTranslateY(robber.getTranslateY() + (e.getY() - yRob.get()));
@@ -393,7 +397,7 @@ public class SingleGameController extends SceneController
             }
             else
             {
-                statusController.informStatus( game.checkMust() );
+                statusController.informStatus( flowManager.checkMust() );
             }
         });
 
@@ -403,7 +407,7 @@ public class SingleGameController extends SceneController
             System.out.println( "Moude Released, coordinateX: "+ PixelProcessor.processX( e.getX() ) + " y: "
                     + PixelProcessor.processY( e.getY() ) );
             // When user releases the robber, if the robber should not play, this function must not work!
-            if ( game.checkMust() == 3)
+            if ( flowManager.checkMust() == 3)
             {
                 // Create a board manager
                 BoardManager boardManager = new BoardManager();
@@ -426,7 +430,7 @@ public class SingleGameController extends SceneController
                 else
                 {
                     // It is known that place is a inside tile, do must!
-                    game.doneMust();
+                    flowManager.doneMust();
                     robber.setX( PixelProcessor.getXToDisplay() );
                     robber.setY( PixelProcessor.getYToDisplay( movedY) );
                     boardManager.changeRobber( movedX, movedY);
@@ -441,7 +445,7 @@ public class SingleGameController extends SceneController
                     else
                     {
                         // As there is not other player, do the must
-                        game.doneMust();
+                        flowManager.doneMust();
                     }
                 }
             }
@@ -456,6 +460,8 @@ public class SingleGameController extends SceneController
      */
     private void buildSettlement(Alert alert, int x, int y)
     {
+        FlowManager flowManager = new FlowManager();
+
         alert.setHeaderText("Building a Settlement");
         alert.setContentText("Do you want to build a settlement?");
 
@@ -466,16 +472,16 @@ public class SingleGameController extends SceneController
             BoardManager boardManager = new BoardManager();
 
             // Check if the user obligated to build a settlement
-            if ( game.checkMust() == 1 )
+            if ( flowManager.checkMust() == 1 )
             {
-                game.doneMust();
+                flowManager.doneMust();
             }
 
             // Make the corresponding game tile in the given index a road.
             boardManager.setTile( x, y);
 
             // Initializing road image to be shown on the UI.
-            ImageView structure = new ImageView("/images/settlement" + game.getCurrentPlayer().getColor() + ".png");
+            ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
 
             // Setting city image's coordinates.
             structure.setX( PixelProcessor.getXToDisplay() );
@@ -506,6 +512,8 @@ public class SingleGameController extends SceneController
      */
     private void buildRoad(Alert alert, int x, int y)
     {
+        FlowManager flowManager = new FlowManager();
+
         alert.setHeaderText("Building a Road");
         alert.setContentText("Do you want to build a road?");
 
@@ -516,15 +524,15 @@ public class SingleGameController extends SceneController
             BoardManager boardManager = new BoardManager();
 
             // Check if the user obligated to build a road
-            if ( game.checkMust() == 0 )
+            if ( flowManager.checkMust() == 0 )
             {
-                game.doneMust();
+                flowManager.doneMust();
             }
 
             // Make the corresponding game tile in the given index a road.
             boardManager.setTile( x, y);
             // Initializing road image to be shown on the UI.
-            ImageView structure = new ImageView("/images/road" + game.getCurrentPlayer().getColor() + ".png");
+            ImageView structure = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor() + ".png");
             // Determining its rotation type corresponding to the hexagon side. Setting the road image's coordinates.
             setRoadRotation(structure, x, y);
             structure.setY( y * 30 + 30);
@@ -538,7 +546,7 @@ public class SingleGameController extends SceneController
             SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
 
             // If its initial state, player has to immediately end the turn.
-            if ( game.checkMust() == 6 )
+            if ( flowManager.checkMust() == 6 )
             {
                 performEndTurnButtonEvent();
             }
@@ -583,6 +591,8 @@ public class SingleGameController extends SceneController
      */
     private void buildCity( Alert alert, int x, int y)
     {
+        FlowManager flowManager = new FlowManager();
+
         alert.setHeaderText("Upgrading To City");
         alert.setContentText("Do you want to upgrade your settlement to a city?");
 
@@ -593,16 +603,16 @@ public class SingleGameController extends SceneController
             BoardManager boardManager = new BoardManager();
 
             // Check if the user obligated to build a city
-            if ( game.checkMust() == 2 )
+            if ( flowManager.checkMust() == 2 )
             {
-                game.doneMust();
+                flowManager.doneMust();
             }
 
             // Make the corresponding game tile in the given index a city.
             boardManager.setTile( x, y);
 
             // Initializing road image to be shown on the UI.
-            ImageView structure = new ImageView("/images/city" + game.getCurrentPlayer().getColor() + ".png");
+            ImageView structure = new ImageView("/images/city" + flowManager.getCurrentPlayer().getColor() + ".png");
 
             // Setting city image's coordinates.
             structure.setX( PixelProcessor.getXToDisplay() );
@@ -632,14 +642,16 @@ public class SingleGameController extends SceneController
      */
     private void performEndTurnButtonEvent()
     {
+        FlowManager flowManager = new FlowManager();
+
         // Check if the user has to do something before ending their turn
-        if ( game.checkMust() == -1 || game.checkMust() == 6) {
+        if ( flowManager.checkMust() == -1 || flowManager.checkMust() == 6) {
 
             // Check if the user ends the turn because of obligation
-            if ( game.checkMust() == 6) {
-                game.doneMust();
+            if ( flowManager.checkMust() == 6) {
+                flowManager.doneMust();
             }
-            game.endTurn();
+            flowManager.endTurn();
 
             SoundManager.getInstance().playEffect(SoundManager.Effect.END_TURN);
             infoController.setupOtherPlayers();
@@ -667,7 +679,7 @@ public class SingleGameController extends SceneController
             });
             new Thread(sleeper2).start();
         } else {
-            statusController.informStatus( game.checkMust());
+            statusController.informStatus( flowManager.checkMust());
         }
     }
 
@@ -714,7 +726,9 @@ public class SingleGameController extends SceneController
      * @param y is the y coordinate of to perform action on the game board
      */
     private void informBoardSelection( Alert alert, int resultCode, int x, int y ) {
-        int mustCheckCode = game.checkMust();
+        FlowManager flowManager = new FlowManager();
+
+        int mustCheckCode = flowManager.checkMust();
 
         // Player.Player tries to build a road
         if (resultCode == 0) {

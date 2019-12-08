@@ -1,6 +1,8 @@
 package DevelopmentCards;
 
+import GameFlow.FlowManager;
 import GameFlow.Game;
+import org.controlsfx.dialog.Wizard;
 
 public class VictoryPoint extends Card {
     // Properties
@@ -18,7 +20,7 @@ public class VictoryPoint extends Card {
      */
     @Override
     public void play() {
-
-        Game.getInstance().getCurrentPlayer().increaseScore( 1);
+        FlowManager flowManager = new FlowManager();
+        flowManager.getCurrentPlayer().increaseScore( 1);
     }
 }

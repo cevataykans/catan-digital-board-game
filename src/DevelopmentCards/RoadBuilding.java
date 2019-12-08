@@ -1,5 +1,6 @@
 package DevelopmentCards;
 
+import GameFlow.FlowManager;
 import GameFlow.Game;
 
 public class RoadBuilding extends Card {
@@ -18,8 +19,9 @@ public class RoadBuilding extends Card {
      */
     @Override
     public void play() {
+        FlowManager flowManager = new FlowManager();
 
-        Game.getInstance().addMust(0);
-        Game.getInstance().addMust(0);
+        flowManager.addMust(0);
+        flowManager.addMust(0);
     }
 }

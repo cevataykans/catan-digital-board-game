@@ -1,5 +1,6 @@
 package DevelopmentCards;
 
+import GameFlow.FlowManager;
 import GameFlow.Game;
 
 public class ChangeOfFortune extends Card {
@@ -19,6 +20,8 @@ public class ChangeOfFortune extends Card {
      */
     @Override
     public void play() {
-        Game.getInstance().addMust(7);
+        FlowManager flowManager = new FlowManager();
+
+        flowManager.addMust(7);
     }
 }

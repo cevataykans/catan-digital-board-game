@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.ResourceManager;
 import SceneManagement.SingleGameController;
@@ -56,6 +57,7 @@ public class SelectionController {
 
         // Get the game for must management
         Game game = Game.getInstance();
+        FlowManager flowManager = new FlowManager();
 
         // Clear old players contained in the selection container.
         selectionBox.getChildren().clear();
@@ -75,10 +77,10 @@ public class SelectionController {
             otherPlayer.setOnMousePressed(e -> {
                 // Check if the action is to select a player. This is to prevent background action that current player
                 // may do and interrupt the game's flow.
-                if ( game.checkMust() == 8 )
+                if ( flowManager.checkMust() == 8 )
                 {
                     // Clear the action of selecting a user from the Flow Manager.
-                    game.doneMust();
+                    flowManager.doneMust();
                 }
                 // Call stealing function with the selected player.
                 stealResourceFromPlayer( playersToSelect.get( finalI) );
@@ -103,8 +105,10 @@ public class SelectionController {
      */
     private void stealResourceFromPlayer( Player stealingFrom)
     {
+        FlowManager flowManager = new FlowManager();
+
         // Steal one of the player's resources and add it to the current player.
-        new ResourceManager().stealResourceFromPlayer( Game.getInstance().getCurrentPlayer(), stealingFrom );
+        new ResourceManager().stealResourceFromPlayer( flowManager.getCurrentPlayer(), stealingFrom );
 
         // Play an out animation for the selection screen after user selects a player.
         new FadeOutRight( selectionBox).play();

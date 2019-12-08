@@ -105,13 +105,14 @@ public class ResourceManager
 	 */
 	public void payForStructure( int[] resources)
 	{
+		FlowManager flowManager = new FlowManager();
 		Game game = Game.getInstance();
 
 		// Pay for the resources
 		for ( int i = 0; i < resources.length; i++ )
 		{
 			// Must be tested! *****************************************************************
-			game.getCurrentPlayer().discardMaterial( i, resources[ i] );
+			flowManager.getCurrentPlayer().discardMaterial( i, resources[ i] );
 		}
 	}
 
@@ -164,8 +165,9 @@ public class ResourceManager
 	 */
 	public void tradeWithHarbor(Harbor.HarborType portType, int discardedMaterial, int collectedMaterial)
 	{
+		FlowManager flowManager = new FlowManager();
 		Game game = Game.getInstance();
-		Player player = game.getCurrentPlayer();
+		Player player = flowManager.getCurrentPlayer();
 
 		if( portType == Harbor.HarborType.THREE_TO_ONE ){
 
