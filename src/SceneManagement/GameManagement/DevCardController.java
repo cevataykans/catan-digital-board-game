@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import GameFlow.FlowManager;
 import GameFlow.Game;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeIn;
@@ -65,6 +66,8 @@ public class DevCardController {
      * the playable area, the card is played.
      */
     public void setupDevelopmentCards() {
+        FlowManager flowManager = new FlowManager();
+
         // Initialize out animation for the previous player's development card box with 3x the normal speed.
         FadeOut cardBoxOut = new FadeOut(cardBox);
         cardBoxOut.setSpeed(3);
@@ -73,7 +76,7 @@ public class DevCardController {
             // Clear all the previous UI (important distinction) development cards from the card container.
             cardBox.getChildren().clear();
             // Get the development cards (logical unit ones) from the current player.
-            ArrayList<Card> cards = Game.getInstance().getCurrentPlayer().getCards();
+            ArrayList<Card> cards = flowManager.getCurrentPlayer().getCards();
             // Initialize an ArrayList for the UI development cards.
             ArrayList<ImageView> cardsInUI = new ArrayList<>();
             for (int i = 0; i < cards.size(); i++) {

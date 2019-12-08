@@ -19,7 +19,8 @@ public class CardManager
 	{
 		// Get the related data
 		Game game = Game.getInstance();
-		Player current = game.getCurrentPlayer();
+		FlowManager flowManager = new FlowManager();
+		Player current = flowManager.getCurrentPlayer();
 		Stack<Card> devCards = game.getCardStack();
 
 		// Get the top of the card
@@ -35,7 +36,8 @@ public class CardManager
 	public void makeCardsPlayable()
 	{
 		Game game = Game.getInstance();
-		ArrayList<Card> cards = game.getCurrentPlayer().getCards();
+		FlowManager flowManager = new FlowManager();
+		ArrayList<Card> cards = flowManager.getCurrentPlayer().getCards();
 
 		// Iterate over each card to make it playable
 		for ( Card tempCard : cards)
@@ -53,8 +55,9 @@ public class CardManager
 	{
 		// Get necessary data to manipulate
 		Game game = Game.getInstance();
+		FlowManager flowManager = new FlowManager();
 		ArrayList<Player> players = game.getPlayers();
-		Player currentP = game.getCurrentPlayer();
+		Player currentP = flowManager.getCurrentPlayer();
 
 		for ( int i = 0; i < players.size(); i++) // Loop through every player
 		{
@@ -80,7 +83,8 @@ public class CardManager
 	 */
 	public void playYearOfPlenty( int selectedMaterial)
 	{
-		Player currentP = Game.getInstance().getCurrentPlayer();
+		FlowManager flowManager = new FlowManager();
+		Player currentP = flowManager.getCurrentPlayer();
 
 		currentP.collectMaterial( selectedMaterial, 1);
 		currentP.collectMaterial( selectedMaterial, 1);

@@ -4,6 +4,7 @@ import GameBoard.GameBoard;
 import GameBoard.RoadTile;
 import GameBoard.StructureTile;
 import Player.Player;
+import org.controlsfx.dialog.Wizard;
 
 import java.util.ArrayList;
 
@@ -33,8 +34,9 @@ public class BoardManager
 	 */
 	public int checkTile( int x, int y)
 	{
+		FlowManager flowManager = new FlowManager();
 		Game game = Game.getInstance();
-		Player currentP = game.getCurrentPlayer();
+		Player currentP = flowManager.getCurrentPlayer();
 		ResourceManager resManager = new ResourceManager();
 		GameBoard board = game.getGameBoard();
 		int gameStatus = game.getGameStatus();
@@ -100,23 +102,25 @@ public class BoardManager
 	public void setTile( int x, int y)
 	{
 		// Get necessary data for processing
+		FlowManager flowManager = new FlowManager();
 		Game game = Game.getInstance();
-		Player cp = game.getCurrentPlayer();
+		Player cp = flowManager.getCurrentPlayer();
 		GameBoard board = game.getGameBoard();
 		ResourceDistributer distributor = ResourceDistributer.getInstance();
+		TitleManager titleManager = new TitleManager();
 
 		if( board.getTile( x, y) instanceof RoadTile)
 		{
 			board.setStructure( cp, x ,y );
 			cp.buyRoad();
-			game.updateLongestRoad( cp);
+			titleManager.updateLongestRoad( cp);
 		}
 		else if ( !(((StructureTile)board.getTile( x, y)).getAvailability()) )
 		{
 			board.setStructure( cp, x ,y );
 			distributor.addHexagonResource( cp, board.getTile( x, y) );
 			cp.buySettlement();
-			game.updateLongestRoad();
+			titleManager.updateLongestRoad();
 		}
 		else
 		{
@@ -152,8 +156,9 @@ public class BoardManager
 	{
 		// Get necessary data
 		Game game = Game.getInstance();
+		FlowManager flowManager = new FlowManager();
 
 		// Return data :)
-		return game.getGameBoard().getNeighborPlayers( game.getCurrentPlayer(), x, y);
+		return game.getGameBoard().getNeighborPlayers( flowManager.getCurrentPlayer(), x, y);
 	}
 }

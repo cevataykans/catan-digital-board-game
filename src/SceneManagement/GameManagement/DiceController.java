@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import GameFlow.FlowManager;
 import GameFlow.Game;
 import SceneManagement.SingleGameController;
 import SceneManagement.SoundManager;
@@ -52,6 +53,8 @@ public class DiceController {
      * is shown. When the dice gif is clicked, roll function is called and the 2 die results are shown as images in UI.
      */
     public void setupDiceRoll() {
+        FlowManager flowManager = new FlowManager();
+
         // Initialize out animation for the previous die results with 2x the normal speed.
         FadeOut die1Out = new FadeOut(die1);
         FadeOut die2Out = new FadeOut(die2);
@@ -75,7 +78,7 @@ public class DiceController {
             Game game = Game.getInstance();
 
             // Dice could only be rolled at the beginning of a turn
-            if ( game.checkMust() == 7 )
+            if ( flowManager.checkMust() == 7 )
             {
                 // Initialize an out animation for the roll gif when its clicked with 2x the normal speed.
                 FadeOut animation = new FadeOut(diceAvailable);
@@ -111,8 +114,8 @@ public class DiceController {
 
                 // Clear the roll action from the Flow Manager as it is already done, roll the dice in the logic itself
                 // and distribute resources to the players that needs to collect resources from the hexagons.
-                game.doneMust();
-                ArrayList<Integer> results = Game.getInstance().rollDice();
+                flowManager.doneMust();
+                ArrayList<Integer> results = flowManager.rollDice();
 
                 // Set die result images taken from the logic.
                 die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
@@ -121,7 +124,7 @@ public class DiceController {
             else
             {
                 // If the current action should not be rolling dice, inform the current player.
-                controller.getStatusController().informStatus( game.checkMust() );
+                controller.getStatusController().informStatus( flowManager.checkMust() );
             }
         });
     }

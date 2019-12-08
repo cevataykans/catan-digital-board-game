@@ -1,5 +1,6 @@
 package DevelopmentCards;
 
+import GameFlow.FlowManager;
 import GameFlow.Game;
 
 public class Monopoly extends Card {
@@ -19,7 +20,8 @@ public class Monopoly extends Card {
      */
     @Override
     public void play() {
+        FlowManager flowManager = new FlowManager();
 
-        Game.getInstance().addMust(4);
+        flowManager.addMust(4);
     }
 }
