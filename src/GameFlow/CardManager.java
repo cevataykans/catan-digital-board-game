@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 /**
- *
+ * controls the card related works by taking data from game
+ * @author Cevat Aykan Sevinc
+ * @version 08.12.2019
  */
 public class CardManager
 {
@@ -35,6 +37,7 @@ public class CardManager
 	 */
 	public void makeCardsPlayable()
 	{
+		// Get the related data
 		Game game = Game.getInstance();
 		FlowManager flowManager = new FlowManager();
 		ArrayList<Card> cards = flowManager.getCurrentPlayer().getCards();
@@ -83,46 +86,11 @@ public class CardManager
 	 */
 	public void playYearOfPlenty( int selectedMaterial)
 	{
+		// Get the related data
 		FlowManager flowManager = new FlowManager();
 		Player currentP = flowManager.getCurrentPlayer();
 
 		currentP.collectMaterial( selectedMaterial, 1);
 		currentP.collectMaterial( selectedMaterial, 1);
-	}
-
-	/**
-	 * Plays a development card specified from the current player. The effect of the card will take place depending on
-	 * the type. must will be loaded. actions will take place after input is taken at other specified functions
-	 * @param card is the development card that will be played with its effect.
-	 */
-	public void playDevelopmentCard(Card card)
-	{
-        /*if ( card.getType() == DevelopmentCards.Card.CardType.KNIGHT)
-        {
-            flowManager.addMust(3); // inside tile
-            flowManager.addMust(8); // get neighbor
-            getCurrentPlayer().incrementLargestArmy(); // Add 1 army point to the player.
-            this.updateLargestArmy();
-        }
-        else if ( card.getType() == DevelopmentCards.Card.CardType.MONOPOLY)
-        {
-            flowManager.addMust(4); // monopoly
-        }
-        else if ( card.getType() == DevelopmentCards.Card.CardType.ROADBUILDING)
-        {
-            getCurrentPlayer().addResource(GameBoard.StructureTile.REQUIREMENTS_FOR_ROAD);
-            getCurrentPlayer().addResource(GameBoard.StructureTile.REQUIREMENTS_FOR_ROAD);
-
-            flowManager.addMust(0); //road
-            flowManager.addMust(0); //road
-        }
-        else if ( card.getType() == DevelopmentCards.Card.CardType.VICTORYPOINT)
-        {
-            getCurrentPlayer().increaseScore(1); // Add 1 score to the player.
-        }
-        else if ( card.getType() == DevelopmentCards.Card.CardType.YEAROFPLENTY)
-        {
-            flowManager.addMust(5); // year of plenty
-        }*/
 	}
 }

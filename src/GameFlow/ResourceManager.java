@@ -105,6 +105,7 @@ public class ResourceManager
 	 */
 	public void payForStructure( int[] resources)
 	{
+		// Get the related data
 		FlowManager flowManager = new FlowManager();
 		Game game = Game.getInstance();
 
@@ -119,7 +120,7 @@ public class ResourceManager
 	/**
 	 * Randomly discards half of the resources if the player has more than 7 resources!
 	 */
-	public void discardHalfOfResources( Player player) // implemented in resource Manager
+	public void discardHalfOfResources( Player player)
 	{
 		int totResources = player.getTotalResCount();
 
@@ -146,6 +147,7 @@ public class ResourceManager
 	 */
 	public void discardHalfOfResources()
 	{
+		// Get the related data
 		Game game = Game.getInstance();
 		ArrayList<Player> players = game.getPlayers();
 
@@ -165,6 +167,7 @@ public class ResourceManager
 	 */
 	public void tradeWithHarbor(Harbor.HarborType portType, int discardedMaterial, int collectedMaterial)
 	{
+		// Get the related data
 		FlowManager flowManager = new FlowManager();
 		Game game = Game.getInstance();
 		Player player = flowManager.getCurrentPlayer();

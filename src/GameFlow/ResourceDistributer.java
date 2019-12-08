@@ -7,6 +7,12 @@ import GameBoard.StartTile;
 import GameBoard.Tile;
 import Player.Player;
 
+/**
+ * Distributes the resources throughout the game
+ * singleton class
+ * @author Cevat Aykan Sevinc
+ * @version 08.12.2019
+ */
 public class ResourceDistributer
 {
 	// Private node
@@ -16,11 +22,13 @@ public class ResourceDistributer
 		public int amount;
 	}
 
+	//singleton object
 	private static ResourceDistributer distributor = null;
 
 	// Attributes
 	private ArrayList<DistributionNode>[] resourceDistributionList;
 
+	//private constructor
 	private ResourceDistributer()
 	{
 		resourceDistributionList = new ArrayList[11];
@@ -31,6 +39,10 @@ public class ResourceDistributer
 		}
 	}
 
+	/**
+	 * returns the singleton instance
+	 * @return singleton resource distributor object
+	 */
 	public static ResourceDistributer getInstance()
 	{
 		if ( distributor == null )

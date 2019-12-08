@@ -89,24 +89,26 @@ public class Game
     }
 
     /**
-     *
-     * @param players
-     * @return
+     * use only on initialization
+     * returns initializes and return the instance
+     * @param players game will be initialized by using the players
+     * @return game
      */
-    public static Game getInstance( ArrayList<Player> players )
+    public static Tile[][] getInstance( ArrayList<Player> players )
     {
         if ( game == null )
         {
             game = new Game( players);
             game.configureGame();
-            return game;
+            return game.board.getBoard();
         }
-        return game;
+        return game.board.getBoard();
     }
 
     /**
-     *
-     * @return
+     * use only to take the ready instance
+     * return the singleton game
+     * @return game
      */
     public static Game getInstance()
     {
@@ -134,8 +136,6 @@ public class Game
         this.must.add( 6); // end turn
     }
 
-
-
     //*****************************************************************************************************************
     //
     // Data access
@@ -146,7 +146,7 @@ public class Game
      * Returns the development card stack data for processing.
      * @return Stack<Card> - development cards
      */
-    protected Stack<Card> getCardStack()
+    Stack<Card> getCardStack()
     {
         return devCards;
     }
@@ -155,12 +155,16 @@ public class Game
      * Returns the current turn number players are playing.
      * @return the turn number.
      */
-    protected int getTurn()
+    int getTurn()
     {
         return turnNumber;
     }
 
-    protected void setTurnNumber( int turnNumber){
+    /**
+     * sets the turn number
+     * @param turnNumber turn number
+     */
+    void setTurnNumber(int turnNumber){
         this.turnNumber = turnNumber;
     }
 
@@ -168,60 +172,112 @@ public class Game
      * Gets the current status of the game, 0 - Initial phase, 1 - Game phase
      * @return int - the current game status
      */
-    protected int getGameStatus()
+    int getGameStatus()
     {
         return gameStatus;
     }
 
-    protected void setGameStatus( int gameStatus){
+    /**
+     * sets gamestatus
+     * @param gameStatus gamestatus
+     */
+    void setGameStatus(int gameStatus){
         this.gameStatus = gameStatus;
     }
 
-    protected Queue<Integer> getMust(){
+    /**
+     * returns must queue
+     * @return must
+     */
+    Queue<Integer> getMust(){
         return this.must;
     }
 
-    protected int getPlayerCount(){
+    /**
+     * returns player count
+     * @return player count
+     */
+    int getPlayerCount(){
         return playerCount;
     }
 
-    protected int getCurrentDice(){
+    /**
+     * returns current dice
+     * @return current dice
+     */
+    int getCurrentDice(){
         return currentDice;
     }
 
-    protected  void setCurrentDice( int currentDice) {
+    /**
+     * sets current dice
+     * @param currentDice current dice
+     */
+    void setCurrentDice(int currentDice) {
         this.currentDice = currentDice;
     }
 
-    protected Player getLongestRoadPlayer() {
+    /**
+     * returns the longest road player
+     * @return longest road player
+     */
+    Player getLongestRoadPlayer() {
         return longestRoadPlayer;
     }
 
-    protected void setLongestRoadPlayer( Player longestRoadPlayer){
+    /**
+     * sets the longest road player
+     * @param longestRoadPlayer longest road player
+     */
+    void setLongestRoadPlayer(Player longestRoadPlayer){
         this.longestRoad = longestRoad;
     }
 
-    protected Player getLargestArmyPlayer() {
+    /**
+     * returns the larget army player
+     * @return largest army player
+     */
+    Player getLargestArmyPlayer() {
         return largestArmyPlayer;
     }
 
-    protected void setLargestArmyPlayer( Player largestArmyPlayer){
+    /**
+     * sets the largest army player
+     * @param largestArmyPlayer largest army player
+     */
+    void setLargestArmyPlayer(Player largestArmyPlayer){
         this.largestArmy = largestArmy;
     }
 
-    protected int getLongestRoad(){
+    /**
+     * returns the longest road
+     * @return longest road
+     */
+    int getLongestRoad(){
         return longestRoad;
     }
 
-    protected void setLongestRoad( int longestRoad){
+    /**
+     * sets the longest road
+     * @param longestRoad longest road
+     */
+    void setLongestRoad(int longestRoad){
         this.longestRoad = longestRoad;
     }
 
-    protected int getLargestArmy(){
+    /**
+     * returns the largest army
+     * @return largest army
+     */
+    int getLargestArmy(){
         return largestArmy;
     }
 
-    protected void setLargestArmy( int largestArmy){
+    /**
+     * sets teh largest army
+     * @param largestArmy largest army
+     */
+    void setLargestArmy(int largestArmy){
         this.largestArmy = largestArmy;
     }
 
@@ -229,7 +285,7 @@ public class Game
      * Retuns GameBoard for board related data flow.
      * @return GameBoard board.
      */
-    protected GameBoard getGameBoard()
+    GameBoard getGameBoard()
     {
         return board;
     }
@@ -238,35 +294,8 @@ public class Game
      * Return the player arraylist for manager to manipulate & use
      * @return the player array in the game.
      */
-    protected ArrayList<Player> getPlayers()
+    ArrayList<Player> getPlayers()
     {
         return this.players;
-    }
-
-
-
-    //*****************************************************************************************************************
-    //
-    // Data access from UI to draw gameboard and from managers
-    //
-    //*****************************************************************************************************************
-
-    /**
-     * Returns the tile board[][] 2D array for UI processing.
-     * @return Tile[][] board.
-     */
-    public Tile[][] getTileBoard()
-    {
-        return board.getBoard();
-    }
-
-    /**
-     * Returns a specific player given in the player index.
-     * @param playerIndex is the specific index of the player.
-     * @return the player in the given index.
-     */
-    public Player getPlayer(int playerIndex)
-    {
-        return players.get( playerIndex);
     }
 }

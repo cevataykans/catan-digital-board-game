@@ -9,7 +9,9 @@ import org.controlsfx.dialog.Wizard;
 import java.util.ArrayList;
 
 /**
- *
+ * controls the board related operations by taking data from game
+ * @author Cevat Aykan Sevinc
+ * @version 08.12.2019
  */
 public class BoardManager
 {
@@ -34,6 +36,7 @@ public class BoardManager
 	 */
 	public int checkTile( int x, int y)
 	{
+		// Get the related data
 		FlowManager flowManager = new FlowManager();
 		Game game = Game.getInstance();
 		Player currentP = flowManager.getCurrentPlayer();
