@@ -70,11 +70,12 @@ public class FlowManager {
             return true;
 
         turnNumber++;
+        game.setTurnNumber( turnNumber);
         if( turnNumber == 2 * playerCount )
         {
             ResourceDistributer.getInstance().collectResources( board.getRobber() );
             addMust( 7); // roll dice
-            gameStatus = 1; // game play phase
+            game.setGameStatus( 1); // game play phase
         }
         else if( gameStatus == 0 )
         {
