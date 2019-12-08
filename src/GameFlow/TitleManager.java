@@ -38,7 +38,7 @@ public class TitleManager {
             {
                 longestRoadPlayer.setLongestRoadTitle( false);
             }
-            longestRoadPlayer = player;
+            game.setLongestRoadPlayer( longestRoadPlayer);
             player.setLongestRoadTitle( true);
         }
     }
@@ -61,7 +61,7 @@ public class TitleManager {
             {
                 largestArmyPlayer.setLargestArmyTitle( false);
             }
-            largestArmyPlayer = flowManager.getCurrentPlayer();
+            game.setLargestArmyPlayer( flowManager.getCurrentPlayer());
             flowManager.getCurrentPlayer().setLargestArmyTitle( true);
         }
     }

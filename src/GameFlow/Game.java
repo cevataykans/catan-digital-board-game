@@ -160,6 +160,10 @@ public class Game
         return turnNumber;
     }
 
+    protected void setTurnNumber( int turnNumber){
+        this.turnNumber = turnNumber;
+    }
+
     /**
      * Gets the current status of the game, 0 - Initial phase, 1 - Game phase
      * @return int - the current game status
@@ -167,6 +171,10 @@ public class Game
     protected int getGameStatus()
     {
         return gameStatus;
+    }
+
+    protected void setGameStatus( int gameStatus){
+        this.gameStatus = gameStatus;
     }
 
     protected Queue<Integer> getMust(){
@@ -189,8 +197,16 @@ public class Game
         return longestRoadPlayer;
     }
 
+    protected void setLongestRoadPlayer( Player longestRoadPlayer){
+        this.longestRoad = longestRoad;
+    }
+
     protected Player getLargestArmyPlayer() {
         return largestArmyPlayer;
+    }
+
+    protected void setLargestArmyPlayer( Player largestArmyPlayer){
+        this.largestArmy = largestArmy;
     }
 
     protected int getLongestRoad(){
