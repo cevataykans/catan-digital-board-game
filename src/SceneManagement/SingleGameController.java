@@ -118,7 +118,7 @@ public class SingleGameController extends SceneController
         // MANAGERS AND GAME
         //
         //**************************************************************************************************************
-        game = Game.getInstance( players);
+        Tile[][] tiles = Game.getInstance( players);
         BoardManager boardManager = new BoardManager();
         CardManager cardManager = new CardManager();
         FlowManager flowManager = new FlowManager();
@@ -126,7 +126,7 @@ public class SingleGameController extends SceneController
         gameBox = (AnchorPane) scene.lookup("#gameBox");
         robber = new ImageView("/images/robber.png");
 
-        setupGameBoard( game.getTileBoard()); // Game is configured here
+        setupGameBoard( tiles); // Game is configured here
         setupRobber(); // Robber is configured here
 
         // Initializing all the sub controllers that will handle the game's other logic.

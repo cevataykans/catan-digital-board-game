@@ -8,6 +8,8 @@ import java.util.Queue;
 
 /**
  * controls the current turn operations( required moves, current players, ending turn etc)
+ * @author Yusuf Nevzat Sengun
+ * @version 08.12.2019
  */
 public class FlowManager {
 
@@ -23,6 +25,10 @@ public class FlowManager {
         return game.getGameStatus();
     }
 
+    /**
+     * returns the current player index
+     * @return current player index
+     */
     public int getCurrentPlayerIndex()
     {
         // Get the related data
@@ -90,11 +96,13 @@ public class FlowManager {
     }
 
     /**
-     * rolls dice and return result
+     * rolls dice, collect resources and return dices
      * @return dice numbers for both dice
      */
     public ArrayList<Integer> rollDice(){
+        // Get the related data
         Game game = Game.getInstance();
+        GameBoard board = game.getGameBoard();
 
         int firstDice =  ( int)( Math.random() * 6 + 1 );
         int secondDice =  ( int)( Math.random() * 6 + 1 );
@@ -107,22 +115,7 @@ public class FlowManager {
 
         // After the dice is rolled, players must collect resource and current player must be able to play previously
         // bought development cards!
-        collectResources();
-
-        new CardManager().makeCardsPlayable();
-
-        return ret;
-    }
-
-    /**
-     * collect resources after dice has been rolled or moves robber
-     */
-    private void collectResources(){
-        Game game = Game.getInstance();
-        int currentDice = game.getCurrentDice();
-        GameBoard board = game.getGameBoard();
-
-        if( currentDice == 7 )
+        if( firstDice + secondDice == 7 )
         {
             new ResourceManager().discardHalfOfResources();
 
@@ -131,8 +124,12 @@ public class FlowManager {
         }
         else
         {
-            ResourceDistributer.getInstance().collectResources( currentDice, board.getRobber() );
+            ResourceDistributer.getInstance().collectResources( firstDice + secondDice, board.getRobber() );
         }
+
+        new CardManager().makeCardsPlayable();
+
+        return ret;
     }
 
     /**
@@ -141,6 +138,7 @@ public class FlowManager {
      */
     public Player getCurrentPlayer()
     {
+        // Get the related data
         Game game = Game.getInstance();
         int gameStatus = game.getGameStatus();
         int turnNumber = game.getTurn();
@@ -154,6 +152,20 @@ public class FlowManager {
         return players.get( turnNumber % playerCount); // If the game has started and turns are in a loop, return the player with associated turn number.
     }
 
+    /**
+     * Returns a specific player given in the player index.
+     * @param playerIndex is the specific index of the player.
+     * @return the player in the given index.
+     */
+    public Player getPlayer(int playerIndex)
+    {
+        // Get the related data
+        Game game = Game.getInstance();
+        ArrayList<Player> players = game.getPlayers();
+
+        return players.get( playerIndex);
+    }
+
     //*****************************************************************************************************************
     //
     // Must Control
@@ -165,6 +177,7 @@ public class FlowManager {
      * @param m must type
      */
     public void addMust( int m){
+        // Get the related data
         Queue<Integer> must = Game.getInstance().getMust();
 
         must.add( m);
@@ -186,6 +199,7 @@ public class FlowManager {
      *         --- 10 = player gets a point (for victory point card) *** can be implemented in card play function
      */
     public int checkMust(){
+        // Get the related data
         Queue<Integer> must = Game.getInstance().getMust();
 
         if( must.size() == 0 )
@@ -197,6 +211,7 @@ public class FlowManager {
      * last-must has been completed
      */
     public void doneMust(){
+        // Get the related data
         Queue<Integer> must = Game.getInstance().getMust();
 
         must.remove();

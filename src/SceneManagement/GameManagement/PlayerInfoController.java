@@ -151,10 +151,10 @@ public class PlayerInfoController {
             FadeIn animationIn = new FadeIn(otherInfoBox);
             // Initialize other1 player's representation in the UI.
             FillProgressIndicator otherPlayer1;
-            otherPlayer1 = new FillProgressIndicator( game.getPlayer(( flowManager.getCurrentPlayerIndex() + 1) % 4)
+            otherPlayer1 = new FillProgressIndicator( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 1) % 4)
                     .getColor().toString().substring(1));
             otherPlayer1.setInnerCircleRadius(10);
-            otherPlayer1.setProgress( game.getPlayer(( flowManager.getCurrentPlayerIndex() + 1) % 4).getScore() * 10);
+            otherPlayer1.setProgress( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 1) % 4).getScore() * 10);
             otherPlayer1.setOnMouseEntered(event1 ->
             {
                 // If the player information container is not already shown, show it.
@@ -180,9 +180,9 @@ public class PlayerInfoController {
 
             // Initialize other2 player's representation in the UI.
             FillProgressIndicator otherPlayer2;
-            otherPlayer2 = new FillProgressIndicator( game.getPlayer(( flowManager.getCurrentPlayerIndex() + 2) % 4)
+            otherPlayer2 = new FillProgressIndicator( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 2) % 4)
                     .getColor().toString().substring(1));
-            otherPlayer2.setProgress( game.getPlayer(( flowManager.getCurrentPlayerIndex() + 2) % 4).getScore() * 10);
+            otherPlayer2.setProgress( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 2) % 4).getScore() * 10);
             otherPlayer2.setTranslateY(otherPlayers.get(0).getTranslateY() + 150);
             otherPlayer2.setOnMouseEntered(event1 ->
             {
@@ -208,9 +208,9 @@ public class PlayerInfoController {
 
             // Initialize other3 player's representation in the UI.
             FillProgressIndicator otherPlayer3;
-            otherPlayer3 = new FillProgressIndicator( game.getPlayer(( flowManager.getCurrentPlayerIndex() + 3) % 4)
+            otherPlayer3 = new FillProgressIndicator( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 3) % 4)
                     .getColor().toString().substring(1));
-            otherPlayer3.setProgress( game.getPlayer(( flowManager.getCurrentPlayerIndex() + 3) % 4).getScore() * 10);
+            otherPlayer3.setProgress( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 3) % 4).getScore() * 10);
             otherPlayer3.setTranslateY(otherPlayers.get(1).getTranslateY() + 150);
             otherPlayer3.setOnMouseEntered(event1 ->
             {
@@ -287,26 +287,26 @@ public class PlayerInfoController {
         FlowManager flowManager = new FlowManager();
 
         otherPlayerBox.getStyleClass().clear();
-        otherPlayerBox.getStyleClass().add( game
+        otherPlayerBox.getStyleClass().add( flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4)
                 .getColor().toString().substring(1) + "PlayerBox");
-        otherPlayerName.setText( game
+        otherPlayerName.setText( flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getName());
 
-        otherSettlementImage.setImage(new Image("/images/settlement" +  game
+        otherSettlementImage.setImage(new Image("/images/settlement" +  flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
-        otherRoadImage.setImage(new Image("/images/road" +  game
+        otherRoadImage.setImage(new Image("/images/road" +  flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
-        otherCityImage.setImage(new Image("/images/city" +  game
+        otherCityImage.setImage(new Image("/images/city" +  flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
 
-        otherSettlementCount.setText("" +  game
+        otherSettlementCount.setText("" +  flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getSettlementCount());
 
-        otherRoadCount.setText("" +  game
+        otherRoadCount.setText("" +  flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getRoadCount());
 
-        otherCityCount.setText("" +  game
+        otherCityCount.setText("" +  flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getCityCount());
 
         // Initialize in animation for the other player's information box.
@@ -376,7 +376,7 @@ public class PlayerInfoController {
         for ( int i = 0; i < 4; i++)
         {
             // See if he/she is the current holder of the longest road card.
-            if (  game.getPlayer(( flowManager.getCurrentPlayerIndex() + i) % 4) ==  titleManager.getLongestRoadPlayer())
+            if (  flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + i) % 4) ==  titleManager.getLongestRoadPlayer())
             {
                 // If he/she is, sets its longest road card image visibility as true and show it via an in animation.
                 otherLR.setVisible(true);
@@ -415,7 +415,7 @@ public class PlayerInfoController {
         for ( int i = 0; i < 4; i++)
         {
             // See if he/she is the current holder of the largest army card.
-            if (  game.getPlayer(( flowManager.getCurrentPlayerIndex() + i) % 4) ==  titleManager.getLargestArmyPlayer())
+            if (  flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + i) % 4) ==  titleManager.getLargestArmyPlayer())
             {
                 // If he/she is, sets its largest army card image visibility as true and show it via an in animation.
                 otherLA.setVisible(true);
