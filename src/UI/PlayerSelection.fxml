@@ -10,90 +10,85 @@
 
 <AnchorPane id="AnchorPane" fx:id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1584.0" styleClass="anchor" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <ImageView fitHeight="1056.6666666666667" fitWidth="1585.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" x="-1.0" y="-1.0">
-      <image>
-        <Image url="@../images/dark-red.jpg" />
-      </image>
-    </ImageView>
-    <Label layoutX="614.0" prefHeight="67.0" prefWidth="357.0" text="Player.Player Selection" textAlignment="CENTER" textFill="#7200cc" AnchorPane.topAnchor="7.0">
+    <Label prefHeight="67.0" prefWidth="357.0" text="Player Selection" textAlignment="CENTER" textFill="#7200cc" AnchorPane.bottomAnchor="750.0" AnchorPane.leftAnchor="613.5" AnchorPane.rightAnchor="613.5" AnchorPane.topAnchor="7.0">
       <font>
         <Font size="50.0" />
       </font>
     </Label>
-    <Button fx:id="startButton" layoutX="700.0" layoutY="745.0" mnemonicParsing="false" prefHeight="47.00006103515625" prefWidth="185.0" text="Start">
+    <Button fx:id="startButton" mnemonicParsing="false" prefHeight="47.00006103515625" prefWidth="185.0" text="Start" AnchorPane.bottomAnchor="31.0" AnchorPane.leftAnchor="700.0" AnchorPane.rightAnchor="699.0" AnchorPane.topAnchor="745.0">
       <font>
         <Font size="25.0" />
       </font>
     </Button>
-    <TextField fx:id="player1Name" alignment="CENTER_LEFT" layoutX="32.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 1" />
-    <TextField fx:id="player2Name" layoutX="443.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.00009999999747" promptText="Player 2" />
-    <TextField fx:id="player3Name" layoutX="884.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 3" />
-    <TextField fx:id="player4Name" layoutX="1285.0" layoutY="88.0" prefHeight="50.0" prefWidth="240.0" promptText="Player 4" />
-    <Region fx:id="player1Color" layoutX="32.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />
-    <Region fx:id="player2Color" layoutX="443.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />
-    <Region fx:id="player3Color" layoutX="885.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />
-    <Region fx:id="player4Color" layoutX="1285.0" layoutY="160.0" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" />
-    <ImageView fx:id="goBack" fitHeight="40.00006103515625" fitWidth="54.11772865351836" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="39.0">
+    <TextField fx:id="player1Name" alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="240.0" promptText="Player 1" AnchorPane.bottomAnchor="686.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="1312.0" AnchorPane.topAnchor="88.0" />
+    <TextField fx:id="player2Name" prefHeight="50.0" prefWidth="240.00009999999747" promptText="Player 2" AnchorPane.bottomAnchor="686.0" AnchorPane.leftAnchor="443.0" AnchorPane.rightAnchor="900.0" AnchorPane.topAnchor="88.0" />
+    <TextField fx:id="player3Name" prefHeight="50.0" prefWidth="240.0" promptText="Player 3" AnchorPane.bottomAnchor="686.0" AnchorPane.leftAnchor="884.0" AnchorPane.rightAnchor="460.0" AnchorPane.topAnchor="88.0" />
+    <TextField fx:id="player4Name" prefHeight="50.0" prefWidth="240.0" promptText="Player 4" AnchorPane.bottomAnchor="686.0" AnchorPane.leftAnchor="1285.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="88.0" />
+    <Region fx:id="player1Color" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="32.0" AnchorPane.rightAnchor="1312.0" AnchorPane.topAnchor="160.0" />
+    <Region fx:id="player2Color" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="443.0" AnchorPane.rightAnchor="901.0" AnchorPane.topAnchor="160.0" />
+    <Region fx:id="player3Color" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="885.0" AnchorPane.rightAnchor="459.0" AnchorPane.topAnchor="160.0" />
+    <Region fx:id="player4Color" prefHeight="534.0" prefWidth="240.0" styleClass="playerColor" AnchorPane.bottomAnchor="130.0" AnchorPane.leftAnchor="1285.0" AnchorPane.rightAnchor="59.0" AnchorPane.topAnchor="160.0" />
+    <ImageView fx:id="goBack" fitHeight="40.00006103515625" fitWidth="54.11772865351836" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="39.0" AnchorPane.rightAnchor="1490.88" AnchorPane.topAnchor="769.0">
       <image>
         <Image url="@../images/goBackToMain.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="128.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="563.29" AnchorPane.leftAnchor="128.0" AnchorPane.rightAnchor="1408.73" AnchorPane.topAnchor="204.71">
       <image>
         <Image url="@../images/settlement0x0000ffff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="128.0" layoutY="399.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="369.29" AnchorPane.leftAnchor="128.0" AnchorPane.rightAnchor="1417.0" AnchorPane.topAnchor="398.71">
       <image>
         <Image url="@../images/road0x0000ffff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="128.0" layoutY="591.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="177.29" AnchorPane.leftAnchor="128.0" AnchorPane.rightAnchor="1408.73" AnchorPane.topAnchor="590.71">
       <image>
         <Image url="@../images/city0x0000ffff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="544.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="563.29" AnchorPane.leftAnchor="544.0" AnchorPane.rightAnchor="992.73" AnchorPane.topAnchor="204.71">
       <image>
         <Image url="@../images/settlement0xffffffff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="544.0" layoutY="399.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="369.29" AnchorPane.leftAnchor="544.0" AnchorPane.rightAnchor="1001.0" AnchorPane.topAnchor="398.71">
       <image>
         <Image url="@../images/road0xffffffff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="544.0" layoutY="591.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="177.29" AnchorPane.leftAnchor="544.0" AnchorPane.rightAnchor="992.73" AnchorPane.topAnchor="590.71">
       <image>
         <Image url="@../images/city0xffffffff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="981.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="563.29" AnchorPane.leftAnchor="981.0" AnchorPane.rightAnchor="555.73" AnchorPane.topAnchor="204.71">
       <image>
         <Image url="@../images/settlement0xffa500ff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="981.0" layoutY="399.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="369.29" AnchorPane.leftAnchor="981.0" AnchorPane.rightAnchor="564.0" AnchorPane.topAnchor="398.71">
       <image>
         <Image url="@../images/road0xffa500ff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="981.0" layoutY="591.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="177.29" AnchorPane.leftAnchor="981.0" AnchorPane.rightAnchor="555.73" AnchorPane.topAnchor="590.71">
       <image>
         <Image url="@../images/city0xffa500ff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="1386.0" layoutY="205.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="563.29" AnchorPane.leftAnchor="1386.0" AnchorPane.rightAnchor="150.73" AnchorPane.topAnchor="204.71">
       <image>
         <Image url="@../images/settlement0xa52a2aff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="1386.0" layoutY="399.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="369.29" AnchorPane.leftAnchor="1386.0" AnchorPane.rightAnchor="159.0" AnchorPane.topAnchor="398.71">
       <image>
         <Image url="@../images/road0xa52a2aff.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" layoutX="1386.0" layoutY="591.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="55.714286228102075" fitWidth="47.272727966308594" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="177.29" AnchorPane.leftAnchor="1386.0" AnchorPane.rightAnchor="150.73" AnchorPane.topAnchor="590.71">
       <image>
         <Image url="@../images/city0xa52a2aff.png" />
       </image>

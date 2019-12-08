@@ -13,18 +13,13 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1536.0" styleClass="anchor" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <ImageView fx:id="background" fitHeight="869.9999899525855" fitWidth="1537.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" x="-1.0" y="-1.0">
-      <image>
-        <Image url="@../images/mainmenu.jpg" />
-      </image>
-    </ImageView>
-    <Button fx:id="playLocalButton" focusTraversable="true" layoutX="501.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="237.0" text="Play Local" AnchorPane.bottomAnchor="246.0">
+    <Button fx:id="playLocalButton" focusTraversable="true" mnemonicParsing="false" prefHeight="58.0" prefWidth="237.0" text="Play Local" AnchorPane.bottomAnchor="246.0" AnchorPane.leftAnchor="501.0" AnchorPane.rightAnchor="798.0" AnchorPane.topAnchor="520.0">
       <font>
         <Font name="System Bold" size="30.0" fx:id="x1" />
       </font>
     </Button>
-    <Button fx:id="helpButton" font="$x1" layoutX="692.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="166.0" text="Help" AnchorPane.bottomAnchor="153.0" />
-    <Button fx:id="exitButton" font="$x1" layoutX="692.0" maxHeight="58.0" maxWidth="166.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="166.0" text="Exit" AnchorPane.bottomAnchor="58.0" />
-    <Button fx:id="playOnlineButton" focusTraversable="true" font="$x1" layoutX="816.0" layoutY="520.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="237.0" text="Play Online" />
+    <Button fx:id="helpButton" font="$x1" mnemonicParsing="false" prefHeight="58.0" prefWidth="166.0" text="Help" AnchorPane.bottomAnchor="153.0" AnchorPane.leftAnchor="692.0" AnchorPane.rightAnchor="678.0" AnchorPane.topAnchor="613.0" />
+    <Button fx:id="exitButton" font="$x1" maxHeight="58.0" maxWidth="166.0" mnemonicParsing="false" prefHeight="58.0" prefWidth="166.0" text="Exit" AnchorPane.bottomAnchor="58.0" AnchorPane.leftAnchor="692.0" AnchorPane.rightAnchor="678.0" AnchorPane.topAnchor="708.0" />
+    <Button fx:id="playOnlineButton" focusTraversable="true" font="$x1" mnemonicParsing="false" prefHeight="58.0" prefWidth="237.0" text="Play Online" AnchorPane.bottomAnchor="246.0" AnchorPane.leftAnchor="816.0" AnchorPane.rightAnchor="483.0" AnchorPane.topAnchor="520.0" />
   </children>
 </AnchorPane>

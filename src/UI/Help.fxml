@@ -10,12 +10,7 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1536.0" styleClass="anchor" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <ImageView fitHeight="1025.0" fitWidth="1537.0" layoutX="1.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" x="-1.0" y="-1.0">
-      <image>
-        <Image url="@../images/dark-red.jpg" />
-      </image>
-    </ImageView>
-    <Label fx:id="title" layoutX="545.0" text="How To Play CATAN" wrapText="false" AnchorPane.topAnchor="11.0">
+    <Label fx:id="title" prefWidth="536.0" text="How To Play CATAN" wrapText="false" AnchorPane.bottomAnchor="746.0" AnchorPane.leftAnchor="545.0" AnchorPane.rightAnchor="455.0" AnchorPane.topAnchor="11.0">
       <font>
         <Font size="50.0" />
       </font>
@@ -23,18 +18,18 @@
         <Color blue="1.000" green="0.000" red="0.560" fx:id="x1" />
       </textFill>
     </Label>
-    <Label layoutY="78.0" prefWidth="160.0" text="Resources" textFill="$x1" underline="true" AnchorPane.leftAnchor="113.0">
+    <Label prefWidth="160.0" text="Resources" textFill="$x1" underline="true" AnchorPane.bottomAnchor="699.0" AnchorPane.leftAnchor="113.0" AnchorPane.rightAnchor="1263.0" AnchorPane.topAnchor="78.0">
       <font>
         <Font size="35.0" fx:id="x2" />
       </font>
     </Label>
-    <Label font="$x2" layoutX="690.0" prefWidth="160.0" text="Structures" underline="true" AnchorPane.topAnchor="78.0">
+    <Label font="$x2" prefWidth="160.0" text="Structures" underline="true" AnchorPane.bottomAnchor="699.0" AnchorPane.leftAnchor="690.0" AnchorPane.rightAnchor="686.0" AnchorPane.topAnchor="78.0">
       <textFill>
         <Color blue="1.000" green="0.000" red="0.561" fx:id="x3" />
       </textFill>
     </Label>
-    <Label font="$x2" layoutY="78.0" prefWidth="320.0" text="Development Cards" textFill="$x3" underline="true" AnchorPane.rightAnchor="14.0" />
-    <ImageView fitHeight="27.0" fitWidth="41.21052360534668" layoutX="105.0" layoutY="139.0" pickOnBounds="true" preserveRatio="true">
+    <Label font="$x2" prefWidth="320.0" text="Development Cards" textFill="$x3" underline="true" AnchorPane.bottomAnchor="699.0" AnchorPane.leftAnchor="1202.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="78.0" />
+    <ImageView fitHeight="27.0" fitWidth="41.21052360534668" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="658.0" AnchorPane.leftAnchor="103.29" AnchorPane.rightAnchor="1391.5" AnchorPane.topAnchor="139.0">
       <image>
         <Image url="@../images/Lumber.png" />
       </image>
@@ -44,22 +39,22 @@
         <Font size="25.0" fx:id="x4" />
       </font>
     </Label>
-    <ImageView fitHeight="27.00000374892687" fitWidth="41.21052932739258" layoutX="105.0" layoutY="231.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="27.00000374892687" fitWidth="41.21052932739258" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="566.0" AnchorPane.leftAnchor="108.26" AnchorPane.rightAnchor="1386.53" AnchorPane.topAnchor="231.0">
       <image>
-        <Image url="@../images/Lumber.png" />
+        <Image url="@../images/Wool.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="40.60231399536133" fitWidth="27.780531333537436" layoutX="112.0" layoutY="320.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="40.60231399536133" fitWidth="27.780531333537436" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="463.4" AnchorPane.leftAnchor="112.0" AnchorPane.rightAnchor="1396.22" AnchorPane.topAnchor="320.0">
       <image>
         <Image url="@../images/Grain.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="32.0" fitWidth="43.78947279188368" layoutX="102.0" layoutY="438.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="32.0" fitWidth="43.78947279188368" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="354.0" AnchorPane.leftAnchor="102.0" AnchorPane.rightAnchor="1390.21" AnchorPane.topAnchor="438.0">
       <image>
         <Image url="@../images/Ore.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="24.02941697973024" fitWidth="43.00000762939453" layoutX="104.0" layoutY="547.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="24.02941697973024" fitWidth="43.00000762939453" pickOnBounds="true" preserveRatio="true" AnchorPane.bottomAnchor="252.97" AnchorPane.leftAnchor="104.0" AnchorPane.rightAnchor="1389.0" AnchorPane.topAnchor="547.0">
       <image>
         <Image url="@../images/Brick.png" />
       </image>
@@ -74,7 +69,7 @@
       </image>
     </ImageView>
     <Label font="$x4" layoutX="782.0" layoutY="146.0" text="Road" textFill="WHITE" />
-    <Text fill="WHITE" layoutX="610.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A road is built using 1 Lumber and 1 Brick and is always placed on an unoccupied side of a hex, connected to another road, settlement, or city. Roads are worth 0 points but they are crucial for advancing in the game because new settlements can only be built next on an intersection adjacent to a road." wrappingWidth="300.0">
+    <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" text="A road is built using 1 Lumber and 1 Brick and is always placed on an unoccupied side of a hex, connected to another road, settlement, or city. Roads are worth 0 points but they are crucial for advancing in the game because new settlements can only be built next on an intersection adjacent to a road." wrappingWidth="300.0" AnchorPane.bottomAnchor="494.76" AnchorPane.leftAnchor="610.0" AnchorPane.rightAnchor="626.0" AnchorPane.topAnchor="198.89">
       <font>
         <Font size="14.0" fx:id="x5" />
       </font>
@@ -85,29 +80,29 @@
       </image>
     </ImageView>
     <Label font="$x4" layoutX="751.0" layoutY="356.0" text="Settlement" textFill="WHITE" />
-    <Text fill="WHITE" font="$x5" layoutX="610.0" layoutY="432.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A settlement is built using 1 Lumber , 1 Brick, 1 Wool, and 1 Grain, and can only be placed on an unoccupied intersection that is at least two intersections away from another settlement, or city. It provides the player that builds it with 1 Victory Point. Settlements allow a player to collect resource cards from adjacent resource hexes. You receive one resource per settlement adjacent to a resource hex whenever the number on that hex is rolled." wrappingWidth="300.0" />
+    <Text fill="WHITE" font="$x5" strokeType="OUTSIDE" strokeWidth="0.0" text="A settlement is built using 1 Lumber , 1 Brick, 1 Wool, and 1 Grain, and can only be placed on an unoccupied intersection that is at least two intersections away from another settlement, or city. It provides the player that builds it with 1 Victory Point. Settlements allow a player to collect resource cards from adjacent resource hexes. You receive one resource per settlement adjacent to a resource hex whenever the number on that hex is rolled." wrappingWidth="300.0" AnchorPane.bottomAnchor="220.9" AnchorPane.leftAnchor="610.0" AnchorPane.rightAnchor="626.0" AnchorPane.topAnchor="416.89" />
     <ImageView fitHeight="46.37096405029297" fitWidth="45.63491972524235" layoutX="652.0" layoutY="614.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="@../images/city.png" />
       </image>
     </ImageView>
     <Label font="$x4" layoutX="790.0" layoutY="620.0" text="City" textFill="WHITE" />
-    <Text fill="WHITE" font="$x5" layoutX="600.0" layoutY="688.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A city is built using 2 Grain and 3 Ore and replaces an already-built settlement on the table. It provides the player that builds it with 2 Victory Points (as opposed to 1 Victory Point from a settlement).Cities double the resource production of adjacent resource hexes. You get two Resource cards per city bordering a given resource hex." wrappingWidth="320.0" />
+    <Text fill="WHITE" font="$x5" strokeType="OUTSIDE" strokeWidth="0.0" text="A city is built using 2 Grain and 3 Ore and replaces an already-built settlement on the table. It provides the player that builds it with 2 Victory Points (as opposed to 1 Victory Point from a settlement).Cities double the resource production of adjacent resource hexes. You get two Resource cards per city bordering a given resource hex." wrappingWidth="320.0" AnchorPane.bottomAnchor="20.76" AnchorPane.leftAnchor="600.0" AnchorPane.rightAnchor="616.0" AnchorPane.topAnchor="672.89" />
     <ImageView fx:id="goBack" fitHeight="49.49665832519531" fitWidth="66.96606805656647" mouseTransparent="false" pickOnBounds="true" preserveRatio="true" smooth="true" AnchorPane.leftAnchor="17.0" AnchorPane.topAnchor="20.0">
       <image>
         <Image url="@../images/goBackToMain.png" />
       </image>
     </ImageView>
-    <Label layoutX="50.0" layoutY="185.0" text="Used for building roads and settlements" textFill="WHITE">
+    <Label text="Used for building roads and settlements" textFill="WHITE" AnchorPane.bottomAnchor="612.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="1132.0" AnchorPane.topAnchor="185.0">
       <font>
         <Font size="20.0" fx:id="x6" />
       </font>
     </Label>
-    <Label font="$x6" layoutX="50.0" layoutY="277.0" text="Used for building settlements and buying cards" textFill="WHITE" wrapText="false" />
-    <Label font="$x6" layoutX="50.0" layoutY="383.0" text="Used for building roads, settlements and cities" textFill="WHITE" />
-    <Label font="$x6" layoutX="50.0" layoutY="597.0" text="Used for building roads and settlements" textFill="WHITE" />
-    <Label font="$x6" layoutX="50.0" layoutY="487.0" text="Used for building cities and buying cards" textFill="WHITE" />
-    <Label font="$x2" layoutX="97.0" layoutY="637.0" prefWidth="193.0" text="How to Win" textFill="#8f00ff" underline="true" />
+    <Label font="$x6" text="Used for building settlements and buying cards" textFill="WHITE" wrapText="false" AnchorPane.bottomAnchor="520.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="1068.0" AnchorPane.topAnchor="277.0" />
+    <Label font="$x6" text="Used for building roads, settlements and cities" textFill="WHITE" AnchorPane.bottomAnchor="414.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="1077.0" AnchorPane.topAnchor="383.0" />
+    <Label font="$x6" text="Used for building roads and settlements" textFill="WHITE" AnchorPane.bottomAnchor="200.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="1132.0" AnchorPane.topAnchor="597.0" />
+    <Label font="$x6" text="Used for building cities and buying cards" textFill="WHITE" AnchorPane.bottomAnchor="310.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="1126.0" AnchorPane.topAnchor="487.0" />
+    <Label font="$x2" prefWidth="193.0" text="How to Win" textFill="#8f00ff" underline="true" AnchorPane.bottomAnchor="140.0" AnchorPane.leftAnchor="97.0" AnchorPane.rightAnchor="1246.0" AnchorPane.topAnchor="637.0" />
     <Text fill="WHITE" font="$x6" layoutX="32.0" layoutY="718.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You need 10 points to win the game. The ways to get points are: Settlement-1 point, City-2 points, Victory Point-1 point, Largest Army-2 points and Longest Road-2 points" wrappingWidth="500.0" />
   </children>
 </AnchorPane>

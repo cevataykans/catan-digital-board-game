@@ -1,3 +1,9 @@
+#background {
+    -fx-background-image: url("/images/game_background.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: 50, 50;
+}
+
 .label {
     -fx-font-family: MinionPro-Bold;
 }

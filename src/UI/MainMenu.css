@@ -1,6 +1,8 @@
-#background {
+.anchor {
   -fx-background-image: url("/images/mainmenu.jpg");
-  -fx-background-size: 1537px 825px;
+  -fx-background-repeat: no-repeat;
+  -fx-background-size: cover, auto;
+  -fx-font-family: MinionPro-Bold;
 }
 
 .button{

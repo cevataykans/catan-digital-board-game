@@ -1,8 +1,8 @@
 package SceneManagement;
 
 import javafx.scene.input.KeyCombination;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import Player.Player;
@@ -51,14 +51,14 @@ public class GameEngine {
         try {
             // To run the game from the beginning, comment the lines below and uncomment the commented line.
             // This is for faster testing.
-           /* ArrayList<Player> temp = new ArrayList<>();
+            ArrayList<Player> temp = new ArrayList<>();
             temp.add(new Player("Talha", Color.BLUE));
             temp.add(new Player("Hakan", Color.WHITE));
             temp.add(new Player("Rafi", Color.ORANGE));
             temp.add(new Player("Cevat", Color.BROWN));
-            controller = new SingleGameController(primaryStage, temp);*/
+            controller = new SingleGameController(primaryStage, temp);
             //controller = new SceneManagement.OpeningController(primaryStage);
-            controller = new MainMenuController(primaryStage);
+            /*controller = new OpeningController(primaryStage);*/
         }
         catch (IOException e)
         {

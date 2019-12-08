@@ -1,6 +1,6 @@
 !! THIS IS FOR INTELLIJ !!
 
-How to install javaFX:
+How to install javaFX (including controlfx):
 
 1. Download javaFX from this link: https://gluonhq.com/products/javafx/ (Download 11.0.2 for your specific operator)
 
@@ -20,11 +20,29 @@ and the properties file (so select every executable file)
 8. Right click the module you just added and click "Add Module to the Project" (or something similar I don't remember exactly), click Apply
 on bottom right and then you are done with modules.
 
+Controlfx:
+
+1. Go to https://github.com/controlsfx/controlsfx
+
+2. At the readme file, there is a section called "Getting ControlFX", install the version that is for java9 and above.
+
+3. You just downloaded a jar file, move that jar file to your javafx folder's lib folder.
+
+4. Go to your project in Intellij. Go to File > Project Structure > Global Libraries.
+
+5. Select the javafx library, then at the top of "classes" label, click the plus sign (just plus).
+
+6. Select your controlfFx jar and click ok.
+
+7. Click apply/ok then close project structure.
+
+8. Done.
+
 Edit Configurations:
 
 For the files you want to run (In our case the GameStart, but you may have Test UI files you want to run) go to Run > Edit Configurations
 and select your main class. For its VM Options, copy paste this in there (except change the part I marked below):
---module-path **PATH TO YOUR JAVAFX FOLDER**\javafx-sdk-11.0.2\lib --add-modules javafx.controls,javafx.fxml
+--module-path **PATH TO YOUR JAVAFX FOLDER**\javafx-sdk-11.0.2\lib --add-modules javafx.controls,javafx.fxml,javafx.media
 and click Apply then OK. You are done with JavaFx
 
 How to install AnimateFX:
