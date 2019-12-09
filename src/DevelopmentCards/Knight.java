@@ -2,6 +2,7 @@ package DevelopmentCards;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.Response;
 
 public class Knight extends Card{
     // Properties
@@ -24,7 +25,7 @@ public class Knight extends Card{
     public void play() {
         FlowManager flowManager = new FlowManager();
 
-        flowManager.addMust(3);
-        flowManager.addMust(8);
+        flowManager.addMust(Response.MUST_INSIDE_TILE_SELECTION);
+        flowManager.addMust(Response.MUST_GET_NEIGHBOR);
     }
 }

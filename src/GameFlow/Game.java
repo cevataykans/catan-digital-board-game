@@ -30,7 +30,7 @@ public class Game
     // Game Singleton
     private static Game game = null;
 
-    private Queue<Integer> must;
+    private Queue<Response> must;
 
     // Constants
     private final int TOTAL_DEV_CARDS = 25;
@@ -42,7 +42,6 @@ public class Game
     // Game related data
     private int turnNumber;
     private int gameStatus;
-    private int currentDice;
 
     // Player Related data
     private ArrayList<Player> players;
@@ -131,9 +130,9 @@ public class Game
         Collections.shuffle(players);
         Collections.shuffle(devCards);
 
-        this.must.add( 1); // settlement
-        this.must.add( 0); // road
-        this.must.add( 6); // end turn
+        this.must.add( Response.MUST_SETTLEMENT_BUILD); // settlement
+        this.must.add( Response.MUST_ROAD_BUILD); // road
+        this.must.add( Response.MUST_END_TURN); // end turn
     }
 
     //*****************************************************************************************************************
@@ -164,7 +163,8 @@ public class Game
      * sets the turn number
      * @param turnNumber turn number
      */
-    void setTurnNumber(int turnNumber){
+    void setTurnNumber(int turnNumber)
+    {
         this.turnNumber = turnNumber;
     }
 
@@ -181,7 +181,8 @@ public class Game
      * sets gamestatus
      * @param gameStatus gamestatus
      */
-    void setGameStatus(int gameStatus){
+    void setGameStatus(int gameStatus)
+    {
         this.gameStatus = gameStatus;
     }
 
@@ -189,7 +190,7 @@ public class Game
      * returns must queue
      * @return must
      */
-    Queue<Integer> getMust(){
+    Queue<Response> getMust(){
         return this.must;
     }
 
@@ -199,22 +200,6 @@ public class Game
      */
     int getPlayerCount(){
         return playerCount;
-    }
-
-    /**
-     * returns current dice
-     * @return current dice
-     */
-    int getCurrentDice(){
-        return currentDice;
-    }
-
-    /**
-     * sets current dice
-     * @param currentDice current dice
-     */
-    void setCurrentDice(int currentDice) {
-        this.currentDice = currentDice;
     }
 
     /**
@@ -230,7 +215,7 @@ public class Game
      * @param longestRoadPlayer longest road player
      */
     void setLongestRoadPlayer(Player longestRoadPlayer){
-        this.longestRoad = longestRoad;
+        this.longestRoadPlayer = longestRoadPlayer;
     }
 
     /**
@@ -246,7 +231,7 @@ public class Game
      * @param largestArmyPlayer largest army player
      */
     void setLargestArmyPlayer(Player largestArmyPlayer){
-        this.largestArmy = largestArmy;
+        this.largestArmyPlayer = largestArmyPlayer;
     }
 
     /**

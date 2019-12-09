@@ -2,6 +2,7 @@ package DevelopmentCards;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.Response;
 
 public class RoadBuilding extends Card {
     // Properties
@@ -21,7 +22,7 @@ public class RoadBuilding extends Card {
     public void play() {
         FlowManager flowManager = new FlowManager();
 
-        flowManager.addMust(0);
-        flowManager.addMust(0);
+        flowManager.addMust(Response.MUST_ROAD_BUILD);
+        flowManager.addMust(Response.MUST_ROAD_BUILD);
     }
 }

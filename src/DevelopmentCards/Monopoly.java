@@ -2,6 +2,7 @@ package DevelopmentCards;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.Response;
 
 public class Monopoly extends Card {
     // Properties
@@ -22,6 +23,6 @@ public class Monopoly extends Card {
     public void play() {
         FlowManager flowManager = new FlowManager();
 
-        flowManager.addMust(4);
+        flowManager.addMust(Response.MUST_RESOURCE_SELECTION_MONOPOLY);
     }
 }

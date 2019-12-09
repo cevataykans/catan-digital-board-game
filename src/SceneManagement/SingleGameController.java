@@ -140,7 +140,12 @@ public class SingleGameController extends SceneController
         gameBox.setOnMouseClicked(mouseEvent -> {
             System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
             // Allow the action to be processed for game board UI if only game board related must, be done
-            if ( flowManager.checkMust() < 4 )
+            Response response = flowManager.checkMust();
+            if ( response == Response.MUST_EMPTY ||
+                    response == Response.MUST_ROAD_BUILD ||
+                    response == Response.MUST_SETTLEMENT_BUILD ||
+                    response == Response.MUST_CITY_BUILD ||
+                    response == Response.MUST_INSIDE_TILE_SELECTION)
             {
                 // Getting the mouse coordinates.
                 int x = PixelProcessor.processX(mouseEvent.getX());
@@ -162,16 +167,21 @@ public class SingleGameController extends SceneController
         gameBox.setOnMouseMoved(mouseEvent2 ->
         {
             // Allow the action to be processed for game board UI if only game board related must, be done
-            if ( flowManager.checkMust() < 4 && !highlightOn)
+            Response response = flowManager.checkMust();
+            if ( ( response == Response.MUST_ROAD_BUILD ||
+                    response == Response.MUST_SETTLEMENT_BUILD ||
+                    response == Response.MUST_CITY_BUILD ||
+                    response == Response.MUST_INSIDE_TILE_SELECTION )
+                    && !highlightOn)
             {
                 // Getting the mouse coordinates.
                 int x = PixelProcessor.processX(mouseEvent2.getX());
                 int y = PixelProcessor.processY(mouseEvent2.getY());
 
                 // Checking if the hovered coordinate is a game tile.
-                int structureCheck = boardManager.checkTile(x, y);
+                Response structureCheck = boardManager.checkTile(x, y);
                 // Check if the hovered tile is a constructable road.
-                if ( structureCheck == 0)
+                if ( structureCheck == Response.INFORM_ROAD_CAN_BE_BUILT)
                 {
                     // Get the road image with the current player's color.
                     ImageView roadHighlight = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor()
@@ -205,7 +215,7 @@ public class SingleGameController extends SceneController
                     highlightOn = true;
                 }
                 // Check if the hovered tile is a constructable settlement.
-                else if ( structureCheck == 1)
+                else if ( structureCheck == Response.INFORM_SETTLEMENT_CAN_BE_BUILT)
                 {
                     // Get the settlement image with the current player's color.
                     ImageView settlementHighlight = new ImageView("/images/settlement" + flowManager.getCurrentPlayer()
@@ -361,7 +371,7 @@ public class SingleGameController extends SceneController
         // User clicks to robber to move it
         robber.setOnMousePressed(e ->
         {
-            if ( flowManager.checkMust() == 3 )
+            if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION )
             {
                 // Save the initial value so that if dropped place is invalid, return to this position
                 initialRobX = robber.getX();
@@ -386,7 +396,7 @@ public class SingleGameController extends SceneController
         {
             System.out.println( "Mouse Dragging, coordinateX: "+ PixelProcessor.processX( e.getX() ) + " y: "
                     + PixelProcessor.processY( e.getY() ) );
-            if ( flowManager.checkMust() == 3 )
+            if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION )
             {
                 //robber.setTranslateX(robber.getTranslateX() + (e.getX() - xRob.get()));
                 //robber.setTranslateY(robber.getTranslateY() + (e.getY() - yRob.get()));
@@ -407,7 +417,7 @@ public class SingleGameController extends SceneController
             System.out.println( "Moude Released, coordinateX: "+ PixelProcessor.processX( e.getX() ) + " y: "
                     + PixelProcessor.processY( e.getY() ) );
             // When user releases the robber, if the robber should not play, this function must not work!
-            if ( flowManager.checkMust() == 3)
+            if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION)
             {
                 // Create a board manager
                 BoardManager boardManager = new BoardManager();
@@ -417,8 +427,8 @@ public class SingleGameController extends SceneController
                 int movedY = PixelProcessor.processY( e.getY() );
                 System.out.println("MovedX: " + movedX + " MovedY: " + movedY); /***********************************************/
 
-                int resultCode = boardManager.checkTile( movedX, movedY);
-                if ( resultCode != 3) // Inside tile
+                Response resultCode = boardManager.checkTile( movedX, movedY);
+                if ( resultCode != Response.INFORM_INSIDE_TILE) // Inside tile
                 {
                     System.out.println("Not inside tile"); /***********************************************/
                     //robber.setTranslateX(0);
@@ -472,7 +482,7 @@ public class SingleGameController extends SceneController
             BoardManager boardManager = new BoardManager();
 
             // Check if the user obligated to build a settlement
-            if ( flowManager.checkMust() == 1 )
+            if ( flowManager.checkMust() == Response.MUST_SETTLEMENT_BUILD )
             {
                 flowManager.doneMust();
             }
@@ -524,7 +534,7 @@ public class SingleGameController extends SceneController
             BoardManager boardManager = new BoardManager();
 
             // Check if the user obligated to build a road
-            if ( flowManager.checkMust() == 0 )
+            if ( flowManager.checkMust() == Response.MUST_ROAD_BUILD )
             {
                 flowManager.doneMust();
             }
@@ -546,7 +556,7 @@ public class SingleGameController extends SceneController
             SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
 
             // If its initial state, player has to immediately end the turn.
-            if ( flowManager.checkMust() == 6 )
+            if ( flowManager.checkMust() == Response.MUST_END_TURN )
             {
                 performEndTurnButtonEvent();
             }
@@ -603,7 +613,7 @@ public class SingleGameController extends SceneController
             BoardManager boardManager = new BoardManager();
 
             // Check if the user obligated to build a city
-            if ( flowManager.checkMust() == 2 )
+            if ( flowManager.checkMust() == Response.MUST_CITY_BUILD )
             {
                 flowManager.doneMust();
             }
@@ -645,10 +655,10 @@ public class SingleGameController extends SceneController
         FlowManager flowManager = new FlowManager();
 
         // Check if the user has to do something before ending their turn
-        if ( flowManager.checkMust() == -1 || flowManager.checkMust() == 6) {
+        if ( flowManager.checkMust() == Response.MUST_EMPTY || flowManager.checkMust() == Response.MUST_END_TURN) {
 
             // Check if the user ends the turn because of obligation
-            if ( flowManager.checkMust() == 6) {
+            if ( flowManager.checkMust() == Response.MUST_END_TURN) {
                 flowManager.doneMust();
             }
             flowManager.endTurn();
@@ -673,7 +683,7 @@ public class SingleGameController extends SceneController
             sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    statusController.informStatus(-9);
+                    statusController.informStatus(Response.EKSIDOKUZ);
                     devCardController.setupDevelopmentCards();
                 }
             });
@@ -689,11 +699,17 @@ public class SingleGameController extends SceneController
      * @param x is the x corrdinate in the game board
      * @param y is the y coordinate in the game board
      */
-    private void createDialog(  int resultCode, int x, int y )
+    private void createDialog(  Response resultCode, int x, int y )
     {
 
         // If the controller returns minus integer, there is an error!
-        if ( resultCode < 0 )
+        if ( resultCode == Response.ERROR_NO_CONNECTION_FOR_ROAD ||
+                resultCode == Response.ERROR_NO_CONNECTION_FOR_SETTLEMENT ||
+                resultCode == Response.ERROR_THERE_IS_NEAR_BUILDING_FOR_SETTLEMENT ||
+                resultCode == Response.ERROR_OCCUPIED_BY ||
+                resultCode == Response.ERROR_NO_RESOURCE_FOR_ROAD ||
+                resultCode == Response.ERROR_NO_RESOURCE_FOR_SETTLEMENT ||
+                resultCode == Response.ERROR_NO_RESOURCE_FOR_CITY)
         {
             System.out.println( " error is ** " + resultCode + "   "); /***********************************************/
             // handle error
@@ -725,33 +741,33 @@ public class SingleGameController extends SceneController
      * @param x is the x coordinate of to perform action on the game board
      * @param y is the y coordinate of to perform action on the game board
      */
-    private void informBoardSelection( Alert alert, int resultCode, int x, int y ) {
+    private void informBoardSelection( Alert alert, Response resultCode, int x, int y ) {
         FlowManager flowManager = new FlowManager();
 
-        int mustCheckCode = flowManager.checkMust();
+        Response mustCheckCode = flowManager.checkMust();
 
         // Player.Player tries to build a road
-        if (resultCode == 0) {
+        if (resultCode == Response.INFORM_ROAD_CAN_BE_BUILT) {
             // Allow construction only if player is obliged or free to hang arooound lol
-            if (mustCheckCode == -1 || mustCheckCode == 0) {
+            if (mustCheckCode == Response.MUST_EMPTY || mustCheckCode == Response.MUST_ROAD_BUILD) {
                 buildRoad(alert, x, y);
             } else {
                 statusController.informStatus(mustCheckCode);
             }
         }
         // Player.Player tries to build a settlement
-        else if (resultCode == 1) {
+        else if (resultCode == Response.INFORM_SETTLEMENT_CAN_BE_BUILT) {
             // Allow construction only if player is obliged or free to hang arooound lol
-            if (mustCheckCode == -1 || mustCheckCode == 1) {
+            if (mustCheckCode == Response.MUST_EMPTY || mustCheckCode == Response.MUST_SETTLEMENT_BUILD) {
                 buildSettlement(alert, x, y);
             } else {
                 statusController.informStatus(mustCheckCode);
             }
         }
         // Player.Player tries to build a city
-        else if (resultCode == 2) {
+        else if (resultCode == Response.INFORM_CITY_CAN_BE_BUILT) {
             // Allow construction only if player is obliged or free to hang arooound lol
-            if (mustCheckCode == -1 || mustCheckCode == 2) {
+            if (mustCheckCode == Response.MUST_EMPTY || mustCheckCode == Response.MUST_CITY_BUILD) {
                 buildCity(alert, x, y);
             } else {
                 statusController.informStatus(mustCheckCode);

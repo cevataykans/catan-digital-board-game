@@ -2,6 +2,7 @@ package SceneManagement.GameManagement;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.Response;
 import SceneManagement.SingleGameController;
 import SceneManagement.SoundManager;
 import animatefx.animation.FadeIn;
@@ -78,7 +79,7 @@ public class DiceController {
             Game game = Game.getInstance();
 
             // Dice could only be rolled at the beginning of a turn
-            if ( flowManager.checkMust() == 7 )
+            if ( flowManager.checkMust() == Response.MUST_ROLL_DICE)
             {
                 // Initialize an out animation for the roll gif when its clicked with 2x the normal speed.
                 FadeOut animation = new FadeOut(diceAvailable);

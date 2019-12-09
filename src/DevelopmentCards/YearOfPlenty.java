@@ -2,6 +2,7 @@ package DevelopmentCards;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.Response;
 
 public class YearOfPlenty extends Card {
     // Properties
@@ -21,6 +22,6 @@ public class YearOfPlenty extends Card {
     public void play() {
         FlowManager flowManager = new FlowManager();
 
-        flowManager.addMust(5);
+        flowManager.addMust(Response.MUST_RESOURCE_SELECTION_PLENTY);
     }
 }
