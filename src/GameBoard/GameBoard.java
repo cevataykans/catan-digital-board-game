@@ -3,6 +3,7 @@ package GameBoard;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import GameFlow.Response;
 import Player.Player;
 
 /**
@@ -112,22 +113,22 @@ public class GameBoard {
      *          -3 = there is a building near
      *          -4 = this tile is occupied by a road, city or other players structure, in this case there is no need to explain anything
      */
-    public int checkStructure(Player player, int x, int y, int gameStatus){
+    public Response checkStructure(Player player, int x, int y, int gameStatus){
         if( board[y][x] instanceof RoadTile ){ // road
             if( !((RoadTile)board[y][x]).getAvailability() )
                 return isValidForRoad(player,x,y); // return 0 or -1
             else
-                return -4;
+                return Response.ERROR_OCCUPIED_BY;
         }
         else{ // settlement or city
             if( !((BuildingTile)board[y][x]).getAvailability() ){
                 return isValidForSettlement(player, x, y, gameStatus); // return 1, -2 or -3
             }
             else if( isThereStructure(player, x , y) && ((BuildingTile)board[y][x]).getType() == BuildingTile.BuildingType.SETTLEMENT){
-                return 2;
+                return Response.INFORM_CITY_CAN_BE_BUILT;
             }
             else
-                return -4;
+                return Response.ERROR_OCCUPIED_BY;
         }
     }
 
@@ -139,19 +140,19 @@ public class GameBoard {
      * @return  0 = road can be built here
      *          -1 = there is no connection for road to build
      */
-    private int isValidForRoad(Player player, int x, int y){
+    private Response isValidForRoad(Player player, int x, int y){
         int[][] possibleNeighbors = { // (x,y)
                 {-2,-1}, {-2,1}, {2,-1}, {2,1}, {0,-2}, {0,2}, // possible road neighbors
                 {-1,0}, {1,0}, {-1,-1}, {1,1}, {-1,1}, {1, -1} // possible settlement/city neighbors
         };
-        int returnValue = -1;
+        Response returnValue = Response.ERROR_NO_CONNECTION_FOR_ROAD;
 
         for( int i = 0 ; i < 12 ; i++ ){
             int targetX = x + possibleNeighbors[i][0];
             int targetY = y + possibleNeighbors[i][1];
 
             if( isThereStructure(player, targetX, targetY))
-                returnValue = 0;
+                returnValue = Response.INFORM_ROAD_CAN_BE_BUILT;
         }
 
         return returnValue;
@@ -190,7 +191,7 @@ public class GameBoard {
      *          -2 = there is no connection for city to build
      *          -3 = there is a building near
      */
-    private int isValidForSettlement(Player player, int x, int y, int gameStatus){
+    private Response isValidForSettlement(Player player, int x, int y, int gameStatus){
         int[][] possibleRoadNeighbors = { // (x,y)
                 {-1,0}, {1,0}, {-1,-1}, {-1,1}, {1,-1}, {1,1}
         };
@@ -217,14 +218,14 @@ public class GameBoard {
         }
 
         if( gameStatus == 0 && !buildingError)
-            return 1;
+            return Response.INFORM_SETTLEMENT_CAN_BE_BUILT;
         else if( gameStatus == 1 && !buildingError && !connectionError)
-            return 1;
+            return Response.INFORM_SETTLEMENT_CAN_BE_BUILT;
         else if(buildingError)
-            return -3;
+            return Response.ERROR_THERE_IS_NEAR_BUILDING_FOR_SETTLEMENT;
         else if(connectionError)
-            return -2;
-        return -1;
+            return Response.ERROR_NO_CONNECTION_FOR_SETTLEMENT;
+        return null;
     }
 
     /**

@@ -3,6 +3,7 @@ package SceneManagement.GameManagement;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.ResourceManager;
+import GameFlow.Response;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeInLeft;
 import animatefx.animation.FadeOutRight;
@@ -63,7 +64,7 @@ public class SelectionController {
         selectionBox.getChildren().clear();
 
         // Inform the current player that he/she needs to select a player to steal a resource.
-        controller.getStatusController().informStatus(8);
+        controller.getStatusController().informStatus(Response.MUST_GET_NEIGHBOR);
         selectionLabel.setText( "Choose Your Player.Player");
 
         // Initialize rectangle list for UI. Rectangles represent the players with their corresponding colors.
@@ -77,7 +78,7 @@ public class SelectionController {
             otherPlayer.setOnMousePressed(e -> {
                 // Check if the action is to select a player. This is to prevent background action that current player
                 // may do and interrupt the game's flow.
-                if ( flowManager.checkMust() == 8 )
+                if ( flowManager.checkMust() == Response.MUST_GET_NEIGHBOR)
                 {
                     // Clear the action of selecting a user from the Flow Manager.
                     flowManager.doneMust();
@@ -128,11 +129,11 @@ public class SelectionController {
         // Change the status corresponding to the caller's identity.
         if ( id == "MONOPOLY")
         {
-            controller.getStatusController().informStatus(5);
+            controller.getStatusController().informStatus(Response.MUST_RESOURCE_SELECTION_MONOPOLY); // todo not sure about here
         }
         else if ( id == "YEAROFPLENTY")
         {
-            controller.getStatusController().informStatus(6);
+            controller.getStatusController().informStatus(Response.MUST_RESOURCE_SELECTION_PLENTY); // todo not sure about here
         }
         selectionLabel.setText("Choose Your Resource");
         // Initialize a list that will contain images of resources to be shown in the UI.

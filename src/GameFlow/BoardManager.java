@@ -34,7 +34,7 @@ public class BoardManager
 	 *         -6 = there is no enough resource for settlement
 	 *         -7 = there is no enough resource for city
 	 */
-	public int checkTile( int x, int y)
+	public Response checkTile( int x, int y)
 	{
 		// Get the related data
 		FlowManager flowManager = new FlowManager();
@@ -46,38 +46,41 @@ public class BoardManager
 
 		if( board.isGameTile( x, y ) )
 		{
-			int structureStatus = board.checkStructure( currentP, x, y, gameStatus);
+			Response structureStatus = board.checkStructure( currentP, x, y, gameStatus);
 
-			if( structureStatus >= -4 && structureStatus <= -1 ) // return error because of game board
+			if( structureStatus == Response.ERROR_NO_CONNECTION_FOR_ROAD ||
+					structureStatus == Response.ERROR_NO_CONNECTION_FOR_SETTLEMENT ||
+					structureStatus == Response.ERROR_THERE_IS_NEAR_BUILDING_FOR_SETTLEMENT ||
+					structureStatus == Response.ERROR_OCCUPIED_BY ) // return error because of game board
 				return structureStatus;
 
-			else if( structureStatus == 0 ){ // road can be built in terms of game board
+			else if( structureStatus == Response.INFORM_ROAD_CAN_BE_BUILT ){ // road can be built in terms of game board
 				if( resManager.hasEnoughResources( currentP, StructureTile.REQUIREMENTS_FOR_ROAD ) )
 					return structureStatus;
 				else
-					return -5; // error because of resource
+					return Response.ERROR_NO_RESOURCE_FOR_ROAD; // error because of resource
 			}
-			else if( structureStatus == 1 ){ // settlement can be built in terms of game board
+			else if( structureStatus == Response.INFORM_SETTLEMENT_CAN_BE_BUILT ){ // settlement can be built in terms of game board
 				if( resManager.hasEnoughResources( currentP, StructureTile.REQUIREMENTS_FOR_SETTLEMENT ) )
 					return structureStatus;
 				else
-					return -6; // error because of resource
+					return Response.ERROR_NO_RESOURCE_FOR_SETTLEMENT; // error because of resource
 			}
-			else if( structureStatus == 2 ){ // city can be built in terms of game board
+			else if( structureStatus == Response.INFORM_CITY_CAN_BE_BUILT ){ // city can be built in terms of game board
 				if( resManager.hasEnoughResources( currentP, StructureTile.REQUIREMENTS_FOR_CITY ) )
 					return structureStatus;
 				else
-					return -7; // error because of resource
+					return Response.ERROR_NO_RESOURCE_FOR_CITY; // error because of resource
 			}
 		}
 		else{
 			if( board.isInsideTile(x,y)){
-				return 3; // means inside tile
+				return Response.INFORM_INSIDE_TILE; // means inside tile
 			}
 			else
-				return 4;// means sea
+				return Response.INFORM_SEA_TILE;// means sea
 		}
-		return 5; // never work this return, this return is just for IDE
+		return null;
 	}
 
 	/**

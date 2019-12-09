@@ -2,6 +2,7 @@ package DevelopmentCards;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.Response;
 
 public class ChangeOfFortune extends Card {
     // Properties
@@ -22,6 +23,6 @@ public class ChangeOfFortune extends Card {
     public void play() {
         FlowManager flowManager = new FlowManager();
 
-        flowManager.addMust(7);
+        flowManager.addMust(Response.MUST_ROLL_DICE);
     }
 }

@@ -80,17 +80,17 @@ public class FlowManager {
         if( turnNumber == 2 * playerCount )
         {
             ResourceDistributer.getInstance().collectResources( board.getRobber() );
-            addMust( 7); // roll dice
+            addMust( Response.MUST_ROLL_DICE); // roll dice
             game.setGameStatus( 1); // game play phase
         }
         else if( gameStatus == 0 )
         {
-            addMust( 1); // settlement
-            addMust( 0); // road
-            addMust( 6); // end turn
+            addMust( Response.MUST_SETTLEMENT_BUILD); // settlement
+            addMust( Response.MUST_ROAD_BUILD); // road
+            addMust( Response.MUST_END_TURN); // end turn
         }
         else {
-            addMust( 7); // roll dice // roll dice
+            addMust( Response.MUST_ROLL_DICE); // roll dice // roll dice
         }
         return false;
     }
@@ -107,8 +107,6 @@ public class FlowManager {
         int firstDice =  ( int)( Math.random() * 6 + 1 );
         int secondDice =  ( int)( Math.random() * 6 + 1 );
 
-        game.setCurrentDice( firstDice + secondDice);
-
         ArrayList<Integer> ret = new ArrayList<>();
         ret.add( firstDice);
         ret.add( secondDice);
@@ -119,8 +117,8 @@ public class FlowManager {
         {
             new ResourceManager().discardHalfOfResources();
 
-            addMust( 3); // inside tile
-            addMust( 8); // get neighbors
+            addMust( Response.MUST_INSIDE_TILE_SELECTION); // inside tile
+            addMust( Response.MUST_GET_NEIGHBOR); // get neighbors
         }
         else
         {
@@ -174,13 +172,13 @@ public class FlowManager {
 
     /**
      * adds a new must
-     * @param m must type
+     * @param response must type
      */
-    public void addMust( int m){
+    public void addMust( Response response){
         // Get the related data
-        Queue<Integer> must = Game.getInstance().getMust();
+        Queue<Response> must = Game.getInstance().getMust();
 
-        must.add( m);
+        must.add( response);
     }
 
     /**
@@ -198,12 +196,12 @@ public class FlowManager {
      *         --- 9 = get half resources from all players (for perfectly balanced card) *** can be implemented in card play function
      *         --- 10 = player gets a point (for victory point card) *** can be implemented in card play function
      */
-    public int checkMust(){
+    public Response checkMust(){
         // Get the related data
-        Queue<Integer> must = Game.getInstance().getMust();
+        Queue<Response> must = Game.getInstance().getMust();
 
         if( must.size() == 0 )
-            return -1;
+            return Response.MUST_EMPTY;
         return must.peek();
     }
 
@@ -212,7 +210,7 @@ public class FlowManager {
      */
     public void doneMust(){
         // Get the related data
-        Queue<Integer> must = Game.getInstance().getMust();
+        Queue<Response> must = Game.getInstance().getMust();
 
         must.remove();
     }
