@@ -1,11 +1,12 @@
 package SceneManagement;
 
+import Player.Player;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import Player.Player;
 
 /**
  * Flow manager is used to control required controllers and their transitions throughout the game.
@@ -57,8 +58,7 @@ public class GameEngine {
             temp.add(new Player("Rafi", Color.ORANGE));
             temp.add(new Player("Cevat", Color.BROWN));
             controller = new SingleGameController(primaryStage, temp);*/
-            //controller = new SceneManagement.OpeningController(primaryStage);
-            controller = new MainMenuController(primaryStage);
+            controller = new SceneManagement.LoginController(primaryStage);
         }
         catch (IOException e)
         {
@@ -104,6 +104,18 @@ public class GameEngine {
             // 3 is the code for Single Game Controller.
             case 3:
                 controller = new SingleGameController(primaryStage, players);
+                break;
+            // 4 is the code for Login Controller.
+            case 4:
+                controller = new LoginController(primaryStage);
+                break;
+            // 5 is the code for Register Controller.
+            case 5:
+                controller = new RegisterController(primaryStage);
+                break;
+            // 6 is the coded for Matchmaking Controller.
+            case 6:
+                controller = new MatchmakingController(primaryStage);
                 break;
             /* More will be added when new controllers are implemented alongside with multi-player */
         }
