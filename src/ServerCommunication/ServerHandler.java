@@ -202,7 +202,7 @@ public class ServerHandler {
 
     public void gameRequest() throws URISyntaxException {
         this.connect();
-        String[] names = {"name"};
+        String[] names = {"userId"};
         String[] keys = new String[1];
         keys[0] = this.userId;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);

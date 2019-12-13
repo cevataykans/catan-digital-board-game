@@ -11,10 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 public class ServerInformation {
 
@@ -26,7 +23,7 @@ public class ServerInformation {
 
     // Constructor
     private ServerInformation(){
-        this.information = null;
+        this.information = new LinkedList<>();
     }
 
     public static ServerInformation getInstance(){

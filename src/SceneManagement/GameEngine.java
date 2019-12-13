@@ -58,7 +58,7 @@ public class GameEngine {
             temp.add(new Player("Rafi", Color.ORANGE));
             temp.add(new Player("Cevat", Color.BROWN));
             controller = new SingleGameController(primaryStage, temp);*/
-            controller = new SceneManagement.OpeningController(primaryStage);
+            controller = new SceneManagement.LoginController(primaryStage);
         }
         catch (IOException e)
         {

@@ -6,6 +6,7 @@ import GameBoard.*;
 import Player.Player;
 import ServerCommunication.ServerHandler;
 import ServerCommunication.ServerInformation;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -92,11 +93,11 @@ public class Game
         {
             JSONObject obj = ServerInformation.getInstance().getInformation();
             try {
-                int[] tempCards = (int[]) obj.get("cards");
-                for ( int i = 0; i < tempCards.length; i++)
+                JSONArray tempCards = (JSONArray) obj.get("cards");
+                for ( int i = 0; i < tempCards.length(); i++)
                 {
                     Card card = null;
-                    switch (i) {
+                    switch (tempCards.getInt(i)) {
                         case 0:
                             card = new Knight();
                             break;
@@ -117,7 +118,6 @@ public class Game
                     }
                     this.devCards.push(card);
                 }
-                ServerInformation.getInstance().deleteInformation();
             }
             catch (JSONException e)
             {

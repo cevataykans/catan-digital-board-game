@@ -2,6 +2,7 @@ package SceneManagement.GameManagement;
 
 import DevelopmentCards.Card;
 import GameFlow.FlowManager;
+import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeIn;
@@ -20,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class MultiDevCardController {
     // Properties
-    private SingleGameController controller;
+    private MultiGameController controller;
     private Scene scene;
     private ImageView devCardsHover;
     private Rectangle cardPlayableArea;
@@ -36,7 +37,7 @@ public class MultiDevCardController {
     public MultiDevCardController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (SingleGameController) controller;
+        this.controller = (MultiGameController) controller;
         initialize();
     }
 

@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.*;
@@ -16,7 +17,7 @@ import GameFlow.*;
 
 public class StatusController {
     // Properties
-    SingleGameController controller;
+    MultiGameController controller;
     Scene scene;
     Label statusText;
 
@@ -24,7 +25,7 @@ public class StatusController {
     public StatusController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (SingleGameController) controller;
+        this.controller = (MultiGameController) controller;
         initialize();
     }
 

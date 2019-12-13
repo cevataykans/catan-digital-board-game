@@ -3,6 +3,7 @@ package GameBoard;
 import GameBoard.*;
 import ServerCommunication.ServerHandler;
 import ServerCommunication.ServerInformation;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,10 +60,10 @@ public class GameBoardBuilder
 		{
 			JSONObject obj = ServerInformation.getInstance().getInformation();
 			try {
-				int[] temp = (int[]) obj.get("diceNumbers");
-				for ( int i = 0; i < temp.length; i++)
+				JSONArray temp = (JSONArray) obj.get("diceNumbers");
+				for ( int i = 0; i < temp.length(); i++)
 				{
-					this.diceNumbers.add(temp[i]);
+					this.diceNumbers.add(temp.getInt(i));
 				}
 			}
 			catch (JSONException e)
@@ -95,10 +96,10 @@ public class GameBoardBuilder
 		{
 			JSONObject obj = ServerInformation.getInstance().getInformation();
 			try {
-				int[] temp = (int[]) obj.get("resources");
-				for ( int i = 0; i < temp.length; i++)
+				JSONArray temp = (JSONArray) obj.get("resources");
+				for ( int i = 0; i < temp.length(); i++)
 				{
-					this.resources.add(temp[i]);
+					this.resources.add(temp.getInt(i));
 				}
 			}
 			catch (JSONException e)
@@ -139,14 +140,16 @@ public class GameBoardBuilder
 		else {
 			JSONObject obj = ServerInformation.getInstance().getInformation();
 			try {
-				int[] tempPort = (int[]) obj.get("ports");
-				for ( int i = 0; i < tempPort.length; i++)
+				JSONArray tempPort = (JSONArray) obj.get("ports");
+				for ( int i = 0; i < tempPort.length(); i++)
 				{
-					ports.add(Harbor.HarborType.values()[tempPort[i]]);
+					ports.add(Harbor.HarborType.values()[tempPort.getInt(i)]);
 				}
+				ServerInformation.getInstance().deleteInformation();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
+
 		}
 		for( int i = 0 ; i < ports.size(); i++ )
 		{

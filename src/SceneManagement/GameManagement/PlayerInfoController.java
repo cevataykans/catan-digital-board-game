@@ -3,8 +3,10 @@ package SceneManagement.GameManagement;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.TitleManager;
+import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
+import ServerCommunication.ServerHandler;
 import animatefx.animation.*;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -31,7 +33,7 @@ import org.controlsfx.dialog.Wizard;
 public class PlayerInfoController {
 
     // Properties
-    private SingleGameController controller;
+    private MultiGameController controller;
     private Scene scene;
 
     private ArrayList<FillProgressIndicator> otherPlayers;
@@ -57,7 +59,7 @@ public class PlayerInfoController {
     public PlayerInfoController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (SingleGameController) controller;
+        this.controller = (MultiGameController) controller;
         initialize();
     }
 

@@ -5,6 +5,7 @@ import GameFlow.Game;
 import GameFlow.ResourceManager;
 import GameFlow.Response;
 import Player.Player;
+import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeInLeft;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 
 public class MultiSelectionController {
     // Properties
-    private SingleGameController controller;
+    private MultiGameController controller;
     private Scene scene;
     private AnchorPane selectionBox;
     private Label selectionLabel;
@@ -28,7 +29,7 @@ public class MultiSelectionController {
     public MultiSelectionController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (SingleGameController) controller;
+        this.controller = (MultiGameController) controller;
         initialize();
     }
 

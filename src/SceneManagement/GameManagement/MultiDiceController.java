@@ -3,6 +3,7 @@ package SceneManagement.GameManagement;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
+import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import SceneManagement.SoundManager;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 public class MultiDiceController {
 
     // Properties
-    private SingleGameController controller;
+    private MultiGameController controller;
     private Scene scene;
     private ImageView die1;
     private ImageView die2;
@@ -28,7 +29,7 @@ public class MultiDiceController {
     public MultiDiceController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (SingleGameController) controller;
+        this.controller = (MultiGameController) controller;
         initialize();
     }
 

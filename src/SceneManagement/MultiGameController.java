@@ -15,6 +15,7 @@ import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
 import animatefx.animation.ZoomIn;
 import animatefx.animation.ZoomOut;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
@@ -32,6 +33,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import netscape.javascript.JSObject;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -76,10 +78,12 @@ public class MultiGameController extends SceneController {
 
         this.players = new ArrayList<>();
         try {
-            String[] playerNames = (String[]) obj.get("players");
-            for ( int i = 0; i < playerNames.length; i++)
+            JSONArray playerNames =  (JSONArray) obj.get("players");
+
+
+            for ( int i = 0; i < playerNames.length(); i++)
             {
-                Player player = new Player(playerNames[i], null);
+                Player player = new Player(playerNames.getString(i), null);
                 switch (i)
                 {
                     case 0:
@@ -95,7 +99,7 @@ public class MultiGameController extends SceneController {
                         player.setColor(Color.BROWN);
                         break;
                 }
-                if ( playerNames[i].equals(ServerHandler.getInstance().getUserId()))
+                if ( playerNames.getString(i).equals(ServerHandler.getInstance().getUserId()))
                 {
                     if ( i == 0 )
                     {
@@ -109,6 +113,10 @@ public class MultiGameController extends SceneController {
         catch (Exception e)
         {
             e.printStackTrace();
+        }
+        for(Player p: players) {
+            System.out.println(p.getName());
+            System.out.println(p.getColor());
         }
         this.root = FXMLLoader.load(getClass().getResource("/UI/MultiGame.fxml"));
         this.scene = new Scene(root, Color.BLACK);
@@ -331,7 +339,12 @@ public class MultiGameController extends SceneController {
             }
         });
 
-        stage.setScene(scene);
+        // Avoid throwing IllegalStateException by running from a non-JavaFX thread.
+        Platform.runLater(
+                () -> {
+                    stage.setScene(scene);
+                }
+        );
     }
 
     /**
