@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -43,6 +44,7 @@ public class PlayerInfoController {
     private Label otherPlayerName;
     private ImageView currentLR;
     private ImageView currentLA;
+    private ProgressIndicator curPlayerScore;
     private ImageView otherLR;
     private ImageView otherLA;
     private ImageView otherSettlementImage;
@@ -100,6 +102,8 @@ public class PlayerInfoController {
         currPlayerResources.add(grainCount);
         currPlayerResources.add(brickCount);
         currPlayerResources.add(oreCount);
+
+        curPlayerScore = (ProgressIndicator) scene.lookup("#currentScore");
 
         // Get the UI representations of other players' longest roads from the player information controller's fxml file.
         currentLR = (ImageView) scene.lookup("#currentLR");
@@ -244,8 +248,6 @@ public class PlayerInfoController {
      */
     public void setupCurrentPlayer() {
 
-        // Get game for accessing data
-        Game game = Game.getInstance();
         FlowManager flowManager = new FlowManager();
 
         // Initialize out animation for previous representation of current player with 3x the normal speed.
@@ -260,7 +262,7 @@ public class PlayerInfoController {
             // Set current player's name in information container to current player's name.
             currentPlayerName.setText( flowManager.getCurrentPlayer().getName());
             // Set current player's score in information container to current player's score.
-            //playerScores.get(0).setProgress( game.getCurrentPlayer().getScore() * 1.0 / 10);
+            curPlayerScore.setProgress( flowManager.getCurrentPlayer().getScore() * 1.0 / 10);
             // Get the resources of the current player.
             int playercurrPlayerResources[] =  flowManager.getCurrentPlayer().getResources();
 
@@ -268,6 +270,25 @@ public class PlayerInfoController {
             for ( int i = 0; i < currPlayerResources.size(); i++)
             {
                 currPlayerResources.get(i).setText("" + playercurrPlayerResources[i]);
+            }
+
+            TitleManager titleMan = new TitleManager();
+            if ( flowManager.getCurrentPlayer() == titleMan.getLongestRoadPlayer() )
+            {
+                currentLR.setVisible( true);
+            }
+            else
+            {
+                currentLR.setVisible( false);
+            }
+
+            if ( flowManager.getCurrentPlayer() == titleMan.getLargestArmyPlayer() )
+            {
+                currentLA.setVisible( true);
+            }
+            else
+            {
+                currentLA.setVisible(  false);
             }
 
             infoIn.setSpeed(3);
@@ -309,9 +330,29 @@ public class PlayerInfoController {
         otherCityCount.setText("" +  flowManager
                 .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getCityCount());
 
+        TitleManager titleMan = new TitleManager();
+        if ( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4) == titleMan.getLongestRoadPlayer() )
+        {
+            otherLR.setVisible( true);
+        }
+        else
+        {
+            otherLR.setVisible( false);
+        }
+
+        if ( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4) == titleMan.getLargestArmyPlayer() )
+        {
+            otherLA.setVisible( true);
+        }
+        else
+        {
+            otherLA.setVisible(  false);
+        }
+
         // Initialize in animation for the other player's information box.
         otherPlayerBox.setVisible(true);
         ZoomIn showAnim = new ZoomIn(otherPlayerBox);
+        showAnim.setSpeed( 5);
         showAnim.play();
     }
 
@@ -328,6 +369,7 @@ public class PlayerInfoController {
             otherPlayerBox.setVisible(false);
             otherInfoShown = false;
         });
+        hideAnim.setSpeed( 100);
         hideAnim.play();
     }
 

@@ -22,8 +22,8 @@ public class GameBoard {
 
     //constants
     final private int FIELDPEREDGE = 3;
-    final private int WIDTH = FIELDPEREDGE * 8 - 1;
-    final private int HEIGHT = FIELDPEREDGE * 8 - 3;
+    final public int WIDTH = FIELDPEREDGE * 8 - 1;
+    final public int HEIGHT = FIELDPEREDGE * 8 - 3;
 
     //properties
     private Tile[][] board;
@@ -358,6 +358,8 @@ public class GameBoard {
         }
         if(distances.size() == 0)
             return 0;
+        System.out.println( "~~~~~~~~~~~~~~~~~~~ Road Length Board ~~~~~~~~~~~~~~~~~~~");
+        System.out.println( "Find longest road length is: " + Collections.max( distances));
         return Collections.max(distances);
     }
 
