@@ -69,6 +69,8 @@ public class MainMenuController extends SceneController{
                 finalRoot.setVisible(true);
                 FadeIn animation = new FadeIn(finalRoot);
                 animation.play();
+                SoundManager.getInstance().playEffect(SoundManager.Effect.BUGLE);
+                SoundManager.getInstance().playBacktrack(SoundManager.Backtrack.MAIN_MENU);
             }
         });
         new Thread(sleeper).start();

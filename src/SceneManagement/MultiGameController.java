@@ -1,8 +1,20 @@
 package SceneManagement;
 
+import GameBoard.RoadTile;
+import GameBoard.StartTile;
+import GameBoard.Tile;
+import GameFlow.*;
 import Player.Player;
 import SceneManagement.GameManagement.*;
-import animatefx.animation.*;
+import SceneManagement.PixelProcessor;
+import SceneManagement.SceneController;
+import SceneManagement.SoundManager;
+import ServerCommunication.ServerHandler;
+import ServerCommunication.ServerInformation;
+import animatefx.animation.FadeIn;
+import animatefx.animation.FadeOut;
+import animatefx.animation.ZoomIn;
+import animatefx.animation.ZoomOut;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
@@ -19,26 +31,21 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import netscape.javascript.JSObject;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import GameFlow.*;
-import GameBoard.*;
-import org.controlsfx.dialog.Wizard;
 
-/**
- * This scene controller manages all of the Single-GameFlow.Game screen and all of its logic with itself and its sub-controllers.
- * @author Talha Şen
- * @version 29.11.2019
- */
-public class SingleGameController extends SceneController
-{
+public class MultiGameController extends SceneController {
     private HashMap<Point2D, Integer> settlementMap = new HashMap<>();
 
     // Properties
     private ArrayList<Player> players;
+    private Player localPlayer;
     private Game game;
     private AnchorPane gameBox;
     private Button buyDevelopmentCard;
@@ -48,9 +55,9 @@ public class SingleGameController extends SceneController
     // Sub Controllers
     private PlayerInfoController infoController;
     private StatusController statusController;
-    private DevCardController devCardController;
-    private SelectionController selectionController;
-    private DiceController diceController;
+    private MultiDevCardController devCardController;
+    private MultiSelectionController selectionController;
+    private MultiDiceController diceController;
 
     // Robber Related Properties
     private ImageView robber;
@@ -63,12 +70,49 @@ public class SingleGameController extends SceneController
 
 
     // Constructor
-    public SingleGameController(Stage stage, ArrayList<Player> players) throws IOException
+    public MultiGameController(Stage stage) throws IOException
     {
-        root = FXMLLoader.load(getClass().getResource("/UI/SingleGame.fxml"));
-        scene = new Scene(root, Color.BLACK);
-        this.players = players;
-        initialize(stage);
+        JSONObject obj = ServerInformation.getInstance().getInformation();
+
+        this.players = new ArrayList<>();
+        try {
+            String[] playerNames = (String[]) obj.get("players");
+            for ( int i = 0; i < playerNames.length; i++)
+            {
+                Player player = new Player(playerNames[i], null);
+                switch (i)
+                {
+                    case 0:
+                        player.setColor(Color.BLUE);
+                        break;
+                    case 1:
+                        player.setColor(Color.WHITE);
+                        break;
+                    case 2:
+                        player.setColor(Color.ORANGE);
+                        break;
+                    case 3:
+                        player.setColor(Color.BROWN);
+                        break;
+                }
+                if ( playerNames[i].equals(ServerHandler.getInstance().getUserId()))
+                {
+                    if ( i == 0 )
+                    {
+                        ServerHandler.getInstance().setStatus(ServerHandler.Status.SENDER);
+                    }
+                    this.localPlayer = player;
+                }
+                this.players.add(player);
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        this.root = FXMLLoader.load(getClass().getResource("/UI/MultiGame.fxml"));
+        this.scene = new Scene(root, Color.BLACK);
+        this.initialize(stage);
     }
 
     // Methods
@@ -81,7 +125,7 @@ public class SingleGameController extends SceneController
     @Override
     public void initialize(Stage stage) throws IOException {
         scene.getStylesheets().clear();
-        scene.getStylesheets().add(getClass().getResource("/UI/SingleGame.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("/UI/MultiGame.css").toExternalForm());
         scene.setRoot(root);
 
         // Wait 10 milliseconds to load the scene. After that, play the scene animation.
@@ -132,121 +176,119 @@ public class SingleGameController extends SceneController
         // Initializing all the sub controllers that will handle the game's other logic.
         infoController = new PlayerInfoController(scene, this);
         statusController = new StatusController(scene, this);
-        devCardController = new DevCardController(scene, this);
-        selectionController = new SelectionController(scene, this);
-        diceController = new DiceController(scene, this);
+        devCardController = new MultiDevCardController(scene, this);
+        selectionController = new MultiSelectionController(scene, this);
+        diceController = new MultiDiceController(scene, this);
 
         // Adding listener to make the game board intractable.
         gameBox.setOnMouseClicked(mouseEvent -> {
-            System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
-            // Allow the action to be processed for game board UI if only game board related must, be done
-            Response response = flowManager.checkMust();
-            if ( response == Response.MUST_EMPTY ||
-                    response == Response.MUST_ROAD_BUILD ||
-                    response == Response.MUST_SETTLEMENT_BUILD ||
-                    response == Response.MUST_CITY_BUILD ||
-                    response == Response.MUST_INSIDE_TILE_SELECTION)
-            {
-                // Getting the mouse coordinates.
-                int x = PixelProcessor.processX(mouseEvent.getX());
-                int y = PixelProcessor.processY(mouseEvent.getY());
+            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+                System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
+                // Allow the action to be processed for game board UI if only game board related must, be done
+                Response response = flowManager.checkMust();
+                if (response == Response.MUST_EMPTY ||
+                        response == Response.MUST_ROAD_BUILD ||
+                        response == Response.MUST_SETTLEMENT_BUILD ||
+                        response == Response.MUST_CITY_BUILD ||
+                        response == Response.MUST_INSIDE_TILE_SELECTION) {
+                    // Getting the mouse coordinates.
+                    int x = PixelProcessor.processX(mouseEvent.getX());
+                    int y = PixelProcessor.processY(mouseEvent.getY());
 
-                System.out.print("X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY()); /********************************************************/
-                System.out.println(" X' is: " + x + " | Y' is: " + y); /********************************************************/
+                    System.out.print("X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY()); /********************************************************/
+                    System.out.println(" X' is: " + x + " | Y' is: " + y); /********************************************************/
 
-                // Checking if the clicked coordinate is a game tile
-                createDialog( boardManager.checkTile(x, y), x, y);
-            }
-            else
-            {
-                statusController.informStatus( flowManager.checkMust() );
+                    // Checking if the clicked coordinate is a game tile
+                    createDialog(boardManager.checkTile(x, y), x, y);
+                } else {
+                    statusController.informStatus(flowManager.checkMust());
+                }
             }
         });
 
         // Adding listener to make the game board highlightable to make the more usable.
         gameBox.setOnMouseMoved(mouseEvent2 ->
         {
-            // Allow the action to be processed for game board UI if only game board related must, be done
-            Response response = flowManager.checkMust();
-            if ( ( response == Response.MUST_ROAD_BUILD ||
-                    response == Response.MUST_SETTLEMENT_BUILD ||
-                    response == Response.MUST_CITY_BUILD ||
-                    response == Response.MUST_INSIDE_TILE_SELECTION )
-                    && !highlightOn)
-            {
-                // Getting the mouse coordinates.
-                int x = PixelProcessor.processX(mouseEvent2.getX());
-                int y = PixelProcessor.processY(mouseEvent2.getY());
+            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+                // Allow the action to be processed for game board UI if only game board related must, be done
+                Response response = flowManager.checkMust();
+                if ((response == Response.MUST_ROAD_BUILD ||
+                        response == Response.MUST_SETTLEMENT_BUILD ||
+                        response == Response.MUST_CITY_BUILD ||
+                        response == Response.MUST_INSIDE_TILE_SELECTION)
+                        && !highlightOn) {
+                    // Getting the mouse coordinates.
+                    int x = PixelProcessor.processX(mouseEvent2.getX());
+                    int y = PixelProcessor.processY(mouseEvent2.getY());
 
-                // Checking if the hovered coordinate is a game tile.
-                Response structureCheck = boardManager.checkTile(x, y);
-                // Check if the hovered tile is a constructable road.
-                if ( structureCheck == Response.INFORM_ROAD_CAN_BE_BUILT)
-                {
-                    // Get the road image with the current player's color.
-                    ImageView roadHighlight = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor()
-                                                            + ".png");
-                    // Set its rotation depending on the hexagon side and sets its x depending on rotation.
-                    setRoadRotation(roadHighlight, x, y);
-                    // Set road highlight's y corresponding to the hexagon side.
-                    roadHighlight.setY( y * 30 + 35);
-                    roadHighlight.setOnMouseExited(event ->
-                    {
-                        // When user exits the road highlight, remove it from UI with an fade out animation.
-                        FadeOut highlightOut = new FadeOut(roadHighlight);
-                        highlightOut.setSpeed(2);
-                        highlightOut.setOnFinished(event1 ->
+                    // Checking if the hovered coordinate is a game tile.
+                    Response structureCheck = boardManager.checkTile(x, y);
+                    // Check if the hovered tile is a constructable road.
+                    if (structureCheck == Response.INFORM_ROAD_CAN_BE_BUILT) {
+                        // Get the road image with the current player's color.
+                        ImageView roadHighlight = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor()
+                                + ".png");
+                        // Set its rotation depending on the hexagon side and sets its x depending on rotation.
+                        setRoadRotation(roadHighlight, x, y);
+                        // Set road highlight's y corresponding to the hexagon side.
+                        roadHighlight.setY(y * 30 + 35);
+                        roadHighlight.setOnMouseExited(event ->
                         {
-                            // Remove the road highlight and set the highlight boolean to false so that the player
-                            // can view other highlights.
-                            gameBox.getChildren().remove(roadHighlight);
-                            highlightOn = false;
+                            // When user exits the road highlight, remove it from UI with an fade out animation.
+                            FadeOut highlightOut = new FadeOut(roadHighlight);
+                            highlightOut.setSpeed(2);
+                            highlightOut.setOnFinished(event1 ->
+                            {
+                                // Remove the road highlight and set the highlight boolean to false so that the player
+                                // can view other highlights.
+                                gameBox.getChildren().remove(roadHighlight);
+                                highlightOn = false;
+                            });
+                            highlightOut.play();
                         });
-                        highlightOut.play();
-                    });
-                    // Add the road highlight to the UI.
-                    gameBox.getChildren().add(roadHighlight);
-                    // Initialize an in animation for the road highlight with 2x the normal speed.
-                    FadeIn highlightIn = new FadeIn(roadHighlight);
-                    highlightIn.setSpeed(2);
-                    highlightIn.play();
-                    // Set the highlight boolean to true so that user can't view multiple highlights in the same/other
-                    // place(s).
-                    highlightOn = true;
-                }
-                // Check if the hovered tile is a constructable settlement.
-                else if ( structureCheck == Response.INFORM_SETTLEMENT_CAN_BE_BUILT)
-                {
-                    // Get the settlement image with the current player's color.
-                    ImageView settlementHighlight = new ImageView("/images/settlement" + flowManager.getCurrentPlayer()
-                            .getColor() + ".png");
-                    // Set its x depending on the hexagin corner.
-                    settlementHighlight.setX( PixelProcessor.getXToDisplay() );
-                    // Set road highlight's y corresponding to the hexagon corner.
-                    settlementHighlight.setY( PixelProcessor.getYToDisplay( y) );
-                    settlementHighlight.setOnMouseExited(event ->
-                    {
-                        // When user exits the settlement highlight, remove it from UI with an fade out animation.
-                        FadeOut highlightOut = new FadeOut(settlementHighlight);
-                        highlightOut.setSpeed(2);
-                        highlightOut.setOnFinished(event1 ->
+                        // Add the road highlight to the UI.
+                        gameBox.getChildren().add(roadHighlight);
+                        // Initialize an in animation for the road highlight with 2x the normal speed.
+                        FadeIn highlightIn = new FadeIn(roadHighlight);
+                        highlightIn.setSpeed(2);
+                        highlightIn.play();
+                        // Set the highlight boolean to true so that user can't view multiple highlights in the same/other
+                        // place(s).
+                        highlightOn = true;
+                    }
+                    // Check if the hovered tile is a constructable settlement.
+                    else if (structureCheck == Response.INFORM_SETTLEMENT_CAN_BE_BUILT) {
+                        // Get the settlement image with the current player's color.
+                        ImageView settlementHighlight = new ImageView("/images/settlement" + flowManager.getCurrentPlayer()
+                                .getColor() + ".png");
+                        // Set its x depending on the hexagin corner.
+                        settlementHighlight.setX(PixelProcessor.getXToDisplay());
+                        // Set road highlight's y corresponding to the hexagon corner.
+                        settlementHighlight.setY(PixelProcessor.getYToDisplay(y));
+                        settlementHighlight.setOnMouseExited(event ->
                         {
-                            // Remove the settlement highlight and set the highlight boolean to false so that the player
-                            // can view other highlights.
-                            gameBox.getChildren().remove(settlementHighlight);
-                            highlightOn = false;
+                            // When user exits the settlement highlight, remove it from UI with an fade out animation.
+                            FadeOut highlightOut = new FadeOut(settlementHighlight);
+                            highlightOut.setSpeed(2);
+                            highlightOut.setOnFinished(event1 ->
+                            {
+                                // Remove the settlement highlight and set the highlight boolean to false so that the player
+                                // can view other highlights.
+                                gameBox.getChildren().remove(settlementHighlight);
+                                highlightOn = false;
+                            });
+                            highlightOut.play();
                         });
-                        highlightOut.play();
-                    });
-                    // Add the settlement highlight to the UI.
-                    gameBox.getChildren().add(settlementHighlight);
-                    // Initialize an in animation for the settlement highlight with 2x the normal speed.
-                    FadeIn highlightIn = new FadeIn(settlementHighlight);
-                    highlightIn.setSpeed(2);
-                    highlightIn.play();
-                    // Set the highlight boolean to true so that user can't view multiple highlights in the same/other
-                    // place(s).
-                    highlightOn = true;
+                        // Add the settlement highlight to the UI.
+                        gameBox.getChildren().add(settlementHighlight);
+                        // Initialize an in animation for the settlement highlight with 2x the normal speed.
+                        FadeIn highlightIn = new FadeIn(settlementHighlight);
+                        highlightIn.setSpeed(2);
+                        highlightIn.play();
+                        // Set the highlight boolean to true so that user can't view multiple highlights in the same/other
+                        // place(s).
+                        highlightOn = true;
+                    }
                 }
             }
         });
@@ -255,14 +297,18 @@ public class SingleGameController extends SceneController
         buyDevelopmentCard = (Button) scene.lookup("#buyDevelopmentCard");
         buyDevelopmentCard.setOnMouseClicked(event ->
         {
-            cardManager.addDevelopmentCard();
+            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+                cardManager.addDevelopmentCard();
+            }
         });
 
         // Getting the end turn button from the single-game fxml file and adding the end turn logic to its click listener.
         endTurn = (Button) scene.lookup( "#endTurn");
         endTurn.setOnMouseReleased(mouseEvent ->
         {
-            performEndTurnButtonEvent();
+            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+                performEndTurnButtonEvent();
+            }
         });
 
         /**
@@ -272,12 +318,16 @@ public class SingleGameController extends SceneController
          *  ---- PLANNED SHORTCUTS ----
          *  Key D or C -> Buy Development DevelopmentCards.Card
          *  If you want to add a shortcut, add the key to the switch case with its functionality.
-        */
+         */
         scene.setOnKeyPressed(event -> {
-            switch (event.getCode()) {
-                case E: performEndTurnButtonEvent();
+            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+                switch (event.getCode()) {
+                    case E:
+                        performEndTurnButtonEvent();
                         break;
-                case H: robber.setImage( new Image("/images/hakan.jpeg", 45, 70, false, false) );
+                    case H:
+                        robber.setImage(new Image("/images/hakan.jpeg", 45, 70, false, false));
+                }
             }
         });
 
@@ -463,8 +513,8 @@ public class SingleGameController extends SceneController
     }
 
     /**
-     * Prompts to ask if the user really wants to build a settlement.
-     * @param alert is the dialog prompting confirmation of building the settlement
+     * Sets, builds and shows a settlement on the given coordinate for the current player.
+     * @param alert is the dialog prompting confirmation of building the settlement (SENDER ONLY)
      * @param x is the x coordinate in the game board
      * @param y is the y coordinate in the game board
      */
@@ -472,50 +522,64 @@ public class SingleGameController extends SceneController
     {
         FlowManager flowManager = new FlowManager();
 
-        alert.setHeaderText("Building a Settlement");
-        alert.setContentText("Do you want to build a settlement?");
+        if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            alert.setHeaderText("Building a Settlement");
+            alert.setContentText("Do you want to build a settlement?");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if ( result.get() == ButtonType.OK)
-        {
-            // Get the necessary managers
-            BoardManager boardManager = new BoardManager();
-
-            // Check if the user obligated to build a settlement
-            if ( flowManager.checkMust() == Response.MUST_SETTLEMENT_BUILD )
-            {
-                flowManager.doneMust();
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                // Check if the user obligated to build a settlement
+                if (flowManager.checkMust() == Response.MUST_SETTLEMENT_BUILD) {
+                    flowManager.doneMust();
+                }
+                showSettlement(flowManager, x, y);
             }
-
-            // Make the corresponding game tile in the given index a road.
-            boardManager.setTile( x, y);
-
-            // Initializing road image to be shown on the UI.
-            ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
-
-            // Setting city image's coordinates.
-            structure.setX( PixelProcessor.getXToDisplay() );
-            structure.setY( PixelProcessor.getYToDisplay( y) );
-
-            // Playing a zoom in animation for the settlement.
-            new ZoomIn(structure).play();
-
-            // Adding settlement image to the game area in UI.
-            gameBox.getChildren().add(structure);
-
-            // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
-            // city images when the player upgrades settlement to city.
-            settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
-
-            // Refresh current player information.
-            infoController.setupCurrentPlayer();
-            infoController.setupLongestRoad();
-            SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
+        }
+        else // RECEIVER
+        {
+            showSettlement(flowManager, x, y);
         }
     }
 
     /**
-     * A custom dialog to confirmation of road building
+     * Shows the settlement belonging to the current player in the UI (called for every client).
+     * @param flowManager is the manager that will pass the current player to the controller.
+     * @param x is the x coordinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    private void showSettlement(FlowManager flowManager, int x, int y)
+    {
+        // Get the necessary managers
+        BoardManager boardManager = new BoardManager();
+
+        // Make the corresponding game tile in the given index a road.
+        boardManager.setTile( x, y);
+
+        // Initializing road image to be shown on the UI.
+        ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
+
+        // Setting city image's coordinates.
+        structure.setX( PixelProcessor.getXToDisplay() );
+        structure.setY( PixelProcessor.getYToDisplay( y) );
+
+        // Playing a zoom in animation for the settlement.
+        new ZoomIn(structure).play();
+
+        // Adding settlement image to the game area in UI.
+        gameBox.getChildren().add(structure);
+
+        // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
+        // city images when the player upgrades settlement to city.
+        settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
+
+        // Refresh current player information.
+        infoController.setupCurrentPlayer();
+        infoController.setupLongestRoad();
+        SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
+    }
+
+    /**
+     * Shows the road belonging to the current player in the UI (called for every client).
      * @param alert is the dialog prompting confirmation of building the road
      * @param x is the x coordinate in the game board
      * @param y is the y coordinate in the game board
@@ -524,43 +588,57 @@ public class SingleGameController extends SceneController
     {
         FlowManager flowManager = new FlowManager();
 
-        alert.setHeaderText("Building a Road");
-        alert.setContentText("Do you want to build a road?");
+        if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            alert.setHeaderText("Building a Road");
+            alert.setContentText("Do you want to build a road?");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if ( result.get() == ButtonType.OK)
-        {
-            // Get the necessary managers
-            BoardManager boardManager = new BoardManager();
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                // Check if the user obligated to build a road
+                if (flowManager.checkMust() == Response.MUST_ROAD_BUILD) {
+                    flowManager.doneMust();
+                }
 
-            // Check if the user obligated to build a road
-            if ( flowManager.checkMust() == Response.MUST_ROAD_BUILD )
-            {
-                flowManager.doneMust();
-            }
+                showRoad(flowManager, x, y);
 
-            // Make the corresponding game tile in the given index a road.
-            boardManager.setTile( x, y);
-            // Initializing road image to be shown on the UI.
-            ImageView structure = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor() + ".png");
-            // Determining its rotation type corresponding to the hexagon side. Setting the road image's coordinates.
-            setRoadRotation(structure, x, y);
-            structure.setY( y * 30 + 30);
-            new ZoomIn(structure).play();
-            // Adding the road image to the game area in UI.
-            gameBox.getChildren().add(structure);
-
-            // Refreshing current player information
-            infoController.setupCurrentPlayer();
-            infoController.setupLongestRoad();
-            SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
-
-            // If its initial state, player has to immediately end the turn.
-            if ( flowManager.checkMust() == Response.MUST_END_TURN )
-            {
-                performEndTurnButtonEvent();
+                // If its initial state, player has to immediately end the turn.
+                if (flowManager.checkMust() == Response.MUST_END_TURN) {
+                    performEndTurnButtonEvent();
+                }
             }
         }
+        else //RECEIVER
+        {
+            showRoad(flowManager, x, y);
+        }
+    }
+
+    /**
+     * Shows the road belonging to the current player in the UI (called for every client).
+     * @param flowManager is the manager that will pass the current player to the controller.
+     * @param x is the x coordinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    private void showRoad(FlowManager flowManager, int x, int y)
+    {
+        // Get the necessary managers
+        BoardManager boardManager = new BoardManager();
+
+        // Make the corresponding game tile in the given index a road.
+        boardManager.setTile( x, y);
+        // Initializing road image to be shown on the UI.
+        ImageView structure = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor() + ".png");
+        // Determining its rotation type corresponding to the hexagon side. Setting the road image's coordinates.
+        setRoadRotation(structure, x, y);
+        structure.setY( y * 30 + 30);
+        new ZoomIn(structure).play();
+        // Adding the road image to the game area in UI.
+        gameBox.getChildren().add(structure);
+
+        // Refreshing current player information
+        infoController.setupCurrentPlayer();
+        infoController.setupLongestRoad();
+        SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
     }
 
     /**
@@ -594,7 +672,7 @@ public class SingleGameController extends SceneController
     }
 
     /**
-     * A custom dialog to confirmation of city upgrading
+     * Shows the city belonging to the current player in the UI (called for every client).
      * @param alert is the dialog prompting confirmation of upgrading to the city
      * @param x is the x coordinate in the game board
      * @param y is the y coordinate in the game board
@@ -603,48 +681,64 @@ public class SingleGameController extends SceneController
     {
         FlowManager flowManager = new FlowManager();
 
-        alert.setHeaderText("Upgrading To City");
-        alert.setContentText("Do you want to upgrade your settlement to a city?");
+        if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            alert.setHeaderText("Upgrading To City");
+            alert.setContentText("Do you want to upgrade your settlement to a city?");
 
-        Optional<ButtonType> result = alert.showAndWait();
-        if ( result.get() == ButtonType.OK)
-        {
-            // Get the necessary managers
-            BoardManager boardManager = new BoardManager();
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                // Check if the user obligated to build a city
+                if (flowManager.checkMust() == Response.MUST_CITY_BUILD) {
+                    flowManager.doneMust();
+                }
 
-            // Check if the user obligated to build a city
-            if ( flowManager.checkMust() == Response.MUST_CITY_BUILD )
-            {
-                flowManager.doneMust();
+                showCity(flowManager, x, y);
             }
-
-            // Make the corresponding game tile in the given index a city.
-            boardManager.setTile( x, y);
-
-            // Initializing road image to be shown on the UI.
-            ImageView structure = new ImageView("/images/city" + flowManager.getCurrentPlayer().getColor() + ".png");
-
-            // Setting city image's coordinates.
-            structure.setX( PixelProcessor.getXToDisplay() );
-            structure.setY( PixelProcessor.getYToDisplay( y) );
-
-            // Switching the corresponding settlement image with city image via an out-in animation.
-            ImageView settlement = (ImageView) gameBox.getChildren().get(settlementMap.get(new Point2D(x, y)));
-            // Initializing and playing a zoom out animation for the settlement image.
-            ZoomOut settlementOut = new ZoomOut(settlement);
-            settlementOut.setOnFinished(event ->
-            {
-                // When the settlement out animation finishes, a zoom in animation for city is played.
-                gameBox.getChildren().remove(settlement);
-                ZoomIn cityIn = new ZoomIn(structure);
-                cityIn.play();
-                gameBox.getChildren().add(structure);
-            });
-            settlementOut.play();
-
-            infoController.setupCurrentPlayer();
-            SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
         }
+        else // RECEIVER
+        {
+            showCity(flowManager, x, y);
+        }
+    }
+
+
+    /**
+     * Shows the city belonging to the current player in the UI (called for every client).
+     * @param flowManager is the manager that will pass the current player to the controller.
+     * @param x is the x coordinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    private void showCity(FlowManager flowManager, int x, int y)
+    {
+        // Get the necessary managers
+        BoardManager boardManager = new BoardManager();
+
+        // Make the corresponding game tile in the given index a city.
+        boardManager.setTile( x, y);
+
+        // Initializing road image to be shown on the UI.
+        ImageView structure = new ImageView("/images/city" + flowManager.getCurrentPlayer().getColor() + ".png");
+
+        // Setting city image's coordinates.
+        structure.setX( PixelProcessor.getXToDisplay() );
+        structure.setY( PixelProcessor.getYToDisplay( y) );
+
+        // Switching the corresponding settlement image with city image via an out-in animation.
+        ImageView settlement = (ImageView) gameBox.getChildren().get(settlementMap.get(new Point2D(x, y)));
+        // Initializing and playing a zoom out animation for the settlement image.
+        ZoomOut settlementOut = new ZoomOut(settlement);
+        settlementOut.setOnFinished(event ->
+        {
+            // When the settlement out animation finishes, a zoom in animation for city is played.
+            gameBox.getChildren().remove(settlement);
+            ZoomIn cityIn = new ZoomIn(structure);
+            cityIn.play();
+            gameBox.getChildren().add(structure);
+        });
+        settlementOut.play();
+
+        infoController.setupCurrentPlayer();
+        SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
     }
 
     /**
@@ -783,15 +877,15 @@ public class SingleGameController extends SceneController
         return statusController;
     }
 
-    public DevCardController getDevCardController() {
+    public MultiDevCardController getDevCardController() {
         return devCardController;
     }
 
-    public SelectionController getSelectionController() {
+    public MultiSelectionController getSelectionController() {
         return selectionController;
     }
 
-    public DiceController getDiceController() {
+    public MultiDiceController getDiceController() {
         return diceController;
     }
 }

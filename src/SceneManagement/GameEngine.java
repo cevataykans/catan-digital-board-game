@@ -58,7 +58,7 @@ public class GameEngine {
             temp.add(new Player("Rafi", Color.ORANGE));
             temp.add(new Player("Cevat", Color.BROWN));
             controller = new SingleGameController(primaryStage, temp);*/
-            controller = new SceneManagement.LoginController(primaryStage);
+            controller = new SceneManagement.OpeningController(primaryStage);
         }
         catch (IOException e)
         {
@@ -117,7 +117,15 @@ public class GameEngine {
             case 6:
                 controller = new MatchmakingController(primaryStage);
                 break;
+            // 7 is the coded for Matchmaking Controller.
+            case 7:
+                controller = new MultiGameController(primaryStage);
+                break;
             /* More will be added when new controllers are implemented alongside with multi-player */
         }
+    }
+
+    public SceneController getController() {
+        return controller;
     }
 }

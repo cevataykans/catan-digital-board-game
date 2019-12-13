@@ -1,7 +1,7 @@
 package SceneManagement.GameManagement;
 
+import DevelopmentCards.Card;
 import GameFlow.FlowManager;
-import GameFlow.Game;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeIn;
@@ -14,17 +14,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
-import DevelopmentCards.*;
 
-/**
- * This controller manages all the development card logic. It has association with the Single-GameFlow.Game controller.
- * @author Talha Şen
- * @version 29.11.2019
- */
-
-public class DevCardController {
+public class MultiDevCardController {
     // Properties
     private SingleGameController controller;
     private Scene scene;
@@ -39,7 +33,7 @@ public class DevCardController {
     private double cardBoxShownLocation;
 
     // Constructor
-    public DevCardController(Scene scene, SceneController controller)
+    public MultiDevCardController(Scene scene, SceneController controller)
     {
         this.scene = scene;
         this.controller = (SingleGameController) controller;

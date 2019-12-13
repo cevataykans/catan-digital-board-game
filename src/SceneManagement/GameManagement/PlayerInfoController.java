@@ -3,6 +3,7 @@ package SceneManagement.GameManagement;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.TitleManager;
+import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.*;
 import javafx.fxml.FXMLLoader;
@@ -53,10 +54,10 @@ public class PlayerInfoController {
     private Label otherCityCount;
 
     // Constructor
-    public PlayerInfoController(Scene scene, SingleGameController controller)
+    public PlayerInfoController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = controller;
+        this.controller = (SingleGameController) controller;
         initialize();
     }
 

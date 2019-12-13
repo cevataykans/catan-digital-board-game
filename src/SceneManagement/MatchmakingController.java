@@ -1,14 +1,18 @@
 package SceneManagement;
 
+import ServerCommunication.ServerHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class MatchmakingController extends SceneController{
     // Properties
+    Button startMatchmaking;
 
     // Constructor
     public MatchmakingController(Stage stage) throws IOException
@@ -30,6 +34,17 @@ public class MatchmakingController extends SceneController{
         scene.getStylesheets().clear();
         scene.getStylesheets().add(getClass().getResource("/UI/Matchmaking.css").toExternalForm());
         scene.setRoot(root);
+
+        startMatchmaking = (Button) scene.lookup("#startMatchmaking");
+        startMatchmaking.setOnMouseClicked(event ->
+        {
+            try {
+                ServerHandler.getInstance().gameRequest();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
+
         stage.setScene(scene);
     }
 }

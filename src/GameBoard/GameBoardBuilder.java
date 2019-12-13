@@ -1,6 +1,13 @@
 package GameBoard;
 
+import GameBoard.*;
+import ServerCommunication.ServerHandler;
+import ServerCommunication.ServerInformation;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -48,6 +55,22 @@ public class GameBoardBuilder
 	 * diceCounts are filled through 2 to 12
 	 */
 	private void addDiceNumbers(){
+		if (ServerHandler.getInstance().getStatus() != null)
+		{
+			JSONObject obj = ServerInformation.getInstance().getInformation();
+			try {
+				int[] temp = (int[]) obj.get("diceNumbers");
+				for ( int i = 0; i < temp.length; i++)
+				{
+					this.diceNumbers.add(temp[i]);
+				}
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+			return;
+		}
 		int[] diceCounts = {1,2,2,2,2,1,2,2,2,2,1};
 
 		for( int i = 2 ; i <= 12 ; i++ )
@@ -68,6 +91,22 @@ public class GameBoardBuilder
 	 *      çöl -> will be assigned automatically when dice is 7
 	 */
 	private void addResources(){
+		if (ServerHandler.getInstance().getStatus() != null)
+		{
+			JSONObject obj = ServerInformation.getInstance().getInformation();
+			try {
+				int[] temp = (int[]) obj.get("resources");
+				for ( int i = 0; i < temp.length; i++)
+				{
+					this.resources.add(temp[i]);
+				}
+			}
+			catch (JSONException e)
+			{
+				e.printStackTrace();
+			}
+			return;
+		}
 		int[] resourceCounts = {4,4,3,3,4};
 
 		for( int i = 0 ; i <= 4 ; i++ )
@@ -84,18 +123,31 @@ public class GameBoardBuilder
 		int[][] positions={ // (x,y,x,y)
 				{10,0,12,0},{4,4,6,2},{0,10,2,8},{0,14,2,16},{6,18,8,18},{14,18,16,18},{20,16,22,14},{20,8,22,10},{16,2,18,4}
 		};
-		int[] portTypes={4,1,1,1,1,1};
+		if ( ServerHandler.getInstance().getStatus() == null) {
+			int[] portTypes = {4, 1, 1, 1, 1, 1};
 
-		int ii = 0;
-		for( Harbor.HarborType pt : Harbor.HarborType.values() ){
-			for( int j = 0 ; j < portTypes[ii] ; j++ ){
-				ports.add(pt);
+			int ii = 0;
+			for (Harbor.HarborType pt : Harbor.HarborType.values()) {
+				for (int j = 0; j < portTypes[ii]; j++) {
+					ports.add(pt);
+				}
+				ii++;
 			}
-			ii++;
+
+			Collections.shuffle(ports);
 		}
-
-		Collections.shuffle(ports);
-
+		else {
+			JSONObject obj = ServerInformation.getInstance().getInformation();
+			try {
+				int[] tempPort = (int[]) obj.get("ports");
+				for ( int i = 0; i < tempPort.length; i++)
+				{
+					ports.add(Harbor.HarborType.values()[tempPort[i]]);
+				}
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 		for( int i = 0 ; i < ports.size(); i++ )
 		{
 			System.out.println( i);

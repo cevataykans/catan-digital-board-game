@@ -104,10 +104,9 @@ public class LoginController extends SceneController {
 
             boolean result = ServerHandler.getInstance().login(enteredName, enteredPassword);
             if(result){
-                try{
-                    ServerHandler.getInstance().gameRequest();
+                try {
                     GameEngine.getInstance().setController(6);
-                } catch(Exception e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

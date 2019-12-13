@@ -3,6 +3,7 @@ package ServerCommunication;
 import DevelopmentCards.Card;
 import Player.Player;
 import SceneManagement.GameEngine;
+import SceneManagement.MultiGameController;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -13,16 +14,20 @@ import java.io.IOException;
 import java.net.*;
 
 public class ServerHandler {
-    enum Status{
+    public enum Status{
         RECEIVER, SENDER
     }
     private final String ADDRESS = "http://localhost:3000";
     private final OkHttpClient httpClient = new OkHttpClient();
 
     public static ServerHandler serverHandler;
+
     // Properties
     private Status status;
     private Socket socket;
+    private MultiGameController controller;
+    private int gameId;
+    private String userId;
 
     // Constructor
     private ServerHandler(){
@@ -42,7 +47,12 @@ public class ServerHandler {
         String[] keys = new String[2];
         keys[0] = userId;
         keys[1] = password;
-        return sendPost(names, keys, "/api/user/login");
+        boolean result = sendPost(names, keys, "/api/user/login");
+        if ( result == true)
+        {
+            this.userId = userId;
+        }
+        return result;
     }
 
 
@@ -77,6 +87,15 @@ public class ServerHandler {
                 JSONObject obj = (JSONObject) objects[0];
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
+                try {
+                    GameEngine.getInstance().setController(7);
+                    controller = (MultiGameController) GameEngine.getInstance().getController();
+                    gameId = (int) obj.get("gameId");
+                }
+                catch (Exception e)
+                {
+                    e.printStackTrace();
+                }
             }
         });
         this.socket.on("build-settlement-response", new Emitter.Listener() {
@@ -172,13 +191,22 @@ public class ServerHandler {
                 // Print error!!!
             }
         });
+        this.socket.on("games-full-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                // Print error!!!
+            }
+        });
     }
 
 
     public void gameRequest() throws URISyntaxException {
         this.connect();
-        socket.emit("game-request");
-
+        String[] names = {"name"};
+        String[] keys = new String[1];
+        keys[0] = this.userId;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("game-request", data);
     }
 
     public void buildSettlement(int x, int y){
@@ -262,6 +290,9 @@ public class ServerHandler {
         this.status = status;
     }
 
+    public String getUserId() {
+        return userId;
+    }
 
     private boolean sendPost(String[] names, String[] keys, String apiURL){
         Request request = ServerInformation.getInstance().buildRequest(names, keys, ADDRESS + apiURL);

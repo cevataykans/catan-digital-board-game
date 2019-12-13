@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.*;
 import javafx.geometry.Pos;
@@ -20,10 +21,10 @@ public class StatusController {
     Label statusText;
 
     // Constructor
-    public StatusController(Scene scene, SingleGameController controller)
+    public StatusController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = controller;
+        this.controller = (SingleGameController) controller;
         initialize();
     }
 

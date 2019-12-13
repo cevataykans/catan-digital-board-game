@@ -4,6 +4,7 @@ import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.ResourceManager;
 import GameFlow.Response;
+import Player.Player;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeInLeft;
@@ -15,15 +16,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
-import Player.Player;
 
-/**
- * This controller manages all the player andd resource selection logic. It has association with the Single-GameFlow.Game controller.
- * @author Talha Şen
- * @version 29.11.2019
- */
-
-public class SelectionController {
+public class MultiSelectionController {
     // Properties
     private SingleGameController controller;
     private Scene scene;
@@ -31,7 +25,7 @@ public class SelectionController {
     private Label selectionLabel;
 
     // Constructor
-    public SelectionController(Scene scene, SceneController controller)
+    public MultiSelectionController(Scene scene, SceneController controller)
     {
         this.scene = scene;
         this.controller = (SingleGameController) controller;

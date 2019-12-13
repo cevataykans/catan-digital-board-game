@@ -12,15 +12,10 @@ import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
 import java.util.ArrayList;
 
-/**
- * This controller manages all the dice logic. It has association with the Single-GameFlow.Game controller.
- * @author Talha Şen
- * @version 29.11.2019
- */
-
-public class DiceController {
+public class MultiDiceController {
 
     // Properties
     private SingleGameController controller;
@@ -30,7 +25,7 @@ public class DiceController {
     private ImageView diceAvailable;
 
     // Constructor
-    public DiceController(Scene scene, SceneController controller)
+    public MultiDiceController(Scene scene, SceneController controller)
     {
         this.scene = scene;
         this.controller = (SingleGameController) controller;

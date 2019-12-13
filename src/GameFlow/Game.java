@@ -4,6 +4,10 @@ import java.util.*;
 import DevelopmentCards.*;
 import GameBoard.*;
 import Player.Player;
+import ServerCommunication.ServerHandler;
+import ServerCommunication.ServerInformation;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * GameFlow.Game class combines logic of the game board and players to enable users to play the game.
@@ -57,34 +61,69 @@ public class Game
     // Constructors
     private Game( ArrayList<Player> players )
     {
-        longestRoadPlayer = null;
-        longestRoad = 4; // minumum requierement to get this card
-        largestArmy = 2; // minumum req to earn the army title
-        largestArmyPlayer = null;
-        gameStatus = 0; // initial phase ( setup mode )
+        this.longestRoadPlayer = null;
+        this.longestRoad = 4; // minumum requierement to get this card
+        this.largestArmy = 2; // minumum req to earn the army title
+        this.largestArmyPlayer = null;
+        this.gameStatus = 0; // initial phase ( setup mode )
         this.players = players;
-        playerCount = players.size();
-        board = new GameBoard();
-        turnNumber = 0;
-        devCards = new Stack<>();
-
-        for( int i = 0; i < TOTAL_DEV_CARDS; i++)
-        {
-            Card card;
-            if ( i < 14)
-                card = new Knight();
-            else if ( i < 16)
-                card = new Monopoly();
-            else if ( i < 18)
-                card = new RoadBuilding();
-            else if ( i < 20)
-                card = new YearOfPlenty();
-            else
-                card = new VictoryPoint();
-            devCards.push(card);
-        }
-
+        this.playerCount = players.size();
+        this.board = new GameBoard();
+        this.turnNumber = 0;
+        this.devCards = new Stack<>();
         this.must = new LinkedList<>();
+        if ( ServerHandler.getInstance().getStatus() == null) {
+            for (int i = 0; i < TOTAL_DEV_CARDS; i++) {
+                Card card;
+                if (i < 14)
+                    card = new Knight();
+                else if (i < 16)
+                    card = new Monopoly();
+                else if (i < 18)
+                    card = new RoadBuilding();
+                else if (i < 20)
+                    card = new YearOfPlenty();
+                else
+                    card = new VictoryPoint();
+                devCards.push(card);
+            }
+        }
+        else
+        {
+            JSONObject obj = ServerInformation.getInstance().getInformation();
+            try {
+                int[] tempCards = (int[]) obj.get("cards");
+                for ( int i = 0; i < tempCards.length; i++)
+                {
+                    Card card = null;
+                    switch (i) {
+                        case 0:
+                            card = new Knight();
+                            break;
+                        case 1:
+                            card = new Monopoly();
+                            break;
+                        case 2:
+                            card = new RoadBuilding();
+                            break;
+                        case 3:
+                            card = new YearOfPlenty();
+                            break;
+                        case 4:
+                            card = new VictoryPoint();
+                            break;
+                        default:
+                            card = null;
+                    }
+                    this.devCards.push(card);
+                }
+                ServerInformation.getInstance().deleteInformation();
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+        }
     }
 
     /**
@@ -127,12 +166,16 @@ public class Game
         // The order must not be changed!
         board.configurate();
 
-        Collections.shuffle(players);
-        Collections.shuffle(devCards);
+        if (ServerHandler.getInstance().getStatus() == null) {
+            Collections.shuffle(players);
+            Collections.shuffle(devCards);
+        }
 
-        this.must.add( Response.MUST_SETTLEMENT_BUILD); // settlement
-        this.must.add( Response.MUST_ROAD_BUILD); // road
-        this.must.add( Response.MUST_END_TURN); // end turn
+        if ( ServerHandler.getInstance().getStatus() != ServerHandler.Status.RECEIVER) {
+            this.must.add(Response.MUST_SETTLEMENT_BUILD); // settlement
+            this.must.add(Response.MUST_ROAD_BUILD); // road
+            this.must.add(Response.MUST_END_TURN); // end turn
+        }
     }
 
     //*****************************************************************************************************************
