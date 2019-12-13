@@ -33,6 +33,7 @@ public class BoardManager
 	 *         -5 = there is no enough resource for road
 	 *         -6 = there is no enough resource for settlement
 	 *         -7 = there is no enough resource for city
+	 *         -100 = outside the range of game board, invalid tile index
 	 */
 	public Response checkTile( int x, int y)
 	{
@@ -43,6 +44,18 @@ public class BoardManager
 		ResourceManager resManager = new ResourceManager();
 		GameBoard board = game.getGameBoard();
 		int gameStatus = game.getGameStatus();
+
+		// Error check for hover
+		if ( x < 0 || y < 0 )
+		{
+			return Response.ERROR_OUTSIDE_GAMEBOARD;
+		}
+
+// Error check for hover
+		if ( x >= board.WIDTH || y >= board.HEIGHT)
+		{
+			return Response.ERROR_OUTSIDE_GAMEBOARD;
+		}
 
 		if( board.isGameTile( x, y ) )
 		{

@@ -54,7 +54,7 @@ public class Player
 	private int roadCount;
 	private int cityCount;
 	private boolean hasLargestArmy;
-	private boolean hasLongestRoad;
+	public boolean hasLongestRoad;
 	private int roadLength;
 	private int armyCount;
 
