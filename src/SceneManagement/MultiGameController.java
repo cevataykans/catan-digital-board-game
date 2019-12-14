@@ -1006,6 +1006,10 @@ public class MultiGameController extends SceneController {
         }
     }
 
+    public Player getLocalPlayer(){
+        return this.localPlayer;
+    }
+
     public PlayerInfoController getInfoController() {
         return infoController;
     }

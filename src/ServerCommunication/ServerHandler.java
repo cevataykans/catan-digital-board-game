@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class ServerHandler {
     public enum Status{
@@ -165,7 +166,7 @@ public class ServerHandler {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
-                // Call related controller method
+                controller.getDiceController().rollDice();
             }
         });
         this.socket.on("end-turn-response", new Emitter.Listener() {
@@ -324,6 +325,16 @@ public class ServerHandler {
         Integer[] keys = new Integer[2];
         keys[0] = firstDice;
         keys[1] = secondDice;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("roll-dice", data);
+    }
+
+    public void rollDice(int firstDice, int secondDice, ArrayList<Integer>[] discarded){
+        String[] names = {"firstDice", "secondDice", "discarded"};
+        Object[] keys = new Object[3];
+        keys[0] = firstDice;
+        keys[1] = secondDice;
+        keys[2] = discarded;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("roll-dice", data);
     }
