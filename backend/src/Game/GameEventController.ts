@@ -94,9 +94,7 @@ export class GameEventController{
             for(let i = 0 ; i < shuffledPlayers.length ; i++){
                 playerIds.push(shuffledPlayers[i].userId);
                 socketIds.push(shuffledPlayers[i].socketId);
-                console.log(i + ".socket: " + shuffledPlayers[i].socketIds);
             }
-            console.log("sockets: " + socketIds);
             const gameId: number = this.setNewGame(socketIds);
             if(gameId < 0){
                 socket.emit("games-full-response", {"message": "No avaliable game room!"});

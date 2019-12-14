@@ -33,6 +33,12 @@ class Game {
             return null;
         return result;
     }
+    getAllPlayers() {
+        return this.players;
+    }
+    getCurrentPlayer() {
+        return this.players[this.turn];
+    }
 }
 exports.Game = Game;
 //# sourceMappingURL=Game.js.map

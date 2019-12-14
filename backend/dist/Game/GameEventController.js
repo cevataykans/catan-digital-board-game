@@ -79,9 +79,7 @@ class GameEventController {
             for (let i = 0; i < shuffledPlayers.length; i++) {
                 playerIds.push(shuffledPlayers[i].userId);
                 socketIds.push(shuffledPlayers[i].socketId);
-                console.log(i + ".socket: " + shuffledPlayers[i].socketIds);
             }
-            console.log("sockets: " + socketIds);
             const gameId = this.setNewGame(socketIds);
             if (gameId < 0) {
                 socket.emit("games-full-response", { "message": "No avaliable game room!" });
@@ -251,21 +249,25 @@ class GameEventController {
             socket.to(item).emit("select-player-response", newData);
         });
     }
-    endTurn(socket, client, data) {
-        const format = data != null; // validation check
-        if (!format) { // Message received by the server is not well formed!!!
-            client.emit("invalid-information-error", { "message": "Wrong format" });
-            return;
-        }
+    endTurn(socket, client) {
         // Message is well formed
-        const otherPlayers = this.findOtherPlayers(client.id);
-        if (otherPlayers == null) {
+        const others = this.findOtherPlayers(client.id);
+        if (others == null) {
             client.emit("no-game-error", { "message": "You are not in a game" });
             return;
         }
+        const game = this.games[this.players[client.id]];
+        game.endTurn();
+        const currentPlayer = game.getCurrentPlayer();
+        const allPlayers = game.getAllPlayers();
         // There is game
-        otherPlayers.forEach((item) => {
-            socket.to(item).emit("roll-dice-response", null);
+        allPlayers.forEach((item) => {
+            if (item == currentPlayer) {
+                socket.to(item).emit("end-turn-response", { "status": 1 });
+            }
+            else {
+                socket.to(item).emit("end-turn-response", { "status": 0 });
+            }
         });
     }
     sendMessage(socket, client, data) {

@@ -131,7 +131,6 @@ public class PlayerInfoController {
      * This function refreshes/sets up the information of the other players.
      */
     public void setupOtherPlayers() {
-
         // Get the game for access
         Game game = Game.getInstance();
         FlowManager flowManager = new FlowManager();

@@ -30,7 +30,6 @@ public class PixelProcessor
 				++hexIndex;
 				x = x - 120; // Discard the first hexagon, shift every hexagon to left
 			}
-			System.out.println( "Hexindex is: " + hexIndex); /********************************************************/
 
 			// Find the right index of the tile in the hexagon
 			// PLEASE DONT JUDGE ME IT IS 01.33 AM AND I AM TIRED! i will update it with a while loop i am aware pls.
