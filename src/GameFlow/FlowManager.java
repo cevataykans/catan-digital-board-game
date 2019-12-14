@@ -201,7 +201,7 @@ public class FlowManager {
         Queue<Response> must = Game.getInstance().getMust();
 
         if( must.size() == 0 )
-            return Response.MUST_EMPTY;
+            return Response.MUST_FREE_TURN;
         return must.peek();
     }
 
