@@ -109,8 +109,6 @@ public class ServerHandler {
                 try {
                     int x = obj.getInt("x");
                     int y = obj.getInt("y");
-                    int hexIndex = obj.getInt("hexIndex");
-                    int tileIndex = obj.getInt("tileIndex");
 
                     controller.buildSettlement(null, x, y);
                 } catch (JSONException e) {
@@ -125,6 +123,14 @@ public class ServerHandler {
                 JSONObject obj = (JSONObject) objects[0];
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
+                try {
+                    int x = obj.getInt("x");
+                    int y = obj.getInt("y");
+
+                    controller.buildCity(null, x, y);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
         this.socket.on("build-road-response", new Emitter.Listener() {
@@ -134,6 +140,14 @@ public class ServerHandler {
                 JSONObject obj = (JSONObject) objects[0];
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
+                try {
+                    int x = obj.getInt("x");
+                    int y = obj.getInt("y");
+
+                    controller.buildRoad(null, x, y);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
         this.socket.on("setup-robber-response", new Emitter.Listener() {
@@ -157,10 +171,21 @@ public class ServerHandler {
         this.socket.on("end-turn-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
-                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
+                if(getStatus() != Status.SENDER){
+                    controller.performEndTurnButtonEvent();
+                }
+                try{
+                    int status = obj.getInt("status");
+                    if(status == 0)
+                        setStatus(Status.RECEIVER);
+                    else
+                        setStatus(Status.SENDER);
+                } catch(Exception e){
+                    e.printStackTrace();
+                }
+
             }
         });
         this.socket.on("select-player-response", new Emitter.Listener() {

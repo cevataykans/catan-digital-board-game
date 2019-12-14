@@ -138,7 +138,6 @@ public class SingleGameController extends SceneController
 
         // Adding listener to make the game board intractable.
         gameBox.setOnMouseClicked(mouseEvent -> {
-            System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
             // Allow the action to be processed for game board UI if only game board related must, be done
             Response response = flowManager.checkMust();
             if ( response == Response.MUST_EMPTY ||
@@ -147,12 +146,13 @@ public class SingleGameController extends SceneController
                     response == Response.MUST_CITY_BUILD ||
                     response == Response.MUST_INSIDE_TILE_SELECTION)
             {
+                System.out.println("Checkpoint1");
+                System.out.println("mousex: " + mouseEvent.getX() + " mousey: " + mouseEvent.getY());
                 // Getting the mouse coordinates.
                 int x = PixelProcessor.processX(mouseEvent.getX());
                 int y = PixelProcessor.processY(mouseEvent.getY());
-
-                System.out.print("X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY()); /********************************************************/
-                System.out.println(" X' is: " + x + " | Y' is: " + y); /********************************************************/
+                System.out.println("Checkpoint2");
+                System.out.println("x: " + x + " y: " + y);
 
                 // Checking if the clicked coordinate is a game tile
                 createDialog( boardManager.checkTile(x, y), x, y);
@@ -470,6 +470,8 @@ public class SingleGameController extends SceneController
      */
     private void buildSettlement(Alert alert, int x, int y)
     {
+        System.out.println("Checkpoint3");
+        System.out.println(" X index: " + x + " Y index: " + y);
         FlowManager flowManager = new FlowManager();
 
         alert.setHeaderText("Building a Settlement");
@@ -487,12 +489,17 @@ public class SingleGameController extends SceneController
                 flowManager.doneMust();
             }
 
+            System.out.println("Checkpoint4");
+            System.out.println(" X index: " + x + " Y index: " + y);
             // Make the corresponding game tile in the given index a road.
             boardManager.setTile( x, y);
 
             // Initializing road image to be shown on the UI.
             ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
 
+            System.out.println("Checkpoint5");
+            System.out.println(" X Display: " + PixelProcessor.getXToDisplay());
+            System.out.println(" Y Display: " + PixelProcessor.getYToDisplay(y));
             // Setting city image's coordinates.
             structure.setX( PixelProcessor.getXToDisplay() );
             structure.setY( PixelProcessor.getYToDisplay( y) );

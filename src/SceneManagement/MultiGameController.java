@@ -191,7 +191,7 @@ public class MultiGameController extends SceneController {
 
         // Adding listener to make the game board intractable.
         gameBox.setOnMouseClicked(mouseEvent -> {
-            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            if ( localPlayer == flowManager.getCurrentPlayer()) {
                 System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
                 // Allow the action to be processed for game board UI if only game board related must, be done
                 Response response = flowManager.checkMust();
@@ -200,7 +200,10 @@ public class MultiGameController extends SceneController {
                         response == Response.MUST_SETTLEMENT_BUILD ||
                         response == Response.MUST_CITY_BUILD ||
                         response == Response.MUST_INSIDE_TILE_SELECTION) {
-
+                    System.out.println("Checkpoint1");
+                    System.out.println(" Hex: " + PixelProcessor.getHexIndex());
+                    System.out.println(" Tile: " + PixelProcessor.getTileIndex());
+                    System.out.println("mousex: " + mouseEvent.getX() + " mousey: " + mouseEvent.getY());
                     // Getting the mouse coordinates.
                     int x = PixelProcessor.processX(mouseEvent.getX());
                     int y = PixelProcessor.processY(mouseEvent.getY());
@@ -534,7 +537,7 @@ public class MultiGameController extends SceneController {
     {
         FlowManager flowManager = new FlowManager();
 
-        if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+        if ( localPlayer == flowManager.getCurrentPlayer()) {
             alert.setHeaderText("Building a Settlement");
             alert.setContentText("Do you want to build a settlement?");
 
@@ -574,22 +577,22 @@ public class MultiGameController extends SceneController {
      */
     private void showSettlement(FlowManager flowManager, int x, int y)
     {
+
+        // Get the necessary managers
+        BoardManager boardManager = new BoardManager();
+
+        // Make the corresponding game tile in the given index a road.
+        boardManager.setTile( x, y);
+
+        // Initializing road image to be shown on the UI.
+        ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
+
+        // Setting city image's coordinates.
+        structure.setX( PixelProcessor.getXToDisplay() );
+        structure.setY( PixelProcessor.getYToDisplay( y) );
         // Avoid throwing IllegalStateException by running from a non-JavaFX thread.
         Platform.runLater(
                 () -> {
-                    // Get the necessary managers
-                    BoardManager boardManager = new BoardManager();
-
-                    // Make the corresponding game tile in the given index a road.
-                    boardManager.setTile( x, y);
-
-                    // Initializing road image to be shown on the UI.
-                    ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
-
-                    // Setting city image's coordinates.
-                    structure.setX( PixelProcessor.getXToDisplay() );
-                    structure.setY( PixelProcessor.getYToDisplay( y) );
-
                     // Playing a zoom in animation for the settlement.
                     new ZoomIn(structure).play();
 
@@ -618,7 +621,7 @@ public class MultiGameController extends SceneController {
     {
         FlowManager flowManager = new FlowManager();
 
-        if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+        if ( localPlayer == flowManager.getCurrentPlayer()) {
             alert.setHeaderText("Building a Road");
             alert.setContentText("Do you want to build a road?");
 
@@ -641,6 +644,7 @@ public class MultiGameController extends SceneController {
         else //RECEIVER
         {
             JSONObject obj = ServerInformation.getInstance().getInformation();
+            ServerInformation.getInstance().deleteInformation();
             int hexIndex = 0;
             int tileIndex = 0;
             try {
@@ -673,14 +677,18 @@ public class MultiGameController extends SceneController {
         // Determining its rotation type corresponding to the hexagon side. Setting the road image's coordinates.
         setRoadRotation(structure, x, y);
         structure.setY( y * 30 + 30);
-        new ZoomIn(structure).play();
-        // Adding the road image to the game area in UI.
-        gameBox.getChildren().add(structure);
+        Platform.runLater(
+                () -> {
+                    new ZoomIn(structure).play();
+                    // Adding the road image to the game area in UI.
+                    gameBox.getChildren().add(structure);
 
-        // Refreshing current player information
-        infoController.setupCurrentPlayer();
-        infoController.setupLongestRoad();
-        SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
+                    // Refreshing current player information
+                    infoController.setupCurrentPlayer();
+                    infoController.setupLongestRoad();
+                    SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
+                }
+        );
     }
 
     /**
@@ -723,7 +731,7 @@ public class MultiGameController extends SceneController {
     {
         FlowManager flowManager = new FlowManager();
 
-        if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+        if ( localPlayer == flowManager.getCurrentPlayer()) {
             alert.setHeaderText("Upgrading To City");
             alert.setContentText("Do you want to upgrade your settlement to a city?");
 
@@ -741,6 +749,7 @@ public class MultiGameController extends SceneController {
         else // RECEIVER
         {
             JSONObject obj = ServerInformation.getInstance().getInformation();
+            ServerInformation.getInstance().deleteInformation();
             int hexIndex = 0;
             int tileIndex = 0;
             try {
@@ -751,7 +760,6 @@ public class MultiGameController extends SceneController {
             }
             PixelProcessor.setHexIndex(hexIndex);
             PixelProcessor.setTileIndex(tileIndex);
-            showSettlement(flowManager, x, y);
             showCity(flowManager, x, y);
         }
     }
@@ -778,46 +786,102 @@ public class MultiGameController extends SceneController {
         structure.setX( PixelProcessor.getXToDisplay() );
         structure.setY( PixelProcessor.getYToDisplay( y) );
 
-        // Switching the corresponding settlement image with city image via an out-in animation.
-        ImageView settlement = (ImageView) gameBox.getChildren().get(settlementMap.get(new Point2D(x, y)));
-        // Initializing and playing a zoom out animation for the settlement image.
-        ZoomOut settlementOut = new ZoomOut(settlement);
-        settlementOut.setOnFinished(event ->
-        {
-            // When the settlement out animation finishes, a zoom in animation for city is played.
-            gameBox.getChildren().remove(settlement);
-            ZoomIn cityIn = new ZoomIn(structure);
-            cityIn.play();
-            gameBox.getChildren().add(structure);
-        });
-        settlementOut.play();
+        Platform.runLater(
+                () -> {
+                    // Switching the corresponding settlement image with city image via an out-in animation.
+                    ImageView settlement = (ImageView) gameBox.getChildren().get(settlementMap.get(new Point2D(x, y)));
+                    // Initializing and playing a zoom out animation for the settlement image.
+                    ZoomOut settlementOut = new ZoomOut(settlement);
+                    settlementOut.setOnFinished(event ->
+                    {
+                        // When the settlement out animation finishes, a zoom in animation for city is played.
+                        gameBox.getChildren().remove(settlement);
+                        ZoomIn cityIn = new ZoomIn(structure);
+                        cityIn.play();
+                        gameBox.getChildren().add(structure);
+                    });
+                    settlementOut.play();
 
-        infoController.setupCurrentPlayer();
-        SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
+                    infoController.setupCurrentPlayer();
+                    SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
+                }
+        );
     }
 
     /**
      * End the turn when the end turn button is pressed or player builds a road in the initial phase.
      */
-    private void performEndTurnButtonEvent()
+    public void performEndTurnButtonEvent()
     {
         FlowManager flowManager = new FlowManager();
+        if(localPlayer == flowManager.getCurrentPlayer()){
+            // Check if the user has to do something before ending their turn
+            if ( flowManager.checkMust() == Response.MUST_EMPTY || flowManager.checkMust() == Response.MUST_END_TURN) {
 
-        // Check if the user has to do something before ending their turn
-        if ( flowManager.checkMust() == Response.MUST_EMPTY || flowManager.checkMust() == Response.MUST_END_TURN) {
+                // Check if the user ends the turn because of obligation
+                if ( flowManager.checkMust() == Response.MUST_END_TURN) {
+                    flowManager.doneMust();
+                }
+                flowManager.endTurn();
 
-            // Check if the user ends the turn because of obligation
-            if ( flowManager.checkMust() == Response.MUST_END_TURN) {
-                flowManager.doneMust();
+                SoundManager.getInstance().playEffect(SoundManager.Effect.END_TURN);
+                Platform.runLater(
+                        () -> {
+                            infoController.setupOtherPlayers();
+                            infoController.setupCurrentPlayer();
+                            infoController.setupLargestArmy();
+                            infoController.setupLongestRoad();
+                            diceController.setupDiceRoll();
+                        }
+                );
+                Task<Void> sleeper2 = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                        }
+                        return null;
+                    }
+                };
+
+                sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                    @Override
+                    public void handle(WorkerStateEvent event) {
+                        Platform.runLater(
+                                () -> {
+                                    statusController.informStatus(Response.EKSIDOKUZ);
+                                    devCardController.setupDevelopmentCards();
+                                }
+                        );
+                    }
+                });
+                new Thread(sleeper2).start();
+            } else {
+                Platform.runLater(
+                        () -> {
+                            statusController.informStatus( flowManager.checkMust());
+                        }
+                );
             }
-            flowManager.endTurn();
 
+            flowManager.discardAllMust();
+            ServerHandler.getInstance().endTurn();
+        }
+        else{ // RECEIVER
+            flowManager.endTurn();
             SoundManager.getInstance().playEffect(SoundManager.Effect.END_TURN);
-            infoController.setupOtherPlayers();
-            infoController.setupCurrentPlayer();
-            infoController.setupLargestArmy();
-            infoController.setupLongestRoad();
-            diceController.setupDiceRoll();
+            // Avoid throwing IllegalStateException by running from a non-JavaFX thread.
+            Platform.runLater(
+                    () -> {
+                        infoController.setupOtherPlayers();
+                        infoController.setupCurrentPlayer();
+                        infoController.setupLargestArmy();
+                        infoController.setupLongestRoad();
+                        diceController.setupDiceRoll();
+                    }
+            );
+
             Task<Void> sleeper2 = new Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
@@ -832,14 +896,28 @@ public class MultiGameController extends SceneController {
             sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    statusController.informStatus(Response.EKSIDOKUZ);
-                    devCardController.setupDevelopmentCards();
+                    Platform.runLater(
+                            () -> {
+                                statusController.informStatus(Response.EKSIDOKUZ);
+                                devCardController.setupDevelopmentCards();
+                            }
+                    );
                 }
             });
             new Thread(sleeper2).start();
-        } else {
-            statusController.informStatus( flowManager.checkMust());
+
+            if(localPlayer == flowManager.getCurrentPlayer()){ // This player is next player
+                Platform.runLater(
+                        () -> {
+                            statusController.informStatus( flowManager.checkMust());
+                        }
+                );
+            }
+            else{ // This player is not next player
+                flowManager.discardAllMust();
+            }
         }
+
     }
 
     /**

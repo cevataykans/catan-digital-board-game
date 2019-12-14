@@ -31,7 +31,7 @@ class GameEventListener {
             this.eventController.selectPlayer(socket, client, data);
         });
         client.on('end-turn', data => {
-            this.eventController.endTurn(socket, client, data);
+            this.eventController.endTurn(socket, client);
         });
         client.on('send-message', data => {
             this.eventController.sendMessage(socket, client, data);

@@ -7,9 +7,6 @@
 Catan.iml
 CS319-3C-CA.iml
 
-/backend/node_modules
-/backend/dist
-
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml

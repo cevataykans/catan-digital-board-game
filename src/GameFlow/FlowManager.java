@@ -182,6 +182,16 @@ public class FlowManager {
     }
 
     /**
+     * clears all musts
+     */
+    public void discardAllMust(){
+        // Get the related data
+        Queue<Response> must = Game.getInstance().getMust();
+
+        must.clear();
+    }
+
+    /**
      * return if there is any must operation for this player and its type
      * @return -1 = there is no must
      *          0 = road need to be built

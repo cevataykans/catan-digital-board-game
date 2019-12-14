@@ -42,7 +42,7 @@ export class GameEventListener{
         });
 
         client.on('end-turn', data => {
-            this.eventController.endTurn(socket, client, data);
+            this.eventController.endTurn(socket, client);
         })
 
         client.on('send-message', data => {
