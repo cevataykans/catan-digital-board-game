@@ -39,7 +39,6 @@ public class SingleGameController extends SceneController
 
     // Properties
     private ArrayList<Player> players;
-    private Game game;
     private AnchorPane gameBox;
     private Button buyDevelopmentCard;
     private Button endTurn;
@@ -141,7 +140,7 @@ public class SingleGameController extends SceneController
             System.out.println("x: " + mouseEvent.getX() + " y: " + mouseEvent.getY());
             // Allow the action to be processed for game board UI if only game board related must, be done
             Response response = flowManager.checkMust();
-            if ( response == Response.MUST_EMPTY ||
+            if ( response == Response.MUST_FREE_TURN ||
                     response == Response.MUST_ROAD_BUILD ||
                     response == Response.MUST_SETTLEMENT_BUILD ||
                     response == Response.MUST_CITY_BUILD ||
@@ -509,7 +508,7 @@ public class SingleGameController extends SceneController
 
             // Refresh current player information.
             infoController.setupCurrentPlayer();
-            infoController.setupLongestRoad();
+            //infoController.setupLongestRoad();
             SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
         }
     }
@@ -552,7 +551,7 @@ public class SingleGameController extends SceneController
 
             // Refreshing current player information
             infoController.setupCurrentPlayer();
-            infoController.setupLongestRoad();
+            //infoController.setupLongestRoad();
             SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
 
             // If its initial state, player has to immediately end the turn.
@@ -655,7 +654,7 @@ public class SingleGameController extends SceneController
         FlowManager flowManager = new FlowManager();
 
         // Check if the user has to do something before ending their turn
-        if ( flowManager.checkMust() == Response.MUST_EMPTY || flowManager.checkMust() == Response.MUST_END_TURN) {
+        if ( flowManager.checkMust() == Response.MUST_FREE_TURN || flowManager.checkMust() == Response.MUST_END_TURN) {
 
             // Check if the user ends the turn because of obligation
             if ( flowManager.checkMust() == Response.MUST_END_TURN) {
@@ -666,8 +665,8 @@ public class SingleGameController extends SceneController
             SoundManager.getInstance().playEffect(SoundManager.Effect.END_TURN);
             infoController.setupOtherPlayers();
             infoController.setupCurrentPlayer();
-            infoController.setupLargestArmy();
-            infoController.setupLongestRoad();
+            //infoController.setupLargestArmy();
+            //infoController.setupLongestRoad();
             diceController.setupDiceRoll();
             Task<Void> sleeper2 = new Task<Void>() {
                 @Override
@@ -749,7 +748,7 @@ public class SingleGameController extends SceneController
         // Player.Player tries to build a road
         if (resultCode == Response.INFORM_ROAD_CAN_BE_BUILT) {
             // Allow construction only if player is obliged or free to hang arooound lol
-            if (mustCheckCode == Response.MUST_EMPTY || mustCheckCode == Response.MUST_ROAD_BUILD) {
+            if (mustCheckCode == Response.MUST_FREE_TURN|| mustCheckCode == Response.MUST_ROAD_BUILD) {
                 buildRoad(alert, x, y);
             } else {
                 statusController.informStatus(mustCheckCode);
@@ -758,7 +757,7 @@ public class SingleGameController extends SceneController
         // Player.Player tries to build a settlement
         else if (resultCode == Response.INFORM_SETTLEMENT_CAN_BE_BUILT) {
             // Allow construction only if player is obliged or free to hang arooound lol
-            if (mustCheckCode == Response.MUST_EMPTY || mustCheckCode == Response.MUST_SETTLEMENT_BUILD) {
+            if (mustCheckCode == Response.MUST_FREE_TURN || mustCheckCode == Response.MUST_SETTLEMENT_BUILD) {
                 buildSettlement(alert, x, y);
             } else {
                 statusController.informStatus(mustCheckCode);
@@ -767,7 +766,7 @@ public class SingleGameController extends SceneController
         // Player.Player tries to build a city
         else if (resultCode == Response.INFORM_CITY_CAN_BE_BUILT) {
             // Allow construction only if player is obliged or free to hang arooound lol
-            if (mustCheckCode == Response.MUST_EMPTY || mustCheckCode == Response.MUST_CITY_BUILD) {
+            if (mustCheckCode == Response.MUST_FREE_TURN || mustCheckCode == Response.MUST_CITY_BUILD) {
                 buildCity(alert, x, y);
             } else {
                 statusController.informStatus(mustCheckCode);

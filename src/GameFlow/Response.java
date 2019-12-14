@@ -43,7 +43,7 @@ public enum Response {
     ERROR_NO_RESOURCE_FOR_SETTLEMENT,               // -6
     ERROR_NO_RESOURCE_FOR_CITY,                     // -7
     ERROR_OUTSIDE_GAMEBOARD,                        // -100
-    MUST_EMPTY,                                     // -1
+    MUST_FREE_TURN,                                     // -1
     MUST_ROAD_BUILD,                                // 0
     MUST_SETTLEMENT_BUILD,                          // 1
     MUST_CITY_BUILD,                                // 2
