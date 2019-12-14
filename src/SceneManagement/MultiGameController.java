@@ -34,6 +34,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import netscape.javascript.JSObject;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -199,12 +200,10 @@ public class MultiGameController extends SceneController {
                         response == Response.MUST_SETTLEMENT_BUILD ||
                         response == Response.MUST_CITY_BUILD ||
                         response == Response.MUST_INSIDE_TILE_SELECTION) {
+
                     // Getting the mouse coordinates.
                     int x = PixelProcessor.processX(mouseEvent.getX());
                     int y = PixelProcessor.processY(mouseEvent.getY());
-
-                    System.out.print("X is: " + mouseEvent.getX() + " | Y is: " + mouseEvent.getY()); /********************************************************/
-                    System.out.println(" X' is: " + x + " | Y' is: " + y); /********************************************************/
 
                     // Checking if the clicked coordinate is a game tile
                     createDialog(boardManager.checkTile(x, y), x, y);
@@ -341,9 +340,9 @@ public class MultiGameController extends SceneController {
 
         // Avoid throwing IllegalStateException by running from a non-JavaFX thread.
         Platform.runLater(
-            () -> {
-                stage.setScene(scene);
-            }
+                () -> {
+                    stage.setScene(scene);
+                }
         );
     }
 
@@ -534,9 +533,8 @@ public class MultiGameController extends SceneController {
     public void buildSettlement(Alert alert, int x, int y)
     {
         FlowManager flowManager = new FlowManager();
-        System.out.println("ENTERED SETTLEMENT");
+
         if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
-            System.out.println("ENTERED SETTLEMENT SENDER");
             alert.setHeaderText("Building a Settlement");
             alert.setContentText("Do you want to build a settlement?");
 
@@ -547,12 +545,23 @@ public class MultiGameController extends SceneController {
                     flowManager.doneMust();
                 }
                 showSettlement(flowManager, x, y);
-                ServerHandler.getInstance().buildSettlement(x, y);
+                ServerHandler.getInstance().buildSettlement(x, y, PixelProcessor.getHexIndex(), PixelProcessor.getTileIndex());
             }
         }
         else // RECEIVER
         {
-            System.out.println("ENTERED SETTLEMENT RECEIVER");
+            JSONObject obj = ServerInformation.getInstance().getInformation();
+            ServerInformation.getInstance().deleteInformation();
+            int hexIndex = 0;
+            int tileIndex = 0;
+            try {
+                hexIndex = obj.getInt("hexIndex");
+                tileIndex = obj.getInt("tileIndex");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            PixelProcessor.setHexIndex(hexIndex);
+            PixelProcessor.setTileIndex(tileIndex);
             showSettlement(flowManager, x, y);
         }
     }
@@ -567,35 +576,35 @@ public class MultiGameController extends SceneController {
     {
         // Avoid throwing IllegalStateException by running from a non-JavaFX thread.
         Platform.runLater(
-            () -> {
-                // Get the necessary managers
-                BoardManager boardManager = new BoardManager();
+                () -> {
+                    // Get the necessary managers
+                    BoardManager boardManager = new BoardManager();
 
-                // Make the corresponding game tile in the given index a road.
-                boardManager.setTile( x, y);
+                    // Make the corresponding game tile in the given index a road.
+                    boardManager.setTile( x, y);
 
-                // Initializing road image to be shown on the UI.
-                ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
+                    // Initializing road image to be shown on the UI.
+                    ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
 
-                // Setting city image's coordinates.
-                structure.setX( PixelProcessor.getXToDisplay() );
-                structure.setY( PixelProcessor.getYToDisplay( y) );
+                    // Setting city image's coordinates.
+                    structure.setX( PixelProcessor.getXToDisplay() );
+                    structure.setY( PixelProcessor.getYToDisplay( y) );
 
-                // Playing a zoom in animation for the settlement.
-                new ZoomIn(structure).play();
+                    // Playing a zoom in animation for the settlement.
+                    new ZoomIn(structure).play();
 
-                // Adding settlement image to the game area in UI.
-                gameBox.getChildren().add(structure);
+                    // Adding settlement image to the game area in UI.
+                    gameBox.getChildren().add(structure);
 
-                // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
-                // city images when the player upgrades settlement to city.
-                settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
+                    // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
+                    // city images when the player upgrades settlement to city.
+                    settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
 
-                // Refresh current player information.
-                infoController.setupCurrentPlayer();
-                infoController.setupLongestRoad();
-                SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
-            }
+                    // Refresh current player information.
+                    infoController.setupCurrentPlayer();
+                    infoController.setupLongestRoad();
+                    SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
+                }
         );
     }
 
@@ -621,6 +630,7 @@ public class MultiGameController extends SceneController {
                 }
 
                 showRoad(flowManager, x, y);
+                ServerHandler.getInstance().buildRoad(x, y, PixelProcessor.getHexIndex(), PixelProcessor.getTileIndex());
 
                 // If its initial state, player has to immediately end the turn.
                 if (flowManager.checkMust() == Response.MUST_END_TURN) {
@@ -630,6 +640,17 @@ public class MultiGameController extends SceneController {
         }
         else //RECEIVER
         {
+            JSONObject obj = ServerInformation.getInstance().getInformation();
+            int hexIndex = 0;
+            int tileIndex = 0;
+            try {
+                hexIndex = obj.getInt("hexIndex");
+                tileIndex = obj.getInt("tileIndex");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            PixelProcessor.setHexIndex(hexIndex);
+            PixelProcessor.setTileIndex(tileIndex);
             showRoad(flowManager, x, y);
         }
     }
@@ -714,10 +735,23 @@ public class MultiGameController extends SceneController {
                 }
 
                 showCity(flowManager, x, y);
+                ServerHandler.getInstance().buildCity(x, y, PixelProcessor.getHexIndex(), PixelProcessor.getTileIndex());
             }
         }
         else // RECEIVER
         {
+            JSONObject obj = ServerInformation.getInstance().getInformation();
+            int hexIndex = 0;
+            int tileIndex = 0;
+            try {
+                hexIndex = obj.getInt("hexIndex");
+                tileIndex = obj.getInt("tileIndex");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            PixelProcessor.setHexIndex(hexIndex);
+            PixelProcessor.setTileIndex(tileIndex);
+            showSettlement(flowManager, x, y);
             showCity(flowManager, x, y);
         }
     }

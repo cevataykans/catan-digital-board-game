@@ -160,4 +160,20 @@ public class PixelProcessor
 	{
 		return y * 30 + 35;
 	}
+
+	public static int getHexIndex() {
+		return hexIndex;
+	}
+
+	public static int getTileIndex() {
+		return tileIndex;
+	}
+
+	public static void setHexIndex(int hexIndex) {
+		PixelProcessor.hexIndex = hexIndex;
+	}
+
+	public static void setTileIndex(int tileIndex) {
+		PixelProcessor.tileIndex = tileIndex;
+	}
 }

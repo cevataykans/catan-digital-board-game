@@ -107,10 +107,11 @@ public class ServerHandler {
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
                 try {
-                    System.out.println("RESPONSE ACQUIRED");
                     int x = obj.getInt("x");
                     int y = obj.getInt("y");
-                    System.out.println("X: " + x + " Y: " + y);
+                    int hexIndex = obj.getInt("hexIndex");
+                    int tileIndex = obj.getInt("tileIndex");
+
                     controller.buildSettlement(null, x, y);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -222,29 +223,35 @@ public class ServerHandler {
         socket.emit("game-request", data);
     }
 
-    public void buildSettlement(int x, int y){
-        String[] names = {"x", "y"};
-        Integer[] keys = new Integer[2];
+    public void buildSettlement(int x, int y, int hexIndex, int tileIndex){
+        String[] names = {"x", "y", "hexIndex", "tileIndex"};
+        Integer[] keys = new Integer[4];
         keys[0] = x;
         keys[1] = y;
+        keys[2] = hexIndex;
+        keys[3] = tileIndex;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("build-settlement", data);
     }
 
-    public void buildRoad(int x, int y){
-        String[] names = {"x", "y"};
-        Integer[] keys = new Integer[2];
+    public void buildRoad(int x, int y, int hexIndex, int tileIndex){
+        String[] names = {"x", "y", "hexIndex", "tileIndex"};
+        Integer[] keys = new Integer[4];
         keys[0] = x;
         keys[1] = y;
+        keys[2] = hexIndex;
+        keys[3] = tileIndex;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("build-road", data);
     }
 
-    public void buildCity(int x, int y){
-        String[] names = {"x", "y"};
-        Integer[] keys = new Integer[2];
+    public void buildCity(int x, int y, int hexIndex, int tileIndex){
+        String[] names = {"x", "y", "hexIndex", "tileIndex"};
+        Integer[] keys = new Integer[4];
         keys[0] = x;
         keys[1] = y;
+        keys[2] = hexIndex;
+        keys[3] = tileIndex;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("build-city", data);
     }

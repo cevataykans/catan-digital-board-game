@@ -164,7 +164,7 @@ export class GameEventController{
     }
 
     public buildSettlement(socket, client, data): void {
-        const format: boolean = data != null && data.x != null && data.y != null; // validation check
+        const format: boolean = data != null && data.x != null && data.y != null && data.hexIndex != null && data.tileIndex != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             console.log("FORMAT ERROR");
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
@@ -177,19 +177,14 @@ export class GameEventController{
             client.emit("no-game-error", {"message": "You are not in a game"});
             return;
         }
-        // There is game
-        const newData = {
-            "x": data.x,
-            "y": data.y
-        };
-        console.log("x: " + newData.x + " y: " + newData.y);
+
         otherPlayers.forEach((item) => {
-            socket.to(item).emit("build-settlement-response", newData);
+            socket.to(item).emit("build-settlement-response", data);
         });
     }
 
     public buildCity(socket, client, data): void {
-        const format: boolean = data != null && data.x != null && data.y != null; // validation check
+        const format: boolean = data != null && data.x != null && data.y != null && data.hexIndex != null && data.tileIndex != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -200,18 +195,14 @@ export class GameEventController{
             client.emit("no-game-error", {"message": "You are not in a game"});
             return;
         }
-        // There is game
-        const newData = {
-            "x": data.x,
-            "y": data.y
-        };
+
         otherPlayers.forEach((item) => {
-            socket.to(item).emit("build-city-response", newData);
+            socket.to(item).emit("build-city-response", data);
         });
     }
 
     public buildRoad(socket, client, data): void {
-        const format: boolean = data != null && data.x != null && data.y != null; // validation check
+        const format: boolean = data != null && data.x != null && data.y != null && data.hexIndex != null && data.tileIndex != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -222,13 +213,9 @@ export class GameEventController{
             client.emit("no-game-error", {"message": "You are not in a game"});
             return;
         }
-        // There is game
-        const newData = {
-            "x": data.x,
-            "y": data.y
-        };
+
         otherPlayers.forEach((item) => {
-            socket.to(item).emit("build-road-response", newData);
+            socket.to(item).emit("build-road-response", data);
         });
     }
 
