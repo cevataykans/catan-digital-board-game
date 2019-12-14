@@ -8,6 +8,7 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 import okhttp3.*;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -105,6 +106,15 @@ public class ServerHandler {
                 JSONObject obj = (JSONObject) objects[0];
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
+                try {
+                    System.out.println("RESPONSE ACQUIRED");
+                    int x = obj.getInt("x");
+                    int y = obj.getInt("y");
+                    System.out.println("X: " + x + " Y: " + y);
+                    controller.buildSettlement(null, x, y);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
         this.socket.on("build-city-response", new Emitter.Listener() {
@@ -183,18 +193,21 @@ public class ServerHandler {
             @Override
             public void call(Object... objects) {
                 // Print error!!!
+                System.out.println("TURN ERROR");
             }
         });
         this.socket.on("validation-error-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
                 // Print error!!!
+                System.out.println("VALIDATION ERROR");
             }
         });
         this.socket.on("games-full-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
                 // Print error!!!
+                System.out.println("GAMES FULL ERROR");
             }
         });
     }

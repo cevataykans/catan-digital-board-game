@@ -68,7 +68,15 @@ export class GameEventController{
         if(result)
             return;
         // If disconnected player was playing a game, finish the game
-
+        const gameId = this.players[client.id];
+        if(gameId == null) // Was not playing a game
+            return;
+        // Was playing a game
+        this.finishGame(gameId);
+        const players = this.games[gameId].getPlayersSockets(client.id);
+        players.forEach((item) => {
+            socket.to(item).emit("disconnect-response", {"message": "Player has disconnected"});
+        })
     }
 
     public gameRequest(socket, client, data): void {
@@ -133,7 +141,7 @@ export class GameEventController{
     }
 
     public rollDice(socket, client, data): void {
-        const result: boolean = data != null && data.gameId != null && data.firstDice != null && data.secondDice != null; // validation check
+        const result: boolean = data != null && data.firstDice != null && data.secondDice != null; // validation check
         if(!result){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -156,14 +164,16 @@ export class GameEventController{
     }
 
     public buildSettlement(socket, client, data): void {
-        const format: boolean = data != null && data.gameId != null && data.x != null && data.y != null; // validation check
+        const format: boolean = data != null && data.x != null && data.y != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
+            console.log("FORMAT ERROR");
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
         }
         // Message is well formed
         const otherPlayers: string[] = this.findOtherPlayers(client.id);
         if(otherPlayers == null){
+            console.log("player ERROR");
             client.emit("no-game-error", {"message": "You are not in a game"});
             return;
         }
@@ -172,13 +182,14 @@ export class GameEventController{
             "x": data.x,
             "y": data.y
         };
+        console.log("x: " + newData.x + " y: " + newData.y);
         otherPlayers.forEach((item) => {
             socket.to(item).emit("build-settlement-response", newData);
         });
     }
 
     public buildCity(socket, client, data): void {
-        const format: boolean = data != null && data.gameId != null && data.x != null && data.y != null; // validation check
+        const format: boolean = data != null && data.x != null && data.y != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -200,7 +211,7 @@ export class GameEventController{
     }
 
     public buildRoad(socket, client, data): void {
-        const format: boolean = data != null && data.gameId != null && data.x != null && data.y != null; // validation check
+        const format: boolean = data != null && data.x != null && data.y != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -222,7 +233,7 @@ export class GameEventController{
     }
 
     public setupRobber(socket, client, data): void {
-        const format: boolean = data != null && data.gameId != null && data.x != null && data.y != null; // validation check
+        const format: boolean = data != null && data.x != null && data.y != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -244,7 +255,7 @@ export class GameEventController{
     }
 
     public selectResource(socket, client, data): void {
-        const format: boolean = data != null && data.gameId != null && data.resource != null; // validation check
+        const format: boolean = data != null && data.resource != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -265,7 +276,7 @@ export class GameEventController{
     }
 
     public selectPlayer(socket, client, data): void {
-        const format: boolean = data != null && data.gameId != null && data.player != null; // validation check
+        const format: boolean = data != null && data.player != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -286,7 +297,7 @@ export class GameEventController{
     }
     
     public endTurn(socket, client, data): void {
-        const format: boolean = data != null && data.gameId != null; // validation check
+        const format: boolean = data != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;
@@ -304,7 +315,7 @@ export class GameEventController{
     }
 
     public sendMessage(socket, client, data): void {
-        const format: boolean = data != null && data.gameId != null && data.userId != null && data.message != null; // validation check
+        const format: boolean = data != null && data.userId != null && data.message != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", {"message": "Wrong format"}); 
             return;

@@ -341,9 +341,9 @@ public class MultiGameController extends SceneController {
 
         // Avoid throwing IllegalStateException by running from a non-JavaFX thread.
         Platform.runLater(
-                () -> {
-                    stage.setScene(scene);
-                }
+            () -> {
+                stage.setScene(scene);
+            }
         );
     }
 
@@ -531,11 +531,12 @@ public class MultiGameController extends SceneController {
      * @param x is the x coordinate in the game board
      * @param y is the y coordinate in the game board
      */
-    private void buildSettlement(Alert alert, int x, int y)
+    public void buildSettlement(Alert alert, int x, int y)
     {
         FlowManager flowManager = new FlowManager();
-
+        System.out.println("ENTERED SETTLEMENT");
         if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            System.out.println("ENTERED SETTLEMENT SENDER");
             alert.setHeaderText("Building a Settlement");
             alert.setContentText("Do you want to build a settlement?");
 
@@ -546,10 +547,12 @@ public class MultiGameController extends SceneController {
                     flowManager.doneMust();
                 }
                 showSettlement(flowManager, x, y);
+                ServerHandler.getInstance().buildSettlement(x, y);
             }
         }
         else // RECEIVER
         {
+            System.out.println("ENTERED SETTLEMENT RECEIVER");
             showSettlement(flowManager, x, y);
         }
     }
@@ -562,33 +565,38 @@ public class MultiGameController extends SceneController {
      */
     private void showSettlement(FlowManager flowManager, int x, int y)
     {
-        // Get the necessary managers
-        BoardManager boardManager = new BoardManager();
+        // Avoid throwing IllegalStateException by running from a non-JavaFX thread.
+        Platform.runLater(
+            () -> {
+                // Get the necessary managers
+                BoardManager boardManager = new BoardManager();
 
-        // Make the corresponding game tile in the given index a road.
-        boardManager.setTile( x, y);
+                // Make the corresponding game tile in the given index a road.
+                boardManager.setTile( x, y);
 
-        // Initializing road image to be shown on the UI.
-        ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
+                // Initializing road image to be shown on the UI.
+                ImageView structure = new ImageView("/images/settlement" + flowManager.getCurrentPlayer().getColor() + ".png");
 
-        // Setting city image's coordinates.
-        structure.setX( PixelProcessor.getXToDisplay() );
-        structure.setY( PixelProcessor.getYToDisplay( y) );
+                // Setting city image's coordinates.
+                structure.setX( PixelProcessor.getXToDisplay() );
+                structure.setY( PixelProcessor.getYToDisplay( y) );
 
-        // Playing a zoom in animation for the settlement.
-        new ZoomIn(structure).play();
+                // Playing a zoom in animation for the settlement.
+                new ZoomIn(structure).play();
 
-        // Adding settlement image to the game area in UI.
-        gameBox.getChildren().add(structure);
+                // Adding settlement image to the game area in UI.
+                gameBox.getChildren().add(structure);
 
-        // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
-        // city images when the player upgrades settlement to city.
-        settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
+                // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
+                // city images when the player upgrades settlement to city.
+                settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
 
-        // Refresh current player information.
-        infoController.setupCurrentPlayer();
-        infoController.setupLongestRoad();
-        SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
+                // Refresh current player information.
+                infoController.setupCurrentPlayer();
+                infoController.setupLongestRoad();
+                SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
+            }
+        );
     }
 
     /**
@@ -597,7 +605,7 @@ public class MultiGameController extends SceneController {
      * @param x is the x coordinate in the game board
      * @param y is the y coordinate in the game board
      */
-    private void buildRoad(Alert alert, int x, int y)
+    public void buildRoad(Alert alert, int x, int y)
     {
         FlowManager flowManager = new FlowManager();
 
@@ -690,7 +698,7 @@ public class MultiGameController extends SceneController {
      * @param x is the x coordinate in the game board
      * @param y is the y coordinate in the game board
      */
-    private void buildCity( Alert alert, int x, int y)
+    public void buildCity( Alert alert, int x, int y)
     {
         FlowManager flowManager = new FlowManager();
 
