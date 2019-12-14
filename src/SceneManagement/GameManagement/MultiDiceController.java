@@ -7,6 +7,7 @@ import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import SceneManagement.SoundManager;
+import ServerCommunication.ServerHandler;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
 import javafx.concurrent.Task;
@@ -15,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
+import java.util.concurrent.Flow;
 
 public class MultiDiceController {
 
@@ -52,7 +54,6 @@ public class MultiDiceController {
      */
     public void setupDiceRoll() {
         FlowManager flowManager = new FlowManager();
-
         // Initialize out animation for the previous die results with 2x the normal speed.
         FadeOut die1Out = new FadeOut(die1);
         FadeOut die2Out = new FadeOut(die2);
@@ -73,57 +74,65 @@ public class MultiDiceController {
         die2Out.play();
         diceAvailable.setOnMouseClicked(event ->
         {
-            Game game = Game.getInstance();
-
-            // Dice could only be rolled at the beginning of a turn
-            if ( flowManager.checkMust() == Response.MUST_ROLL_DICE)
-            {
-                // Initialize an out animation for the roll gif when its clicked with 2x the normal speed.
-                FadeOut animation = new FadeOut(diceAvailable);
-                animation.setSpeed(2);
-                animation.setOnFinished(event1 ->
-                {
-                    // Wait 50 milliseconds before showing the die results in the UI.
-                    Task<Void> sleeper = new Task<Void>() {
-                        @Override
-                        protected Void call() throws Exception {
-                            try {
-                                Thread.sleep(50);
-                            } catch (InterruptedException e) {
-                            }
-                            return null;
-                        }
-                    };
-                    sleeper.setOnSucceeded(event2 -> {
-                        // Initialize in animations for the die results, also refresh the current player information.
-                        diceAvailable.setVisible(false);
-                        FadeIn die1Anim = new FadeIn(die1);
-                        FadeIn die2Anim = new FadeIn(die2);
-                        die1Anim.play();
-                        die2Anim.play();
-                        die1.setVisible(true);
-                        die2.setVisible(true);
-                        controller.getInfoController().setupCurrentPlayer();
-                    });
-                    new Thread(sleeper).start();
-                });
-                animation.play();
-                SoundManager.getInstance().playEffect(SoundManager.Effect.ROLL_DICE);
-
-                // Clear the roll action from the Flow Manager as it is already done, roll the dice in the logic itself
-                // and distribute resources to the players that needs to collect resources from the hexagons.
-                flowManager.doneMust();
-                ArrayList<Integer> results = flowManager.rollDice();
-
-                // Set die result images taken from the logic.
-                die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
-                die2.setImage(new Image("/images/die" + results.get(1) + ".png"));
-            }
-            else
-            {
-                // If the current action should not be rolling dice, inform the current player.
-                controller.getStatusController().informStatus( flowManager.checkMust() );
+            if(controller.getLocalPlayer() == flowManager.getCurrentPlayer()){
+                rollDice();
             }
         });
     }
+
+    public void rollDice(){
+        FlowManager flowManager = new FlowManager();
+        // Dice could only be rolled at the beginning of a turn
+        if ( flowManager.checkMust() == Response.MUST_ROLL_DICE || controller.getLocalPlayer() != flowManager.getCurrentPlayer())
+        {
+            // Initialize an out animation for the roll gif when its clicked with 2x the normal speed.
+            FadeOut animation = new FadeOut(diceAvailable);
+            animation.setSpeed(2);
+            animation.setOnFinished(event1 ->
+            {
+                // Wait 50 milliseconds before showing the die results in the UI.
+                Task<Void> sleeper = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                        }
+                        return null;
+                    }
+                };
+                sleeper.setOnSucceeded(event2 -> {
+                    // Initialize in animations for the die results, also refresh the current player information.
+                    diceAvailable.setVisible(false);
+                    FadeIn die1Anim = new FadeIn(die1);
+                    FadeIn die2Anim = new FadeIn(die2);
+                    die1Anim.play();
+                    die2Anim.play();
+                    die1.setVisible(true);
+                    die2.setVisible(true);
+                    controller.getInfoController().setupCurrentPlayer();
+                });
+                new Thread(sleeper).start();
+            });
+            animation.play();
+            SoundManager.getInstance().playEffect(SoundManager.Effect.ROLL_DICE);
+
+            // Clear the roll action from the Flow Manager as it is already done, roll the dice in the logic itself
+            // and distribute resources to the players that needs to collect resources from the hexagons.
+            if(controller.getLocalPlayer() == flowManager.getCurrentPlayer())
+                flowManager.doneMust();
+            ArrayList<Integer> results = flowManager.rollDice();
+            System.out.println("Status: " + ServerHandler.getInstance().getStatus().toString() + "first dice: " + results.get(0) + " second dice: " + results.get(1));
+
+            // Set die result images taken from the logic.
+            die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
+            die2.setImage(new Image("/images/die" + results.get(1) + ".png"));
+        }
+        else
+        {
+            // If the current action should not be rolling dice, inform the current player.
+            controller.getStatusController().informStatus( flowManager.checkMust() );
+        }
+    }
+
 }

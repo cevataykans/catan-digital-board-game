@@ -2,6 +2,10 @@ package GameFlow;
 
 import GameBoard.Harbor;
 import Player.Player;
+import ServerCommunication.ServerHandler;
+import ServerCommunication.ServerInformation;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -120,8 +124,9 @@ public class ResourceManager
 	/**
 	 * Randomly discards half of the resources if the player has more than 7 resources!
 	 */
-	public void discardHalfOfResources( Player player)
+	public ArrayList<Integer> discardHalfOfResources( Player player)
 	{
+		ArrayList<Integer> discardedIndexes = new ArrayList<>();
 		int totResources = player.getTotalResCount();
 
 		// Check if the player has more than 7 resources.
@@ -140,22 +145,46 @@ public class ResourceManager
 				}
 			}
 		}
+		return discardedIndexes; // will be implemented
 	}
 
 	/**
 	 * Discards half of every players' resources
 	 */
-	public void discardHalfOfResources()
+	public ArrayList<Integer>[] discardHalfOfResources()
 	{
 		// Get the related data
 		Game game = Game.getInstance();
 		ArrayList<Player> players = game.getPlayers();
 
+		if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER){
+			JSONObject obj = ServerInformation.getInstance().getInformation();
+			ServerInformation.getInstance().deleteInformation();
+			try{
+				JSONArray discarded = obj.getJSONArray("discarded");
+				for(int i = 0 ; i < players.size() ; i++){
+					JSONArray indexes = discarded.getJSONArray(i);
+					for(int j = 0 ; j < indexes.length() ; j++){
+						int discardIndex = indexes.getInt(j);
+						players.get(i).discardMaterial( discardIndex, 1);
+					}
+				}
+				return null;
+			}
+			catch(Exception e){
+				e.printStackTrace();;
+			}
+		}
+
+		ArrayList<Integer>[] discarded = new ArrayList[4];
+
+
 		// Traverse the player array to try discarding resources!
 		for ( int i = 0; i < players.size(); i++ )
 		{
-			this.discardHalfOfResources( players.get( i) );
+			discarded[i] = this.discardHalfOfResources( players.get( i) );
 		}
+		return discarded; // will be implemented
 	}
 
 	/**
