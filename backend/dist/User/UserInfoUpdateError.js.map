@@ -1,0 +1,1 @@
+{"version":3,"file":"UserInfoUpdateError.js","sourceRoot":"","sources":["../../src/User/UserInfoUpdateError.ts"],"names":[],"mappings":";;AAEA,MAAa,mBAAmB;IAM5B;QACI,IAAI,CAAC,IAAI,GAAG,IAAI,CAAC;QACjB,IAAI,CAAC,OAAO,GAAG,wBAAwB,CAAC;QACxC,IAAI,CAAC,IAAI,GAAG,mBAAmB,CAAC;QAChC,IAAI,CAAC,MAAM,GAAG,GAAG,CAAC;IACtB,CAAC;CACJ;AAZD,kDAYC"}

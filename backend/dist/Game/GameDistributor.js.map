@@ -1,0 +1,1 @@
+{"version":3,"file":"GameDistributor.js","sourceRoot":"","sources":["../../src/Game/GameDistributor.ts"],"names":[],"mappings":";;AAAA,MAAa,eAAe;IAEjB,YAAY,CAAC,MAAM;QACtB,MAAM,CAAC,EAAE,CAAC,OAAO,EAAE,IAAI,CAAC,EAAE;YACtB,OAAO,CAAC,GAAG,CAAC,UAAU,GAAG,MAAM,CAAC,EAAE,CAAC,CAAC;YACpC,aAAa;YACb,wBAAwB;QAC5B,CAAC,CAAC,CAAC;IACP,CAAC;CACJ;AATD,0CASC"}
