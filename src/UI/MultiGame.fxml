@@ -107,12 +107,12 @@
         <Image url="@../images/diceAvaibleGif.gif" />
       </image>
     </ImageView>
-    <Label fx:id="statusBar" layoutX="745.0" layoutY="14.0" text="Status" textAlignment="CENTER" textFill="#ffcccc" underline="true">
+    <Label fx:id="statusBar" layoutX="1226.0" layoutY="14.0" text="Status" textAlignment="CENTER" textFill="#ffcccc" underline="true">
       <font>
         <Font size="30.0" />
       </font>
     </Label>
-    <Label fx:id="statusText" layoutX="591.0" layoutY="71.0" prefHeight="32.0" prefWidth="383.0" text="-" textAlignment="CENTER" textFill="WHITE" underline="false">
+    <Label fx:id="statusText" layoutX="1030.0" layoutY="71.0" prefHeight="32.0" prefWidth="475.0" text="-" textAlignment="CENTER" textFill="WHITE" underline="false">
       <font>
         <Font name="System Bold" size="14.0" />
       </font>
@@ -276,5 +276,17 @@
     <Label fx:id="other3BIncrease" font="$x5" layoutX="1512.0" layoutY="571.0" text="+0" visible="false" />
     <Label fx:id="other3OIncrease" font="$x5" layoutX="1512.0" layoutY="596.0" text="+0" visible="false" />
     <AnchorPane fx:id="otherInfoBox" layoutX="1368.0" layoutY="192.0" prefHeight="401.0" prefWidth="123.0" visible="true" />
+    <AnchorPane fx:id="chatBox" layoutX="418.0" layoutY="-163.0" prefHeight="163.0" prefWidth="601.0" styleClass="chatBox">
+      <children>
+        <TextField fx:id="chatInput" layoutX="14.0" layoutY="123.0" prefWidth="573.0" />
+        <Separator layoutX="14.0" layoutY="107.0" prefWidth="573.0" />
+        <TextArea fx:id="chatMessages" layoutX="14.0" layoutY="7.0" prefHeight="92.0" prefWidth="573.0" text="" wrapText="true" />
+      </children>
+    </AnchorPane>
+    <ImageView fx:id="chatHover" fitHeight="150.0" fitWidth="200.0" layoutX="619.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/chatHover.png" />
+      </image>
+    </ImageView>
   </children>
 </AnchorPane>

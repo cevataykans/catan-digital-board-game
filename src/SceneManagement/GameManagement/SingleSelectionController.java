@@ -23,7 +23,7 @@ import Player.Player;
  * @version 29.11.2019
  */
 
-public class SelectionController {
+public class SingleSelectionController {
     // Properties
     private SingleGameController controller;
     private Scene scene;
@@ -31,7 +31,7 @@ public class SelectionController {
     private Label selectionLabel;
 
     // Constructor
-    public SelectionController(Scene scene, SceneController controller)
+    public SingleSelectionController(Scene scene, SceneController controller)
     {
         this.scene = scene;
         this.controller = (SingleGameController) controller;

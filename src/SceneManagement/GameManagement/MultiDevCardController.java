@@ -155,7 +155,7 @@ public class MultiDevCardController {
 
         devCardsHover.setOnMouseEntered(event ->
         {
-            // If current player hovers of the "Development DevelopmentCards.Card" part of the box in UI, show the card container to user.
+            // If current player hovers of the "Development Card" part of the box in UI, show the card container to user.
             if ( cardBox.getTranslateY() == cardBoxHideLocation) {
                 TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
                 TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);

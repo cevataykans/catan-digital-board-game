@@ -24,7 +24,7 @@ import DevelopmentCards.*;
  * @version 29.11.2019
  */
 
-public class DevCardController {
+public class SingleDevCardController {
     // Properties
     private SingleGameController controller;
     private Scene scene;
@@ -39,7 +39,7 @@ public class DevCardController {
     private double cardBoxShownLocation;
 
     // Constructor
-    public DevCardController(Scene scene, SceneController controller)
+    public SingleDevCardController(Scene scene, SceneController controller)
     {
         this.scene = scene;
         this.controller = (SingleGameController) controller;

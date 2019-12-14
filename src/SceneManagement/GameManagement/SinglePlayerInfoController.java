@@ -30,10 +30,10 @@ import org.controlsfx.dialog.Wizard;
  * @version 29.11.2019
  */
 
-public class PlayerInfoController {
+public class SinglePlayerInfoController {
 
     // Properties
-    private MultiGameController controller;
+    private SingleGameController controller;
     private Scene scene;
 
     private ArrayList<FillProgressIndicator> otherPlayers;
@@ -56,10 +56,10 @@ public class PlayerInfoController {
     private Label otherCityCount;
 
     // Constructor
-    public PlayerInfoController(Scene scene, SceneController controller)
+    public SinglePlayerInfoController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (MultiGameController) controller;
+        this.controller = (SingleGameController) controller;
         initialize();
     }
 

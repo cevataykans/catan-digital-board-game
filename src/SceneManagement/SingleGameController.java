@@ -46,11 +46,11 @@ public class SingleGameController extends SceneController
     private boolean highlightOn = false;
 
     // Sub Controllers
-    private PlayerInfoController infoController;
-    private StatusController statusController;
-    private DevCardController devCardController;
-    private SelectionController selectionController;
-    private DiceController diceController;
+    private SinglePlayerInfoController infoController;
+    private SingleStatusController statusController;
+    private SingleDevCardController devCardController;
+    private SingleSelectionController selectionController;
+    private SingleDiceController diceController;
 
     // Robber Related Properties
     private ImageView robber;
@@ -130,11 +130,11 @@ public class SingleGameController extends SceneController
         setupRobber(); // Robber is configured here
 
         // Initializing all the sub controllers that will handle the game's other logic.
-        infoController = new PlayerInfoController(scene, this);
-        statusController = new StatusController(scene, this);
-        devCardController = new DevCardController(scene, this);
-        selectionController = new SelectionController(scene, this);
-        diceController = new DiceController(scene, this);
+        infoController = new SinglePlayerInfoController(scene, this);
+        statusController = new SingleStatusController(scene, this);
+        devCardController = new SingleDevCardController(scene, this);
+        selectionController = new SingleSelectionController(scene, this);
+        diceController = new SingleDiceController(scene, this);
 
         // Adding listener to make the game board intractable.
         gameBox.setOnMouseClicked(mouseEvent -> {
@@ -782,23 +782,23 @@ public class SingleGameController extends SceneController
         }
     }
 
-    public PlayerInfoController getInfoController() {
+    public SinglePlayerInfoController getInfoController() {
         return infoController;
     }
 
-    public StatusController getStatusController() {
+    public SingleStatusController getStatusController() {
         return statusController;
     }
 
-    public DevCardController getDevCardController() {
+    public SingleDevCardController getDevCardController() {
         return devCardController;
     }
 
-    public SelectionController getSelectionController() {
+    public SingleSelectionController getSelectionController() {
         return selectionController;
     }
 
-    public DiceController getDiceController() {
+    public SingleDiceController getDiceController() {
         return diceController;
     }
 }

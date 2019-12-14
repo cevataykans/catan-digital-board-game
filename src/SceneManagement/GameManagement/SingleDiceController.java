@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * @version 29.11.2019
  */
 
-public class DiceController {
+public class SingleDiceController {
 
     // Properties
     private SingleGameController controller;
@@ -30,7 +30,7 @@ public class DiceController {
     private ImageView diceAvailable;
 
     // Constructor
-    public DiceController(Scene scene, SceneController controller)
+    public SingleDiceController(Scene scene, SceneController controller)
     {
         this.scene = scene;
         this.controller = (SingleGameController) controller;

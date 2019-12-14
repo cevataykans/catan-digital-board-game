@@ -1,31 +1,27 @@
 package SceneManagement.GameManagement;
 
-import SceneManagement.MultiGameController;
+import GameFlow.FlowManager;
+import GameFlow.Game;
+import GameFlow.Response;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
-import animatefx.animation.*;
+import animatefx.animation.FadeInLeft;
+import animatefx.animation.FadeOutRight;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import GameFlow.*;
 
-/**
- * This controller manages all the player andd resource selection logic. It has association with the Single-GameFlow.Game controller.
- * @author Talha Şen
- * @version 29.11.2019
- */
-
-public class StatusController {
+public class MultiStatusController {
     // Properties
-    MultiGameController controller;
+    SingleGameController controller;
     Scene scene;
     Label statusText;
 
     // Constructor
-    public StatusController(Scene scene, SceneController controller)
+    public MultiStatusController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (MultiGameController) controller;
+        this.controller = (SingleGameController) controller;
         initialize();
     }
 

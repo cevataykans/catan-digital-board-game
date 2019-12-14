@@ -178,6 +178,7 @@ public class ServerHandler {
                 }
                 try{
                     int status = obj.getInt("status");
+                    System.out.println("Status: " + status);
                     if(status == 0)
                         setStatus(Status.RECEIVER);
                     else
@@ -213,6 +214,22 @@ public class ServerHandler {
                 JSONObject obj = (JSONObject) objects[0];
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
+            }
+        });
+        this.socket.on("send-message-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                JSONObject obj = (JSONObject) objects[0];
+                // Make related things
+                try {
+                    String userId = obj.getString("userId");
+                    String message = obj.getString("message");
+
+                    controller.getChatController().getChatMessage(userId, message);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
             }
         });
         this.socket.on("turn-error-response", new Emitter.Listener() {
@@ -325,6 +342,15 @@ public class ServerHandler {
         keys[0] = resource;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("select-resource", data);
+    }
+
+    public void sendMessage(String userId, String message){
+        String[] names = {"userId", "message"};
+        String[] keys = new String[2];
+        keys[0] = userId;
+        keys[1] = message;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("send-message", data);
     }
 
     public Status getStatus(){

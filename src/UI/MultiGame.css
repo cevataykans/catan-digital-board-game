@@ -48,6 +48,13 @@
     -fx-border-color: black;
 }
 
+.chatBox {
+    -fx-background-color: transparent;
+    -fx-border-color: black;
+    -fx-border-width: 4px;
+    -fx-border-radius: 10px;
+}
+
 .x0000ffffPlayerBox {
     -fx-border-width: 5px;
     -fx-background-color: rgba(255, 168, 100, 0.75);
