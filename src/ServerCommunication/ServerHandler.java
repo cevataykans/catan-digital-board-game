@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 public class ServerHandler {
     public enum Status{
@@ -165,7 +166,7 @@ public class ServerHandler {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
-                // Call related controller method
+                controller.getDiceController().rollDice();
             }
         });
         this.socket.on("end-turn-response", new Emitter.Listener() {
@@ -216,6 +217,15 @@ public class ServerHandler {
                 // Call related controller method
             }
         });
+
+        this.socket.on("send-message-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                JSONObject obj = (JSONObject) objects[0];
+                // Make related things
+            }
+        });
+
         this.socket.on("turn-error-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
@@ -312,6 +322,16 @@ public class ServerHandler {
         socket.emit("roll-dice", data);
     }
 
+    public void rollDice(int firstDice, int secondDice, ArrayList<Integer>[] discarded){
+        String[] names = {"firstDice", "secondDice", "discarded"};
+        Object[] keys = new Object[3];
+        keys[0] = firstDice;
+        keys[1] = secondDice;
+        keys[2] = discarded;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("roll-dice", data);
+    }
+
     public void selectPlayer(Player player){
         String[] names = {"player"};
         Player[] keys = new Player[1];
@@ -326,6 +346,15 @@ public class ServerHandler {
         keys[0] = resource;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("select-resource", data);
+    }
+
+    public void sendMessage(String userId, String message){
+        String[] names = {"userId", "message"};
+        String[] keys = new String[2];
+        keys[0] = userId;
+        keys[1] = message;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("send-message", data);
     }
 
     public Status getStatus(){
