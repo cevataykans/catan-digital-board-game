@@ -3,6 +3,8 @@ export class Game{
     private players: string[]
     private turn: number;
     private gameId: number;
+    private phase: number;
+    private order: boolean;
 
     constructor(socketIds: string[], id: number){
         this.turn = 0;
@@ -11,10 +13,36 @@ export class Game{
             this.players.push(item);
         });
         this.gameId = id;
+        this.phase = 0;
+        this.order = true;
     }
 
     public endTurn(): void {
-        this.turn = (this.turn + 1) % 4;
+        if(this.phase == 0 && this.order){
+            if(this.turn == 3){
+                this.order = false;
+                console.log("Again turn " + this.turn + "but order is " + this.order);
+            }
+            else{
+                this.turn = (this.turn + 1) % 4;
+                console.log("turn: " + this.turn + "order: " + this.order);
+            }
+        }
+        else if(this.phase == 0){
+            if(this.turn == 0){
+                this.phase = 1;
+                this.order = true;
+                console.log("turn: " + this.turn + "order: " + this.order)
+            }
+            else{
+                this.turn = (this.turn - 1) % 4;
+                console.log("turn: " + this.turn + "order: " + this.order)
+            }
+        }
+        else{
+            this.turn = (this.turn + 1) % 4;
+            console.log("turn: " + this.turn + "order: " + this.order)
+        }
     }
 
     public isTurnOf(userId: string): boolean {

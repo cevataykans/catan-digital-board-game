@@ -219,7 +219,7 @@ public class MultiGameController extends SceneController {
         // Adding listener to make the game board highlightable to make the more usable.
         gameBox.setOnMouseMoved(mouseEvent2 ->
         {
-            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            if (localPlayer == flowManager.getCurrentPlayer()) {
                 // Allow the action to be processed for game board UI if only game board related must, be done
                 Response response = flowManager.checkMust();
                 if ((response == Response.MUST_ROAD_BUILD ||
@@ -307,7 +307,7 @@ public class MultiGameController extends SceneController {
         buyDevelopmentCard = (Button) scene.lookup("#buyDevelopmentCard");
         buyDevelopmentCard.setOnMouseClicked(event ->
         {
-            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            if (localPlayer == flowManager.getCurrentPlayer()) {
                 cardManager.addDevelopmentCard();
             }
         });
@@ -316,7 +316,7 @@ public class MultiGameController extends SceneController {
         endTurn = (Button) scene.lookup( "#endTurn");
         endTurn.setOnMouseReleased(mouseEvent ->
         {
-            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            if (localPlayer == flowManager.getCurrentPlayer()) {
                 performEndTurnButtonEvent();
             }
         });
@@ -330,7 +330,7 @@ public class MultiGameController extends SceneController {
          *  If you want to add a shortcut, add the key to the switch case with its functionality.
          */
         scene.setOnKeyPressed(event -> {
-            if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            if (localPlayer == flowManager.getCurrentPlayer()) {
                 switch (event.getCode()) {
                     case E:
                         performEndTurnButtonEvent();
@@ -857,6 +857,17 @@ public class MultiGameController extends SceneController {
                     }
                 });
                 new Thread(sleeper2).start();
+                if(localPlayer == flowManager.getCurrentPlayer()){ // This player is next player
+                    Platform.runLater(
+                            () -> {
+                                statusController.informStatus( flowManager.checkMust());
+                            }
+                    );
+                }
+                else{ // This player is not next player
+                    flowManager.discardAllMust();
+                }
+                ServerHandler.getInstance().endTurn();
             } else {
                 Platform.runLater(
                         () -> {
@@ -864,9 +875,6 @@ public class MultiGameController extends SceneController {
                         }
                 );
             }
-
-            flowManager.discardAllMust();
-            ServerHandler.getInstance().endTurn();
         }
         else{ // RECEIVER
             flowManager.endTurn();
@@ -955,7 +963,7 @@ public class MultiGameController extends SceneController {
             icon.setFitWidth(48);
             alert.getDialogPane().setGraphic( icon);
 
-            System.out.println( "result is ** " + resultCode + "   "); /***********************************************/
+            System.out.println( "result is ** " + resultCode + "   ");  /***********************************************/
             // Handle the intended user action could have a dedicated function for it!
             informBoardSelection( alert, resultCode, x, y);
         }

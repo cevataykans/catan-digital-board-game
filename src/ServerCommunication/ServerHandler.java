@@ -178,6 +178,7 @@ public class ServerHandler {
                 }
                 try{
                     int status = obj.getInt("status");
+                    System.out.println("Status: " + status);
                     if(status == 0)
                         setStatus(Status.RECEIVER);
                     else
