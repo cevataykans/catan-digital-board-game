@@ -283,21 +283,25 @@ export class GameEventController{
         });
     }
     
-    public endTurn(socket, client, data): void {
-        const format: boolean = data != null; // validation check
-        if(!format){ // Message received by the server is not well formed!!!
-            client.emit("invalid-information-error", {"message": "Wrong format"}); 
-            return;
-        }
+    public endTurn(socket, client): void {
         // Message is well formed
-        const otherPlayers: string[] = this.findOtherPlayers(client.id);
-        if(otherPlayers == null){
+        const others: string[] = this.findOtherPlayers(client.id);
+        if(others == null){
             client.emit("no-game-error", {"message": "You are not in a game"});
             return;
         }
+        const game: Game = this.games[this.players[client.id]];
+        game.endTurn();
+        const currentPlayer = game.getCurrentPlayer();
+        const allPlayers = game.getAllPlayers();
         // There is game
-        otherPlayers.forEach((item) => {
-            socket.to(item).emit("roll-dice-response", null);
+        allPlayers.forEach((item) => { 
+            if(item == currentPlayer){
+                socket.to(item).emit("end-turn-response", {"status": 1});
+            }
+            else{
+                socket.to(item).emit("end-turn-response", {"status": 0});
+            }
         });
     }
 

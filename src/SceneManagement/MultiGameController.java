@@ -799,19 +799,53 @@ public class MultiGameController extends SceneController {
     /**
      * End the turn when the end turn button is pressed or player builds a road in the initial phase.
      */
-    private void performEndTurnButtonEvent()
+    public void performEndTurnButtonEvent()
     {
         FlowManager flowManager = new FlowManager();
+        if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER){
+            // Check if the user has to do something before ending their turn
+            if ( flowManager.checkMust() == Response.MUST_EMPTY || flowManager.checkMust() == Response.MUST_END_TURN) {
 
-        // Check if the user has to do something before ending their turn
-        if ( flowManager.checkMust() == Response.MUST_EMPTY || flowManager.checkMust() == Response.MUST_END_TURN) {
+                // Check if the user ends the turn because of obligation
+                if ( flowManager.checkMust() == Response.MUST_END_TURN) {
+                    flowManager.doneMust();
+                }
+                flowManager.endTurn();
 
-            // Check if the user ends the turn because of obligation
-            if ( flowManager.checkMust() == Response.MUST_END_TURN) {
-                flowManager.doneMust();
+                SoundManager.getInstance().playEffect(SoundManager.Effect.END_TURN);
+                infoController.setupOtherPlayers();
+                infoController.setupCurrentPlayer();
+                infoController.setupLargestArmy();
+                infoController.setupLongestRoad();
+                diceController.setupDiceRoll();
+                Task<Void> sleeper2 = new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        try {
+                            Thread.sleep(300);
+                        } catch (InterruptedException e) {
+                        }
+                        return null;
+                    }
+                };
+
+                sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                    @Override
+                    public void handle(WorkerStateEvent event) {
+                        statusController.informStatus(Response.EKSIDOKUZ);
+                        devCardController.setupDevelopmentCards();
+                    }
+                });
+                new Thread(sleeper2).start();
+            } else {
+                statusController.informStatus( flowManager.checkMust());
             }
-            flowManager.endTurn();
 
+            flowManager.discardAllMust();
+            ServerHandler.getInstance().endTurn();
+        }
+        else{ // RECEIVER
+            flowManager.endTurn();
             SoundManager.getInstance().playEffect(SoundManager.Effect.END_TURN);
             infoController.setupOtherPlayers();
             infoController.setupCurrentPlayer();
@@ -837,9 +871,15 @@ public class MultiGameController extends SceneController {
                 }
             });
             new Thread(sleeper2).start();
-        } else {
-            statusController.informStatus( flowManager.checkMust());
+
+            if(localPlayer == flowManager.getPlayer((flowManager.getCurrentPlayerIndex() + 1) % 4)){ // This player is next player
+                statusController.informStatus( flowManager.checkMust());
+            }
+            else{ // This player is not next player
+                flowManager.discardAllMust();
+            }
         }
+
     }
 
     /**

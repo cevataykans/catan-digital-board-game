@@ -41,4 +41,12 @@ export class Game{
         return result;
     }
 
+    public getAllPlayers(): string[]{
+        return this.players;
+    }
+
+    public getCurrentPlayer(): string{
+        return this.players[this.turn];
+    }
+
 }
