@@ -24,8 +24,6 @@ import java.io.IOException;
 
 public class OpeningController extends SceneController{
     // Properties
-    Parent root;
-    Scene scene;
 
     // Constructor
     public OpeningController(Stage stage) throws IOException
@@ -124,7 +122,5 @@ public class OpeningController extends SceneController{
                 System.out.println(e);
             }
         });
-
-        stage.setScene(scene);
     }
 }

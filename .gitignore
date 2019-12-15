@@ -6,7 +6,8 @@
 .idea/
 Catan.iml
 CS319-3C-CA.iml
-
+backend/dist/
+backend/node_modules/
 
 
 # User-specific stuff

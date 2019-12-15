@@ -2,6 +2,9 @@ package GameFlow;
 
 import GameBoard.GameBoard;
 import Player.Player;
+import ServerCommunication.ServerHandler;
+import ServerCommunication.ServerInformation;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Queue;
@@ -104,8 +107,23 @@ public class FlowManager {
         Game game = Game.getInstance();
         GameBoard board = game.getGameBoard();
 
-        int firstDice =  ( int)( Math.random() * 6 + 1 );
-        int secondDice =  ( int)( Math.random() * 6 + 1 );
+        int firstDice = 0;
+        int secondDice = 0;
+        if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER){
+            JSONObject obj = ServerInformation.getInstance().getInformation();
+            try{
+                firstDice = obj.getInt("firstDice");
+                secondDice = obj.getInt("secondDice");
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        else{
+            firstDice =  ( int)( Math.random() * 6 + 1 );
+            secondDice =  ( int)( Math.random() * 6 + 1 );
+        }
+
 
         ArrayList<Integer> ret = new ArrayList<>();
         ret.add( firstDice);
@@ -115,13 +133,19 @@ public class FlowManager {
         // bought development cards!
         if( firstDice + secondDice == 7 )
         {
-            new ResourceManager().discardHalfOfResources();
+            ArrayList<Integer>[] discarded = new ResourceManager().discardHalfOfResources();
+            if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER)
+                ServerHandler.getInstance().rollDice(firstDice, secondDice, discarded);
 
             addMust( Response.MUST_INSIDE_TILE_SELECTION); // inside tile
             addMust( Response.MUST_GET_NEIGHBOR); // get neighbors
         }
         else
         {
+            if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER)
+                ServerHandler.getInstance().rollDice(firstDice, secondDice);
+            else if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER)
+                ServerInformation.getInstance().deleteInformation();
             ResourceDistributer.getInstance().collectResources( firstDice + secondDice, board.getRobber() );
         }
 
@@ -179,6 +203,16 @@ public class FlowManager {
         Queue<Response> must = Game.getInstance().getMust();
 
         must.add( response);
+    }
+
+    /**
+     * clears all musts
+     */
+    public void discardAllMust(){
+        // Get the related data
+        Queue<Response> must = Game.getInstance().getMust();
+
+        must.clear();
     }
 
     /**

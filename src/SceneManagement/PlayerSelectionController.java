@@ -36,7 +36,7 @@ public class PlayerSelectionController extends SceneController{
     public PlayerSelectionController(Stage stage) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/PlayerSelection.fxml"));
-        scene = new Scene(root, Color.BLACK);
+        scene = stage.getScene();
         initialize(stage);
     }
 
@@ -120,44 +120,10 @@ public class PlayerSelectionController extends SceneController{
                     // names and colors. Then passing these players to SceneManagement.GameEngine to change and initialize the Single-GameFlow.Game
                     // controller and scene.
                     ArrayList<Player> players = new ArrayList<>();
-
-                    // Check if any player name is empty, then fill it with player COLOR, later, bots must be initialized here!
-                    if ( player1Name.getText().equals( "") )
-                    {
-                        players.add( new Player( "BLUE", Color.BLUE) );
-                    }
-                    else
-                    {
-                        players.add( new Player(player1Name.getText(), Color.BLUE));
-                    }
-
-                    if ( player2Name.getText().equals( "") )
-                    {
-                        players.add( new Player( "WHITE", Color.WHITE) );
-                    }
-                    else
-                    {
-                        players.add( new Player( player2Name.getText(), Color.WHITE));
-                    }
-
-                    if ( player3Name.getText().equals( "") )
-                    {
-                        players.add( new Player( "ORANGE", Color.ORANGE) );
-                    }
-                    else
-                    {
-                        players.add( new Player( player3Name.getText(), Color.ORANGE));
-                    }
-
-                    if ( player4Name.getText().equals( "") )
-                    {
-                        players.add( new Player( "BROWN", Color.BROWN) );
-                    }
-                    else
-                    {
-                        players.add( new Player( player4Name.getText(), Color.BROWN));
-                    }
-
+                    players.add(new Player(player1Name.getText(), Color.BLUE));
+                    players.add(new Player(player2Name.getText(), Color.WHITE));
+                    players.add(new Player(player3Name.getText(), Color.ORANGE));
+                    players.add(new Player(player4Name.getText(), Color.BROWN));
                     GameEngine.getInstance().setPlayers(players);
                     GameEngine.getInstance().setController(3);
                 }
@@ -168,7 +134,5 @@ public class PlayerSelectionController extends SceneController{
             });
             animation2.play();
         });
-
-        stage.setScene(scene);
     }
 }

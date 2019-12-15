@@ -2,6 +2,10 @@ package GameFlow;
 
 import GameBoard.Harbor;
 import Player.Player;
+import ServerCommunication.ServerHandler;
+import ServerCommunication.ServerInformation;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -52,8 +56,9 @@ public class ResourceManager
 	 * A function to enable players steal a random material from other players when the robber is changed.
 	 * @param other other player whose resource is being stolen by this player
 	 */
-	public void stealResourceFromPlayer( Player current, Player other )
+	public int stealResourceFromPlayer( Player current, Player other )
 	{
+		int index = -1;
 		// Get player resources
 		int[] otherPlResources = other.getResources();
 
@@ -71,11 +76,12 @@ public class ResourceManager
 					// Adjust total resources
 					current.collectMaterial( randomStealIndex, 1);
 					other.discardMaterial( randomStealIndex, 1);
-
+					index = randomStealIndex;
 					leftToSteal = 0;
 				}
 			}
 		}
+		return index;
 	}
 
 	/**
@@ -120,8 +126,9 @@ public class ResourceManager
 	/**
 	 * Randomly discards half of the resources if the player has more than 7 resources!
 	 */
-	public void discardHalfOfResources( Player player)
+	public ArrayList<Integer> discardHalfOfResources( Player player)
 	{
+		ArrayList<Integer> discardedIndexes = new ArrayList<>();
 		int totResources = player.getTotalResCount();
 
 		// Check if the player has more than 7 resources.
@@ -136,26 +143,53 @@ public class ResourceManager
 				if ( resources[ discardIndex] > 0)
 				{
 					player.discardMaterial( discardIndex, 1);
+					discardedIndexes.add(discardIndex);
 					discardCount--;
 				}
 			}
 		}
+		System.out.println("SENDER discarded from " + player.getName() + ": " + discardedIndexes);
+		return discardedIndexes; // will be implemented
 	}
 
 	/**
 	 * Discards half of every players' resources
 	 */
-	public void discardHalfOfResources()
+	public ArrayList<Integer>[] discardHalfOfResources()
 	{
 		// Get the related data
 		Game game = Game.getInstance();
 		ArrayList<Player> players = game.getPlayers();
 
+		if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER){
+			JSONObject obj = ServerInformation.getInstance().getInformation();
+			ServerInformation.getInstance().deleteInformation();
+			try{
+				JSONArray discarded = obj.getJSONArray("discarded");
+				for(int i = 0 ; i < players.size() ; i++){
+					JSONArray indexes = discarded.getJSONArray(i);
+					for(int j = 0 ; j < indexes.length() ; j++){
+						int discardIndex = indexes.getInt(j);
+						System.out.println("RECEIVER discarded from " + players.get(i).getName() + ", index " + discardIndex);
+						players.get(i).discardMaterial( discardIndex, 1);
+					}
+				}
+				return null;
+			}
+			catch(Exception e){
+				e.printStackTrace();;
+			}
+		}
+
+		ArrayList<Integer>[] discarded = new ArrayList[4];
+
+
 		// Traverse the player array to try discarding resources!
 		for ( int i = 0; i < players.size(); i++ )
 		{
-			this.discardHalfOfResources( players.get( i) );
+			discarded[i] = this.discardHalfOfResources( players.get( i) );
 		}
+		return discarded; // will be implemented
 	}
 
 	/**
@@ -165,7 +199,7 @@ public class ResourceManager
 	 * @param discardedMaterial is the material wanted to be given by the player
 	 * @param collectedMaterial is the material wanted to be taken by the player
 	 */
-	public void tradeWithHarbor( Harbor.HarborType portType, int discardedMaterial, int collectedMaterial)
+	public void tradeWithHarbor(Harbor.HarborType portType, int discardedMaterial, int collectedMaterial)
 	{
 		// Get the related data
 		FlowManager flowManager = new FlowManager();

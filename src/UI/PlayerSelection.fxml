@@ -10,12 +10,7 @@
 
 <AnchorPane id="AnchorPane" fx:id="background" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1584.0" styleClass="anchor" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <ImageView fitHeight="1056.6666666666667" fitWidth="1585.0" layoutX="0.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true" x="-1.0" y="-1.0">
-      <image>
-        <Image url="@../images/dark-red.jpg" />
-      </image>
-    </ImageView>
-    <Label layoutX="614.0" prefHeight="67.0" prefWidth="357.0" text="Player.Player Selection" textAlignment="CENTER" textFill="#7200cc" AnchorPane.topAnchor="7.0">
+    <Label layoutX="614.0" prefHeight="67.0" prefWidth="357.0" text="Player Selection" textAlignment="CENTER" textFill="#7200cc" AnchorPane.topAnchor="7.0">
       <font>
         <Font size="50.0" />
       </font>
