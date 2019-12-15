@@ -165,7 +165,7 @@ public class ResourceManager
 	 * @param discardedMaterial is the material wanted to be given by the player
 	 * @param collectedMaterial is the material wanted to be taken by the player
 	 */
-	public void tradeWithHarbor(Harbor.HarborType portType, int discardedMaterial, int collectedMaterial)
+	public void tradeWithHarbor( Harbor.HarborType portType, int discardedMaterial, int collectedMaterial)
 	{
 		// Get the related data
 		FlowManager flowManager = new FlowManager();
@@ -202,5 +202,18 @@ public class ResourceManager
 			player.discardMaterial(ResourceManager.ORE, 2);
 			player.collectMaterial(collectedMaterial, 1);
 		}
+	}
+
+	/**
+	 * A basic function for trading a resource by the ratio 4:1
+	 * @param discardedMaterial index for discarding 4 of that resource
+	 * @param collectedMaterial index for gaining 1 of that resource
+	 */
+	public void tradeUsing4( int discardedMaterial, int collectedMaterial )
+	{
+		Player player = new FlowManager().getCurrentPlayer();
+
+		player.discardMaterial( discardedMaterial, 4);
+		player.collectMaterial( collectedMaterial, 1);
 	}
 }

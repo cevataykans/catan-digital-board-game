@@ -43,6 +43,9 @@ public enum Response {
     ERROR_NO_RESOURCE_FOR_SETTLEMENT,               // -6
     ERROR_NO_RESOURCE_FOR_CITY,                     // -7
     ERROR_OUTSIDE_GAMEBOARD,                        // -100
+    ERROR_NOT_ENOGUH_TRADING_MATERIAL,
+    ERROR_PLAYER_REFUSED_TRADE,
+    EKSIDOKUZ, // VAT DA FAK is DIS, displays only "-"?
     MUST_FREE_TURN,                                     // -1
     MUST_ROAD_BUILD,                                // 0
     MUST_SETTLEMENT_BUILD,                          // 1
@@ -55,6 +58,4 @@ public enum Response {
     MUST_GET_NEIGHBOR,                              // 8
     MUST_GET_HALF_RESOURCE_PERFECT_BALANCE,         // 9
     MUST_PLAYER_GETS_POINT,                         // 10
-    EKSISEKIZ,                                      // todo change here
-    EKSIDOKUZ                                       // todo change here
 }
