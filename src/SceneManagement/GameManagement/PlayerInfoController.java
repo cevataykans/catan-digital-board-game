@@ -240,10 +240,10 @@ public class PlayerInfoController {
                 otherPlayer.setOnMouseClicked( event3 ->
                 {
                     // Trade can be done only if player is in free turn
-                    if ( new FlowManager().checkMust() == Response.MUST_FREE_TURN)
-                    {
+                    //if ( new FlowManager().checkMust() == Response.MUST_FREE_TURN)
+                    //{
                         showTradePopup(otherPlayer, index - 1);
-                    }
+                    //}
                 });
 
                 otherPlayers.set(i, otherPlayer);
@@ -464,12 +464,14 @@ public class PlayerInfoController {
                 int[] toGive = {0, 0, 0, 0, 0};
                 int[] toTake = {0, 0, 0, 0, 0};
 
+                // These values are set in a way that they cannot be set to an amount that player does not have, do not worry!
                 toGive[ ResourceManager.LUMBER] = cLumberSpin.getValue();
                 toGive[ ResourceManager.WOOL] = cWoolSpin.getValue();
                 toGive[ ResourceManager.GRAIN] = cGrainSpin.getValue();
                 toGive[ ResourceManager.BRICK] = cBrickSpin.getValue();
                 toGive[ ResourceManager.ORE] = cOreSpin.getValue();
 
+                // In tradeWithPlayer function, resource check is made!
                 toTake[ ResourceManager.LUMBER] = oLumberSpin.getValue();
                 toTake[ ResourceManager.WOOL] = oWoolSpin.getValue();
                 toTake[ ResourceManager.GRAIN] = oGrainSpin.getValue();
@@ -477,26 +479,32 @@ public class PlayerInfoController {
                 toTake[ ResourceManager.ORE] = oOreSpin.getValue();
 
 
-                alert.setHeaderText("Trade offer of player: " + curPlayer.getName() );
-                alert.setContentText( curPlayer.getName() + " offers:\nLumber: ");
+                alert.setHeaderText("Trade Offer by:   " + curPlayer.getName() + "   to:   " + otherPlayer.getName() );
+                alert.setContentText( "Offers: \t\t\t Wants: "
+                        + "\nLumber: " + toGive[ ResourceManager.LUMBER] + "\t\t Lumber: " + toTake[ ResourceManager.LUMBER]
+                        + "\nWool: " + toGive[ ResourceManager.WOOL] + "\t\t\t Wool: " + toTake[ ResourceManager.WOOL]
+                        + "\nGrain: " + toGive[ ResourceManager.GRAIN] + "\t\t Grain: " + toTake[ ResourceManager.GRAIN]
+                        + "\nBrick: " + toGive[ ResourceManager.BRICK] + "\t\t\t Brick: " + toTake[ ResourceManager.BRICK]
+                        + "\nOre: " + toGive[ ResourceManager.ORE] + "\t\t\t Ore: " + toTake[ ResourceManager.ORE]
+                );
 
                 tradePopup.hide(javafx.util.Duration.seconds(0.2));
                 Optional<ButtonType> result = alert.showAndWait();
                 if ( result.get() == ButtonType.OK )
                 {
                     // From the point of view of current player
-                    if (resManager.tradeWithPlayer(curPlayer, otherPlayer, toGive, toTake))
+                    if ( resManager.tradeWithPlayer( curPlayer, otherPlayer, toGive, toTake))
                     {
                         // Trade successfuly made, close pop up, update current player UI
                         this.setupCurrentPlayer();
                     } else
                     {
-                        System.out.println("Trade failed");
+                        controller.getStatusController().informStatus( Response.ERROR_PLAYER_REFUSED_TRADE );
                     }
                 }
                 else
                 {
-                    System.out.println( "Player: " + otherPlayer.getName() + " declined the trade");
+                    controller.getStatusController().informStatus( Response.ERROR_PLAYER_REFUSED_TRADE );
                 }
             }
         });

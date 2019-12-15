@@ -122,7 +122,7 @@
         <Image url="@../images/legend.jpg" />
       </image>
     </ImageView>
-    <Button fx:id="buyDevelopmentCard" cancelButton="false" layoutX="64.0" layoutY="475.0" mnemonicParsing="false" prefHeight="40.000099999997474" text="Buy a Development Card" />
+    <Button fx:id="buyDevelopmentCard" cancelButton="false" layoutX="64.0" layoutY="475.0" mnemonicParsing="false" prefHeight="40.000099999997474" text="Buy Development Card" />
     <AnchorPane fx:id="selectionBox" layoutX="166.0" layoutY="135.0" prefHeight="585.0" prefWidth="1074.0" styleClass="selectionBox" visible="false">
       <children>
         <Label fx:id="selectionLabel" layoutX="490.0" layoutY="23.0" text="Choose Your Resource">
@@ -132,7 +132,7 @@
         </Label>
       </children>
     </AnchorPane>
-    <Button fx:id="tradeWithPort" layoutX="64.0" layoutY="392.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="191.0" text="Trade With Harbor" />
+    <Button fx:id="tradeGameButton" layoutX="64.0" layoutY="392.0" mnemonicParsing="false" prefHeight="41.0" prefWidth="191.0" text="Trade With Game" />
     <AnchorPane fx:id="otherBox" layoutX="1160.0" layoutY="262.0" minHeight="40.0" prefHeight="245.0" prefWidth="191.0" visible="false">
       <children>
         <Label fx:id="otherName" layoutX="76.0" layoutY="4.0" text="Name" />

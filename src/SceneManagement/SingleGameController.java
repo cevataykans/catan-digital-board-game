@@ -49,6 +49,7 @@ public class SingleGameController extends SceneController
     private StatusController statusController;
     private DevCardController devCardController;
     private SelectionController selectionController;
+    private HarborController harborController;
     private DiceController diceController;
 
     // Robber Related Properties
@@ -134,6 +135,7 @@ public class SingleGameController extends SceneController
         devCardController = new DevCardController(scene, this);
         selectionController = new SelectionController(scene, this);
         diceController = new DiceController(scene, this);
+        harborController = new HarborController( scene, this);
 
         // Adding listener to make the game board intractable.
         gameBox.setOnMouseClicked(mouseEvent -> {
@@ -254,7 +256,10 @@ public class SingleGameController extends SceneController
         buyDevelopmentCard = (Button) scene.lookup("#buyDevelopmentCard");
         buyDevelopmentCard.setOnMouseClicked(event ->
         {
-            cardManager.addDevelopmentCard();
+        	if ( flowManager.checkMust() == Response.MUST_FREE_TURN )
+        	{
+				cardManager.addDevelopmentCard();
+			}
         });
 
         // Getting the end turn button from the single-game fxml file and adding the end turn logic to its click listener.
@@ -665,8 +670,6 @@ public class SingleGameController extends SceneController
             SoundManager.getInstance().playEffect(SoundManager.Effect.END_TURN);
             infoController.setupOtherPlayers();
             infoController.setupCurrentPlayer();
-            //infoController.setupLargestArmy();
-            //infoController.setupLongestRoad();
             diceController.setupDiceRoll();
             Task<Void> sleeper2 = new Task<Void>() {
                 @Override

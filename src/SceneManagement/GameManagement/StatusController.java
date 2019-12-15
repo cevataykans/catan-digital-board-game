@@ -83,13 +83,13 @@ public class StatusController {
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resources for a city");
             }
-            else if ( resultCode == Response.EKSISEKIZ )
+            else if ( resultCode == Response.ERROR_NOT_ENOGUH_TRADING_MATERIAL)
             {
-                statusText.setText( "Other player does not have enough resources");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resource amount!");
             }
-            else if ( resultCode == Response.EKSIDOKUZ)
+            else if ( resultCode == Response.ERROR_PLAYER_REFUSED_TRADE)
             {
-                statusText.setText( "-");
+                statusText.setText( flowManager.getCurrentPlayer().getName() + "'s offer is declined!");
             }
             else if ( resultCode == Response.MUST_ROAD_BUILD )
             {
