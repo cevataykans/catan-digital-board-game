@@ -52,7 +52,7 @@ public class TitleManager {
                 System.out.println( longestRoadPlayer.getName() + " has title: " + player.hasLongestRoad );
 
             }
-            game.setLongestRoadPlayer( longestRoadPlayer);
+            game.setLongestRoadPlayer( player);
             player.setLongestRoadTitle( true);
 
             System.out.println( "New Longest Road Player name is: " + player.getName() );
