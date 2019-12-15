@@ -3,6 +3,7 @@ package SceneManagement.GameManagement;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
+import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeInLeft;
@@ -13,7 +14,7 @@ import javafx.scene.control.Label;
 
 public class MultiStatusController {
     // Properties
-    SingleGameController controller;
+    MultiGameController controller;
     Scene scene;
     Label statusText;
 
@@ -21,7 +22,7 @@ public class MultiStatusController {
     public MultiStatusController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (SingleGameController) controller;
+        this.controller = (MultiGameController) controller;
         initialize();
     }
 

@@ -50,8 +50,8 @@ public class MultiGameController extends SceneController {
     private boolean highlightOn = false;
 
     // Sub Controllers
-    private PlayerInfoController infoController;
-    private StatusController statusController;
+    private MultiPlayerInfoController infoController;
+    private MultiStatusController statusController;
     private MultiDevCardController devCardController;
     private MultiSelectionController selectionController;
     private MultiDiceController diceController;
@@ -178,8 +178,8 @@ public class MultiGameController extends SceneController {
         setupRobber(); // Robber is configured here
 
         // Initializing all the sub controllers that will handle the game's other logic.
-        infoController = new PlayerInfoController(scene, this);
-        statusController = new StatusController(scene, this);
+        infoController = new MultiPlayerInfoController(scene, this);
+        statusController = new MultiStatusController(scene, this);
         devCardController = new MultiDevCardController(scene, this);
         selectionController = new MultiSelectionController(scene, this);
         diceController = new MultiDiceController(scene, this);
@@ -1006,15 +1006,11 @@ public class MultiGameController extends SceneController {
         }
     }
 
-    public Player getLocalPlayer(){
-        return this.localPlayer;
-    }
-
-    public PlayerInfoController getInfoController() {
+    public MultiPlayerInfoController getInfoController() {
         return infoController;
     }
 
-    public StatusController getStatusController() {
+    public MultiStatusController getStatusController() {
         return statusController;
     }
 

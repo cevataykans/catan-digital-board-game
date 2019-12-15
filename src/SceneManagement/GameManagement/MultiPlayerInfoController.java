@@ -4,6 +4,7 @@ import External.FillProgressIndicator;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.TitleManager;
+import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.*;
@@ -25,7 +26,7 @@ import java.util.ArrayList;
 public class MultiPlayerInfoController {
 
     // Properties
-    private SingleGameController controller;
+    private MultiGameController controller;
     private Scene scene;
 
     private ArrayList<FillProgressIndicator> otherPlayers;
@@ -51,7 +52,7 @@ public class MultiPlayerInfoController {
     public MultiPlayerInfoController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = (SingleGameController) controller;
+        this.controller = (MultiGameController) controller;
         initialize();
     }
 

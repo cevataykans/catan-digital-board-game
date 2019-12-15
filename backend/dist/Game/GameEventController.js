@@ -129,13 +129,8 @@ class GameEventController {
             client.emit("no-game-error", { "message": "You are not in a game" });
             return;
         }
-        // There is game
-        const newData = {
-            "firstDice": data.firstDice,
-            "secondDice": data.secondDice
-        };
         otherPlayers.forEach((item) => {
-            socket.to(item).emit("roll-dice-response", newData);
+            socket.to(item).emit("roll-dice-response", data);
         });
     }
     buildSettlement(socket, client, data) {
@@ -282,13 +277,8 @@ class GameEventController {
             client.emit("no-game-error", { "message": "You are not in a game" });
             return;
         }
-        // There is game
-        const newData = {
-            "userId": data.userId,
-            "message": data.message
-        };
         otherPlayers.forEach((item) => {
-            socket.to(item).emit("send-message-response", newData);
+            socket.to(item).emit("send-message-response", data);
         });
     }
 }

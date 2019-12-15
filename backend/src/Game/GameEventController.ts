@@ -150,13 +150,9 @@ export class GameEventController{
             client.emit("no-game-error", {"message": "You are not in a game"});
             return;
         }
-        // There is game
-        const newData = {
-            "firstDice": data.firstDice,
-            "secondDice": data.secondDice
-        };
+        
         otherPlayers.forEach((item) => {
-            socket.to(item).emit("roll-dice-response", newData);
+            socket.to(item).emit("roll-dice-response", data);
         });
         
     }

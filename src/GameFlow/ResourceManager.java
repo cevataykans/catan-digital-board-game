@@ -141,10 +141,12 @@ public class ResourceManager
 				if ( resources[ discardIndex] > 0)
 				{
 					player.discardMaterial( discardIndex, 1);
+					discardedIndexes.add(discardIndex);
 					discardCount--;
 				}
 			}
 		}
+		System.out.println("SENDER discarded from " + player.getName() + ": " + discardedIndexes);
 		return discardedIndexes; // will be implemented
 	}
 
@@ -166,6 +168,7 @@ public class ResourceManager
 					JSONArray indexes = discarded.getJSONArray(i);
 					for(int j = 0 ; j < indexes.length() ; j++){
 						int discardIndex = indexes.getInt(j);
+						System.out.println("RECEIVER discarded from " + players.get(i).getName() + ", index " + discardIndex);
 						players.get(i).discardMaterial( discardIndex, 1);
 					}
 				}
