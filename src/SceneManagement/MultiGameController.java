@@ -25,6 +25,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -336,13 +337,16 @@ public class MultiGameController extends SceneController {
                 }
             }
         });
-
-        // Avoid throwing IllegalStateException by running from a non-JavaFX thread.
-        Platform.runLater(
-                () -> {
-                    stage.setScene(scene);
-                }
-        );
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                stage.setScene(scene);
+                stage.setFullScreen(true);
+                stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+                stage.setMaximized(true);
+                stage.setResizable(false);
+            }
+        });
     }
 
     /**

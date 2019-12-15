@@ -1,3 +1,9 @@
+#background {
+    -fx-background-image: url("/images/game_background.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover, auto;
+}
+
 .label {
     -fx-font-family: MinionPro-Bold;
 }
@@ -49,8 +55,8 @@
 }
 
 .chatBox {
-    -fx-background-color: transparent;
-    -fx-border-color: black;
+    -fx-background-color: #faffc5;
+    -fx-border-color: #d3ff9b;
     -fx-border-width: 4px;
     -fx-border-radius: 10px;
 }

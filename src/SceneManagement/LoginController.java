@@ -112,9 +112,7 @@ public class LoginController extends SceneController {
             }
         });
 
-
         stage.setScene(scene);
+        stage.setFullScreen(true);
     }
-
-    //public void checkLoginAttempt()
 }

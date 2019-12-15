@@ -18,7 +18,7 @@ public class MatchmakingController extends SceneController{
     public MatchmakingController(Stage stage) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Matchmaking.fxml"));
-        scene = new Scene(root, Color.BLACK);
+        scene = stage.getScene();
         initialize(stage);
     }
 
@@ -44,7 +44,5 @@ public class MatchmakingController extends SceneController{
                 e.printStackTrace();
             }
         });
-
-        stage.setScene(scene);
     }
 }

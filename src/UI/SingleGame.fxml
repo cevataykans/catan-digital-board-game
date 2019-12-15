@@ -11,7 +11,7 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1536.0" visible="true" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <ImageView fx:id="background" fitHeight="892.774972456681" fitWidth="1598.9998779296875" layoutX="-2.0" layoutY="0.0" opacity="0.75" pickOnBounds="true" preserveRatio="true">
+    <ImageView fx:id="background" fitHeight="883.0" fitWidth="1581.4924566494517" layoutX="0.0" layoutY="0.0" opacity="0.75" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="@../images/game_background.jpg" />
       </image>

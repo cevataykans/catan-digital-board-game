@@ -36,7 +36,7 @@ public class PlayerSelectionController extends SceneController{
     public PlayerSelectionController(Stage stage) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/PlayerSelection.fxml"));
-        scene = new Scene(root, Color.BLACK);
+        scene = stage.getScene();
         initialize(stage);
     }
 
@@ -134,7 +134,5 @@ public class PlayerSelectionController extends SceneController{
             });
             animation2.play();
         });
-
-        stage.setScene(scene);
     }
 }

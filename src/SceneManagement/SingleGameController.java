@@ -66,7 +66,7 @@ public class SingleGameController extends SceneController
     public SingleGameController(Stage stage, ArrayList<Player> players) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/SingleGame.fxml"));
-        scene = new Scene(root, Color.BLACK);
+        scene = stage.getScene();
         this.players = players;
         initialize(stage);
     }
@@ -280,8 +280,6 @@ public class SingleGameController extends SceneController
                 case H: robber.setImage( new Image("/images/hakan.jpeg", 45, 70, false, false) );
             }
         });
-
-        stage.setScene(scene);
     }
 
     /**

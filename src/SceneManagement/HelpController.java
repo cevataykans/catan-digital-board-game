@@ -28,7 +28,7 @@ public class HelpController extends SceneController{
     public HelpController(Stage stage) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Help.fxml"));
-        scene = new Scene(root, Color.BLACK);
+        scene = stage.getScene();
         initialize(stage);
     }
 
@@ -91,8 +91,5 @@ public class HelpController extends SceneController{
             });
             animation2.play();
         });
-
-        // Set the help scene as game's scene.
-        stage.setScene(scene);
     }
 }

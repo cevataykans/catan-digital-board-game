@@ -116,9 +116,9 @@ public class SoundManager {
             double soundLevel = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(soundLevel >= 0.1){
+                if(soundLevel >= 0.5){
                     timer.stop();
-                    mp.setVolume(0.1);
+                    mp.setVolume(0.5);
                 }
                 else{
                     mp.setVolume(soundLevel);

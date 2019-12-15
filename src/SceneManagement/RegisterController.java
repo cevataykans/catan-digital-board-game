@@ -30,7 +30,7 @@ public class RegisterController extends SceneController{
     public RegisterController(Stage stage) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Register.fxml"));
-        scene = new Scene(root, Color.BLACK);
+        scene = stage.getScene();
         initialize(stage);
     }
 
@@ -115,6 +115,5 @@ public class RegisterController extends SceneController{
                 notMatchAnim.play();
             }
         });
-        stage.setScene(scene);
     }
 }

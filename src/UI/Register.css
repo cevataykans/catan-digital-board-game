@@ -1,0 +1,5 @@
+.anchor {
+    -fx-background-image: url("/images/game_background.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover, auto;
+}
