@@ -383,7 +383,7 @@ public class GameBoard {
                 int roadX = x + possibleNeighbors[i][0] / 2;
                 int roadY = y + possibleNeighbors[i][1] / 2;
                 StructureTile road = (StructureTile) board[roadY][roadX];
-                if(!road.getAvailability() && road.getOwner() == player && markedRoads[roadY][roadX] == 0){
+                if(road.getAvailability() && road.getOwner() == player && markedRoads[roadY][roadX] == 0){
                     neighbor = true;
                     if(!targetStructure.getAvailability() || targetStructure.getOwner() == player){
                         markedRoads[roadY][roadX] = 1;
