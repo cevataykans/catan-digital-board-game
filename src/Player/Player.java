@@ -63,7 +63,7 @@ public class Player
 	{
 		this.name = name;
 		this.color = color;
-		this.totResources = 10; // pre construct for initial resources, not final!
+		this.totResources = 12; // pre construct for initial resources, not final!
 		this.cards = new ArrayList<>();
 		this.structures = new ArrayList<>();
 		this.ports = new ArrayList<>();

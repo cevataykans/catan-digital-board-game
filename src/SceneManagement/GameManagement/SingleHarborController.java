@@ -25,7 +25,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class HarborController
+public class SingleHarborController
 {
 	// Game Properties
 	private Button tradeGameButton;
@@ -51,7 +51,7 @@ public class HarborController
 	private ChoiceBox toTake;
 
 	// Constructor
-	public HarborController( Scene scene, SingleGameController controller)
+	public SingleHarborController( Scene scene, SingleGameController controller)
 	{
 		this.gameScene = scene;
 		this.parentController = controller;

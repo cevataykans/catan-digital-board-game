@@ -50,4 +50,23 @@ Open edit configuration of GameApplication.
 At VM options, add javafx.media to the end of the line.
 Click OK. It is done!
 
+How to install Socket-IO:
+
+1. Go to https://jar-download.com/artifacts/io.socket/socket.io-client/1.0.0/source-code
+
+2. Download socket-io (1.0.0)
+
+3. In the zip files you just downloaded, there are 5 jar files, put them in a folder and put the folder 
+in a place of your choice (make note of path)
+
+4. In Intellij, go to File > Project Structure
+
+5. Go to libraries
+
+6. Click the plus sign, select java and select all 5 jar files you downloaded.
+
+7. Click ok and add the jar files to the modules.
+
+8. Click apply and ok.
+
 AFTER YOU HAVE DONE BOTH, YOU CAN RUN THE MAIN UI CLASSES OF THE PROJECT!

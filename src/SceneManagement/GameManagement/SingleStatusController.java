@@ -13,14 +13,14 @@ import GameFlow.*;
  * @version 29.11.2019
  */
 
-public class StatusController {
+public class SingleStatusController {
     // Properties
     SingleGameController controller;
     Scene scene;
     Label statusText;
 
     // Constructor
-    public StatusController(Scene scene, SingleGameController controller)
+    public SingleStatusController(Scene scene, SingleGameController controller)
     {
         this.scene = scene;
         this.controller = controller;

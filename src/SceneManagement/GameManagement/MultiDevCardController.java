@@ -1,7 +1,9 @@
 package SceneManagement.GameManagement;
 
+import DevelopmentCards.Card;
 import GameFlow.FlowManager;
-import GameFlow.Game;
+import SceneManagement.MultiGameController;
+import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
@@ -13,19 +15,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
-import DevelopmentCards.*;
 
-/**
- * This controller manages all the development card logic. It has association with the Single-GameFlow.Game controller.
- * @author Talha Şen
- * @version 29.11.2019
- */
-
-public class DevCardController {
+public class MultiDevCardController {
     // Properties
-    private SingleGameController controller;
+    private MultiGameController controller;
     private Scene scene;
     private ImageView devCardsHover;
     private Rectangle cardPlayableArea;
@@ -38,10 +34,10 @@ public class DevCardController {
     private double cardBoxShownLocation;
 
     // Constructor
-    public DevCardController(Scene scene, SingleGameController controller)
+    public MultiDevCardController(Scene scene, SceneController controller)
     {
         this.scene = scene;
-        this.controller = controller;
+        this.controller = (MultiGameController) controller;
         initialize();
     }
 
@@ -159,7 +155,7 @@ public class DevCardController {
 
         devCardsHover.setOnMouseEntered(event ->
         {
-            // If current player hovers of the "Development DevelopmentCards.Card" part of the box in UI, show the card container to user.
+            // If current player hovers of the "Development Card" part of the box in UI, show the card container to user.
             if ( cardBox.getTranslateY() == cardBoxHideLocation) {
                 TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
                 TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);
