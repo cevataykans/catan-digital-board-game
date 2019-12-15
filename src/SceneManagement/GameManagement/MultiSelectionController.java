@@ -8,6 +8,7 @@ import Player.Player;
 import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
+import ServerCommunication.ServerHandler;
 import animatefx.animation.FadeInLeft;
 import animatefx.animation.FadeOutRight;
 import javafx.scene.Scene;
@@ -56,6 +57,8 @@ public class MultiSelectionController {
         Game game = Game.getInstance();
         FlowManager flowManager = new FlowManager();
 
+        Player selectedPlayer = null;
+
         // Clear old players contained in the selection container.
         selectionBox.getChildren().clear();
 
@@ -81,6 +84,7 @@ public class MultiSelectionController {
                 }
                 // Call stealing function with the selected player.
                 stealResourceFromPlayer( playersToSelect.get( finalI) );
+
                 // Refresh current player information (stolen resource is added).
                 controller.getInfoController().setupCurrentPlayer();
             });
@@ -100,16 +104,20 @@ public class MultiSelectionController {
      * This function steals one resource from the given player.
      * @param stealingFrom is the unfortunate player who will get one of his/her resources stolen.
      */
-    private void stealResourceFromPlayer( Player stealingFrom)
+    public void stealResourceFromPlayer( Player stealingFrom)
     {
         FlowManager flowManager = new FlowManager();
 
         // Steal one of the player's resources and add it to the current player.
-        new ResourceManager().stealResourceFromPlayer( flowManager.getCurrentPlayer(), stealingFrom );
+        int index = new ResourceManager().stealResourceFromPlayer( flowManager.getCurrentPlayer(), stealingFrom );
 
-        // Play an out animation for the selection screen after user selects a player.
-        new FadeOutRight( selectionBox).play();
-        selectionBox.setVisible(false);
+        if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER){
+            // Play an out animation for the selection screen after user selects a player.
+            new FadeOutRight( selectionBox).play();
+            selectionBox.setVisible(false);
+
+            ServerHandler.getInstance().selectPlayer(stealingFrom, index);
+        }
         // Refresh current player's information.
         controller.getInfoController().setupCurrentPlayer();
     }

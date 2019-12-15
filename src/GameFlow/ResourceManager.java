@@ -56,8 +56,9 @@ public class ResourceManager
 	 * A function to enable players steal a random material from other players when the robber is changed.
 	 * @param other other player whose resource is being stolen by this player
 	 */
-	public void stealResourceFromPlayer( Player current, Player other )
+	public int stealResourceFromPlayer( Player current, Player other )
 	{
+		int index = -1;
 		// Get player resources
 		int[] otherPlResources = other.getResources();
 
@@ -75,11 +76,12 @@ public class ResourceManager
 					// Adjust total resources
 					current.collectMaterial( randomStealIndex, 1);
 					other.discardMaterial( randomStealIndex, 1);
-
+					index = randomStealIndex;
 					leftToSteal = 0;
 				}
 			}
 		}
+		return index;
 	}
 
 	/**

@@ -156,8 +156,15 @@ public class ServerHandler {
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
-                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
+                try{
+                    double mouseX = obj.getDouble("mouseX");
+                    double mouseY = obj.getDouble("mouseY");
+                    controller.changeRobber(mouseX, mouseY);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
             }
         });
         this.socket.on("roll-dice-response", new Emitter.Listener() {
@@ -195,8 +202,13 @@ public class ServerHandler {
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
-                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
+                try{
+                    String playerName = obj.getString("player");
+                    controller.selectPlayer(playerName);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
             }
         });
         this.socket.on("select-resource-response", new Emitter.Listener() {
@@ -299,11 +311,11 @@ public class ServerHandler {
         socket.emit("build-city", data);
     }
 
-    public void setupRobber(int x, int y){
-        String[] names = {"x", "y"};
-        Integer[] keys = new Integer[2];
-        keys[0] = x;
-        keys[1] = y;
+    public void setupRobber(double mouseX, double mouseY){
+        String[] names = {"mouseX", "mouseY"};
+        Object[] keys = new Object[2];
+        keys[0] = mouseX;
+        keys[1] = mouseY;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("setup-robber", data);
     }
@@ -339,10 +351,11 @@ public class ServerHandler {
         socket.emit("roll-dice", data);
     }
 
-    public void selectPlayer(Player player){
-        String[] names = {"player"};
-        Player[] keys = new Player[1];
-        keys[0] = player;
+    public void selectPlayer(Player player, int index){
+        String[] names = {"player", "index"};
+        Object[] keys = new Object[2];
+        keys[0] = player.getName();
+        keys[1] = index;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("select-player", data);
     }

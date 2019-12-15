@@ -184,7 +184,7 @@ class GameEventController {
         });
     }
     setupRobber(socket, client, data) {
-        const format = data != null && data.x != null && data.y != null; // validation check
+        const format = data != null && data.mouseX != null && data.mouseY != null; // validation check
         if (!format) { // Message received by the server is not well formed!!!
             client.emit("invalid-information-error", { "message": "Wrong format" });
             return;
@@ -196,12 +196,8 @@ class GameEventController {
             return;
         }
         // There is game
-        const newData = {
-            "x": data.x,
-            "y": data.y
-        };
         otherPlayers.forEach((item) => {
-            socket.to(item).emit("setup-robber-response", newData);
+            socket.to(item).emit("setup-robber-response", data);
         });
     }
     selectResource(socket, client, data) {
@@ -237,11 +233,8 @@ class GameEventController {
             return;
         }
         // There is game
-        const newData = {
-            "player": data.player
-        };
         otherPlayers.forEach((item) => {
-            socket.to(item).emit("select-player-response", newData);
+            socket.to(item).emit("select-player-response", data);
         });
     }
     endTurn(socket, client) {

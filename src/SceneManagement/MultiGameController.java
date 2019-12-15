@@ -436,22 +436,23 @@ public class MultiGameController extends SceneController {
         // User clicks to robber to move it
         robber.setOnMousePressed(e ->
         {
-            if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION )
-            {
-                // Save the initial value so that if dropped place is invalid, return to this position
-                initialRobX = robber.getX();
-                initialRobY = robber.getY();
+            if(localPlayer == flowManager.getCurrentPlayer()){
+                if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION )
+                {
+                    // Save the initial value so that if dropped place is invalid, return to this position
+                    initialRobX = robber.getX();
+                    initialRobY = robber.getY();
 
-                // Source: https://blogs.oracle.com/vaibhav/image-drag-with-mouse-in-javafx
-                xRob.set( e.getX());
-                yRob.set( e.getY());
-                distXRob = xRob.get() - robber.getX();
-                distYRob = yRob.get() - robber.getY();
-                SoundManager.getInstance().playEffect(SoundManager.Effect.ROBBER);
-            }
-            else
-            {
-                statusController.informStatus( flowManager.checkMust() );
+                    // Source: https://blogs.oracle.com/vaibhav/image-drag-with-mouse-in-javafx
+                    xRob.set( e.getX());
+                    yRob.set( e.getY());
+                    distXRob = xRob.get() - robber.getX();
+                    distYRob = yRob.get() - robber.getY();
+                }
+                else
+                {
+                    statusController.informStatus( flowManager.checkMust() );
+                }
             }
 
         });
@@ -459,31 +460,29 @@ public class MultiGameController extends SceneController {
         // User drags the robber to another hexagon of choice or simply can put it in the same place to continue blocking the users
         robber.setOnMouseDragged(e ->
         {
-            System.out.println( "Mouse Dragging, coordinateX: "+ PixelProcessor.processX( e.getX() ) + " y: "
-                    + PixelProcessor.processY( e.getY() ) );
-            if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION )
-            {
-                //robber.setTranslateX(robber.getTranslateX() + (e.getX() - xRob.get()));
-                //robber.setTranslateY(robber.getTranslateY() + (e.getY() - yRob.get()));
+            if(localPlayer == flowManager.getCurrentPlayer()){
+                System.out.println( "Mouse Dragging, coordinateX: "+ PixelProcessor.processX( e.getX() ) + " y: "
+                        + PixelProcessor.processY( e.getY() ) );
+                if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION )
+                {
+                    //robber.setTranslateX(robber.getTranslateX() + (e.getX() - xRob.get()));
+                    //robber.setTranslateY(robber.getTranslateY() + (e.getY() - yRob.get()));
 
-                // source : https://blogs.oracle.com/vaibhav/image-drag-with-mouse-in-javafx
-                robber.setX( e.getX() - distXRob );
-                robber.setY( e.getY() - distYRob );
-            }
-            else
-            {
-                statusController.informStatus( flowManager.checkMust() );
+                    // source : https://blogs.oracle.com/vaibhav/image-drag-with-mouse-in-javafx
+                    robber.setX( e.getX() - distXRob );
+                    robber.setY( e.getY() - distYRob );
+                }
+                else
+                {
+                    statusController.informStatus( flowManager.checkMust() );
+                }
             }
         });
 
         // Check if user has put the robber onto a valid position
         robber.setOnMouseReleased(e ->
         {
-            System.out.println( "Moude Released, coordinateX: "+ PixelProcessor.processX( e.getX() ) + " y: "
-                    + PixelProcessor.processY( e.getY() ) );
-            // When user releases the robber, if the robber should not play, this function must not work!
-            if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION)
-            {
+            if(localPlayer == flowManager.getCurrentPlayer()){
                 // Create a board manager
                 BoardManager boardManager = new BoardManager();
 
@@ -502,29 +501,54 @@ public class MultiGameController extends SceneController {
                     robber.setY( initialRobY );
                     statusController.informStatus( resultCode);
                 }
-                else
+                else // SUCCESSFUL
                 {
-                    // It is known that place is a inside tile, do must!
-                    flowManager.doneMust();
-                    robber.setX( PixelProcessor.getXToDisplay() );
-                    robber.setY( PixelProcessor.getYToDisplay( movedY) );
-                    boardManager.changeRobber( movedX, movedY);
-                    SoundManager.getInstance().playEffect(SoundManager.Effect.ROBBER);
-
-                    // Now get the neighbors of that hexagon and display player selection to do the must
-                    ArrayList<Player> neighbors = boardManager.getNeighborPlayers( movedX, movedY);
-                    if ( neighbors.size() != 0)
-                    {
-                        selectionController.showPlayerSelection(neighbors);
-                    }
-                    else
-                    {
-                        // As there is not other player, do the must
-                        flowManager.doneMust();
-                    }
+                    changeRobber(e.getX(), e.getY());
                 }
+
             }
         });
+    }
+
+    public void changeRobber(double mouseX, double mouseY){
+        FlowManager flowManager = new FlowManager();
+        BoardManager boardManager = new BoardManager();
+
+        int movedX = PixelProcessor.processX( mouseX );
+        int movedY = PixelProcessor.processY( mouseY );
+
+        System.out.println( "Moude Released, coordinateX: "+ PixelProcessor.processX( mouseX ) + " y: "
+                + PixelProcessor.processY( mouseY ) );
+
+        robber.setX( PixelProcessor.getXToDisplay() );
+        robber.setY( PixelProcessor.getYToDisplay( movedY) );
+        boardManager.changeRobber( movedX, movedY);
+        SoundManager.getInstance().playEffect(SoundManager.Effect.ROBBER);
+
+        if(localPlayer == flowManager.getCurrentPlayer()){ // SENDER
+            ServerHandler.getInstance().setupRobber(mouseX, mouseY); // Send signal to the Server
+            flowManager.doneMust();
+            // Now get the neighbors of that hexagon and display player selection to do the must
+
+            ArrayList<Player> neighbors = boardManager.getNeighborPlayers( movedX, movedY);
+            if ( neighbors.size() != 0)
+            {
+                selectionController.showPlayerSelection(neighbors);
+            }
+            else
+            {
+                // As there is not other player, do the must
+                flowManager.doneMust();
+            }
+
+        }
+    }
+
+    public void selectPlayer(String name){
+        for(Player p: players){
+            if(p.getName().equals(name))
+                selectionController.stealResourceFromPlayer(p);
+        }
     }
 
     /**
