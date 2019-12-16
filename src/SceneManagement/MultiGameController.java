@@ -1,5 +1,6 @@
 package SceneManagement;
 
+import DevelopmentCards.Card;
 import GameBoard.RoadTile;
 import GameBoard.StartTile;
 import GameBoard.Tile;
@@ -172,6 +173,7 @@ public class MultiGameController extends SceneController {
         BoardManager boardManager = new BoardManager();
         CardManager cardManager = new CardManager();
         FlowManager flowManager = new FlowManager();
+        ResourceManager resourceManager = new ResourceManager();
 
         gameBox = (AnchorPane) scene.lookup("#gameBox");
         robber = new ImageView("/images/robber.png");
@@ -306,8 +308,17 @@ public class MultiGameController extends SceneController {
         buyDevelopmentCard = (Button) scene.lookup("#buyDevelopmentCard");
         buyDevelopmentCard.setOnMouseClicked(event ->
         {
-            if (localPlayer == flowManager.getCurrentPlayer()) {
-                cardManager.addDevelopmentCard();
+            if ( localPlayer == flowManager.getCurrentPlayer() && flowManager.checkMust() == Response.MUST_FREE_TURN )
+            {
+                if( resourceManager.hasEnoughResources(flowManager.getCurrentPlayer(), Card.REQUIREMENTS_FOR_CARD) ) {
+                    System.out.println("hello");
+                    cardManager.addDevelopmentCard();
+                }
+                else
+                    statusController.informStatus( Response.ERROR_NO_RESOURCE_FOR_CARD);
+            }
+            else{
+                statusController.informStatus(flowManager.checkMust());
             }
         });
 
@@ -956,21 +967,18 @@ public class MultiGameController extends SceneController {
      */
     private void createDialog(  Response resultCode, int x, int y )
     {
-
-        // If the controller returns minus integer, there is an error!
-        if ( resultCode == Response.ERROR_NO_CONNECTION_FOR_ROAD ||
-                resultCode == Response.ERROR_NO_CONNECTION_FOR_SETTLEMENT ||
-                resultCode == Response.ERROR_THERE_IS_NEAR_BUILDING_FOR_SETTLEMENT ||
-                resultCode == Response.ERROR_OCCUPIED_BY ||
-                resultCode == Response.ERROR_NO_RESOURCE_FOR_ROAD ||
-                resultCode == Response.ERROR_NO_RESOURCE_FOR_SETTLEMENT ||
-                resultCode == Response.ERROR_NO_RESOURCE_FOR_CITY)
-        {
-            System.out.println( " error is ** " + resultCode + "   "); /***********************************************/
-            // handle error
-            statusController.informStatus( resultCode);
-        }
-        else
+        if(resultCode == Response.INFORM_SETTLEMENT_CAN_BE_BUILT ||
+                resultCode == Response.INFORM_ROAD_CAN_BE_BUILT ||
+                resultCode == Response.INFORM_CITY_CAN_BE_BUILT ||
+                resultCode == Response.INFORM_INSIDE_TILE ||
+                resultCode == Response.INFORM_SEA_TILE ||
+                ( new FlowManager().checkMust() == Response.MUST_ROAD_BUILD &&
+                        resultCode != Response.ERROR_NO_CONNECTION_FOR_ROAD &&
+                        resultCode != Response.ERROR_OCCUPIED_BY ) ||
+                ( new FlowManager().checkMust() == Response.MUST_SETTLEMENT_BUILD &&
+                        resultCode != Response.ERROR_NO_CONNECTION_FOR_SETTLEMENT &&
+                        resultCode != Response.ERROR_THERE_IS_NEAR_BUILDING_FOR_SETTLEMENT &&
+                        resultCode != Response.ERROR_OCCUPIED_BY ) )
         {
             // The clicked tile is game tile, inform the user about the event regarding the resultCode gotten from controller
             Alert alert = new Alert( Alert.AlertType.CONFIRMATION);
@@ -983,9 +991,14 @@ public class MultiGameController extends SceneController {
             icon.setFitWidth(48);
             alert.getDialogPane().setGraphic( icon);
 
-            System.out.println( "result is ** " + resultCode + "   ");  /***********************************************/
+            System.out.println( "result is ** " + resultCode + "   "); /***********************************************/
             // Handle the intended user action could have a dedicated function for it!
             informBoardSelection( alert, resultCode, x, y);
+        }
+        else{
+            System.out.println( " error is ** " + resultCode + "   "); /***********************************************/
+            // handle error
+            statusController.informStatus( resultCode);
         }
     }
 
@@ -1027,6 +1040,9 @@ public class MultiGameController extends SceneController {
             } else {
                 statusController.informStatus(mustCheckCode);
             }
+        }
+        else{
+            statusController.informStatus(mustCheckCode);
         }
     }
 
