@@ -51,7 +51,7 @@ public class BoardManager
 			return Response.ERROR_OUTSIDE_GAMEBOARD;
 		}
 
-// Error check for hover
+		// Error check for hover
 		if ( x >= board.WIDTH || y >= board.HEIGHT)
 		{
 			return Response.ERROR_OUTSIDE_GAMEBOARD;

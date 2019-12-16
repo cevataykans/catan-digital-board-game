@@ -52,7 +52,6 @@ public class SingleStatusController {
         animation.setSpeed(3);
         animation.setOnFinished(event ->
         {
-            Game game = Game.getInstance();
 
             // Check the status code given, change the status text corresponding to the code.
             if ( resultCode == Response.ERROR_NO_CONNECTION_FOR_ROAD )
@@ -126,6 +125,10 @@ public class SingleStatusController {
             else if ( resultCode == Response.MUST_GET_NEIGHBOR)
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", choose a neighbor player first to steal a resource!");
+            }
+            else if( resultCode == Response.ERROR_NO_RESOURCE_FOR_CARD )
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resource for a card!");
             }
             else
             {

@@ -45,6 +45,7 @@ public enum Response {
     ERROR_OUTSIDE_GAMEBOARD,                        // -100
     ERROR_NOT_ENOGUH_TRADING_MATERIAL,
     ERROR_PLAYER_REFUSED_TRADE,
+    ERROR_NO_RESOURCE_FOR_CARD,
     EKSIDOKUZ, // VAT DA FAK is DIS, displays only "-"?
     MUST_FREE_TURN,                                     // -1
     MUST_ROAD_BUILD,                                // 0

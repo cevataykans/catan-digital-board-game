@@ -196,7 +196,7 @@ public class Player
 	/**
 	 * Increments the player's largest army count by 1 when player plays the "DevelopmentCards.Knight" special card.
 	 */
-	public void incrementLargestArmy() { armyCount++; }
+	public void incrementLargestArmy() { this.armyCount++; }
 
 	/**
 	 * Sets the longest road title of the player.
