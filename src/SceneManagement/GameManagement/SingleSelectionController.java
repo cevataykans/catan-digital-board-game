@@ -147,6 +147,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     lumber.setX(25);
                     lumber.setY(100);
@@ -162,6 +163,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     wool.setX(275);
                     wool.setY(100);
@@ -177,6 +179,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     grain.setX(525);
                     grain.setY(100);
@@ -192,6 +195,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     brick.setX(775);
                     brick.setY(100);
@@ -207,6 +211,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     ore.setX(1025);
                     ore.setY(100);
@@ -247,6 +252,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     lumber.setX(25);
                     lumber.setY(100);
@@ -262,6 +268,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     wool.setX(275);
                     wool.setY(100);
@@ -277,6 +284,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     grain.setX(525);
                     grain.setY(100);
@@ -292,6 +300,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     brick.setX(775);
                     brick.setY(100);
@@ -307,6 +316,7 @@ public class SingleSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     ore.setX(1025);
                     ore.setY(100);

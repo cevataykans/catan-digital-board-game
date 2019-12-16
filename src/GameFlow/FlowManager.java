@@ -201,7 +201,6 @@ public class FlowManager {
      * @param response must type
      */
     public void addMust( Response response){
-        System.out.println(response.toString() + " " + ServerHandler.getInstance().getStatus().toString());
         // Get the related data
         Queue<Response> must = Game.getInstance().getMust();
 

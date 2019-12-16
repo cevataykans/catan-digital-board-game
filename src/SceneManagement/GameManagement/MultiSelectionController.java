@@ -153,6 +153,7 @@ public class MultiSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     lumber.setX(25);
                     lumber.setY(100);
@@ -168,6 +169,7 @@ public class MultiSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     wool.setX(275);
                     wool.setY(100);
@@ -183,6 +185,7 @@ public class MultiSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     grain.setX(525);
                     grain.setY(100);
@@ -198,6 +201,7 @@ public class MultiSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     brick.setX(775);
                     brick.setY(100);
@@ -213,6 +217,7 @@ public class MultiSelectionController {
                         {
                             flowManager.doneMust();
                         }
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     ore.setX(1025);
                     ore.setY(100);
@@ -254,6 +259,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.LUMBER);
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     lumber.setX(25);
                     lumber.setY(100);
@@ -270,6 +276,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.WOOL);
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     wool.setX(275);
                     wool.setY(100);
@@ -286,6 +293,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.GRAIN);
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     grain.setX(525);
                     grain.setY(100);
@@ -302,6 +310,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.BRICK);
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     brick.setX(775);
                     brick.setY(100);
@@ -318,6 +327,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.ORE);
+                        controller.getInfoController().setupCurrentPlayer();
                     });
                     ore.setX(1025);
                     ore.setY(100);
