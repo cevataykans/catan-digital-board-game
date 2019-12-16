@@ -386,7 +386,6 @@ public class ServerHandler {
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
-                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
                 controller.getInfoController().setupCurrentPlayer();
                 controller.getInfoController().setupOtherPlayers();
