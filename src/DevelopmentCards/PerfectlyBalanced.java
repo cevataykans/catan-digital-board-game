@@ -1,6 +1,12 @@
 package DevelopmentCards;
 
+import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.ResourceManager;
+import Player.Player;
+
+import java.util.ArrayList;
+import java.util.concurrent.Flow;
 
 public class PerfectlyBalanced extends Card {
     // Properties
@@ -18,7 +24,8 @@ public class PerfectlyBalanced extends Card {
      */
     @Override
     public void play() {
+        ResourceManager resourceManager = new ResourceManager();
 
-
+        resourceManager.discardHalfOfResourcesWithoutCondition();
     }
 }

@@ -1,6 +1,7 @@
 package GameFlow;
 
 import DevelopmentCards.Card;
+import DevelopmentCards.Knight;
 import Player.Player;
 
 import java.util.ArrayList;
@@ -24,10 +25,16 @@ public class CardManager
 		FlowManager flowManager = new FlowManager();
 		Player current = flowManager.getCurrentPlayer();
 		Stack<Card> devCards = game.getCardStack();
+		TitleManager titleManager = new TitleManager();
 
 		// Get the top of the card
 		Card top = devCards.peek();
 		devCards.pop();
+
+		if( top instanceof Knight ){
+			flowManager.getCurrentPlayer().incrementLargestArmy();
+			titleManager.updateLargestArmy();
+		}
 
 		current.buyDevelopmentCard( Card.REQUIREMENTS_FOR_CARD , top);
 	}

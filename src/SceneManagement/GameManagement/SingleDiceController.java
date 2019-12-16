@@ -76,7 +76,6 @@ public class SingleDiceController {
         die2Out.play();
         diceAvailable.setOnMouseClicked(event ->
         {
-            Game game = Game.getInstance();
 
             // Dice could only be rolled at the beginning of a turn
             if ( flowManager.checkMust() == Response.MUST_ROLL_DICE)

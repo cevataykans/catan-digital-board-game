@@ -152,6 +152,27 @@ public class ResourceManager
 		return discardedIndexes; // will be implemented
 	}
 
+	public void discardHalfOfResourcesWithoutCondition()
+	{
+		Game game = Game.getInstance();
+		ArrayList<Player> players = game.getPlayers();
+
+		for ( Player player : players ) {
+			int totResources = player.getTotalResCount();
+
+			int discardCount = totResources / 2; // take the floor to discard
+			int[] resources = player.getResources();
+			while (discardCount > 0) {
+				// Find a valid random index to discard resource
+				int discardIndex = (int) (Math.random() * 5);
+				if (resources[discardIndex] > 0) {
+					player.discardMaterial(discardIndex, 1);
+					discardCount--;
+				}
+			}
+		}
+	}
+
 	/**
 	 * Discards half of every players' resources
 	 */
@@ -193,7 +214,6 @@ public class ResourceManager
 	}
 
 	/**
-	 * todo
 	 * This method makes wanted trade by using port
 	 * @param portType is the type of port wanted to check
 	 * @param discardedMaterial is the material wanted to be given by the player

@@ -1,7 +1,6 @@
 package SceneManagement.GameManagement;
 
 import GameFlow.FlowManager;
-import GameFlow.Game;
 import GameFlow.ResourceManager;
 import GameFlow.Response;
 import Player.Player;
@@ -54,7 +53,6 @@ public class MultiSelectionController {
     public void showPlayerSelection(ArrayList<Player> playersToSelect) {
 
         // Get the game for must management
-        Game game = Game.getInstance();
         FlowManager flowManager = new FlowManager();
 
         Player selectedPlayer = null;
