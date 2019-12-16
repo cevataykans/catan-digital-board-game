@@ -33,6 +33,26 @@ export class GameEventListener{
             this.eventController.setupRobber(socket, client, data);
         });
 
+        client.on('send-card', data => {
+            this.eventController.sendCard(socket, client, data);
+        });
+
+        client.on('play-card', data => {
+            this.eventController.playCard(socket, client, data);
+        });
+
+        client.on('send-monopoly', data => {
+            this.eventController.sendMonopoly(socket, client, data);
+        });
+
+        client.on('send-plenty', data => {
+            this.eventController.sendYearOfPlenty(socket, client, data);
+        });
+
+        client.on('send-balanced', data => {
+            this.eventController.sendPerfectlyBalanced(socket, client, data);
+        });
+
         client.on('select-resource', data => {
             this.eventController.selectResource(socket, client, data);
         });
@@ -40,15 +60,23 @@ export class GameEventListener{
         client.on('select-player', data => {
             this.eventController.selectPlayer(socket, client, data);
         });
+
         client.on('send-trade', data => {
             this.eventController.sendTrade(socket, client, data);
         });
+
         client.on('confirm-trade', data => {
             this.eventController.confirmTrade(socket, client, data);
         });
+
         client.on('harbor-trade', data => {
             this.eventController.harborTrade(socket, client, data);
         });
+
+        client.on('refresh-infos', data => {
+            this.eventController.refreshInfos(socket, client);
+        });
+
         client.on('end-turn', data => {
             this.eventController.endTurn(socket, client);
         })

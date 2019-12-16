@@ -5,6 +5,7 @@ import Player.Player;
 import ServerCommunication.ServerHandler;
 import ServerCommunication.ServerInformation;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -152,8 +153,14 @@ public class ResourceManager
 		return discardedIndexes; // will be implemented
 	}
 
-	public void discardHalfOfResourcesWithoutCondition()
+	public ArrayList<Integer> discardHalfOfResourcesWithoutCondition()
 	{
+		JSONObject obj = null;
+		if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER) {
+			obj = ServerInformation.getInstance().getInformation();
+			ServerInformation.getInstance().deleteInformation();
+		}
+		ArrayList<Integer> indexes = new ArrayList<>();
 		Game game = Game.getInstance();
 		ArrayList<Player> players = game.getPlayers();
 
@@ -163,14 +170,23 @@ public class ResourceManager
 			int discardCount = totResources / 2; // take the floor to discard
 			int[] resources = player.getResources();
 			while (discardCount > 0) {
-				// Find a valid random index to discard resource
 				int discardIndex = (int) (Math.random() * 5);
+				// Find a valid random index to discard resource
+				if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER) {
+					try {
+						discardIndex = obj.getJSONArray("indexes").getInt(obj.getJSONArray("indexes").length() - discardCount);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
 				if (resources[discardIndex] > 0) {
+					indexes.add(discardIndex);
 					player.discardMaterial(discardIndex, 1);
 					discardCount--;
 				}
 			}
 		}
+		return indexes;
 	}
 
 	/**

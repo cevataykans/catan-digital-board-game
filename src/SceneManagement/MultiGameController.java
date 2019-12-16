@@ -311,8 +311,9 @@ public class MultiGameController extends SceneController {
             if ( localPlayer == flowManager.getCurrentPlayer() && flowManager.checkMust() == Response.MUST_FREE_TURN )
             {
                 if( resourceManager.hasEnoughResources(flowManager.getCurrentPlayer(), Card.REQUIREMENTS_FOR_CARD) ) {
-                    System.out.println("hello");
                     cardManager.addDevelopmentCard();
+                    devCardController.setupDevelopmentCards();
+                    infoController.setupCurrentPlayer();
                 }
                 else
                     statusController.informStatus( Response.ERROR_NO_RESOURCE_FOR_CARD);

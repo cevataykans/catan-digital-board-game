@@ -157,6 +157,101 @@ export class GameEventController{
         
     }
 
+    public sendCard(socket, client, data): void {
+        const result: boolean = data != null && data.cardName != null; // validation check
+        if(!result){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("send-card-response", data);
+        });
+        
+    }
+
+    public playCard(socket, client, data): void {
+        const result: boolean = data != null && data.cardName != null && data.cardIndex != null; // validation check
+        if(!result){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("play-card-response", data);
+        });
+        
+    }
+
+    public sendMonopoly(socket, client, data): void {
+        const result: boolean = data != null && data.material != null; // validation check
+        if(!result){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("send-monopoly-response", data);
+        });
+        
+    }
+
+    public sendYearOfPlenty(socket, client, data): void {
+        const result: boolean = data != null && data.material != null; // validation check
+        if(!result){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("send-plenty-response", data);
+        });
+        
+    }
+
+    public sendPerfectlyBalanced(socket, client, data): void {
+        const result: boolean = data != null && data.indexes != null; // validation check
+        if(!result){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("send-balanced-response", data);
+        });
+        
+    }
+
     public buildSettlement(socket, client, data): void {
         const format: boolean = data != null && data.x != null && data.y != null && data.hexIndex != null && data.tileIndex != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
@@ -321,6 +416,19 @@ export class GameEventController{
         // There is game
         otherPlayers.forEach((item) => {
             socket.to(item).emit("harbor-trade-response", data);
+        });
+    }
+
+    public refreshInfos(socket, client): void {
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        // There is game
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("refresh-infos-response");
         });
     }
     

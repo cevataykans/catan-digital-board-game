@@ -1,10 +1,11 @@
 package SceneManagement.GameManagement;
 
-import DevelopmentCards.Card;
 import GameFlow.FlowManager;
+import GameFlow.Game;
+import GameFlow.Response;
 import SceneManagement.MultiGameController;
-import SceneManagement.SceneController;
 import SceneManagement.SingleGameController;
+import ServerCommunication.ServerHandler;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
 import javafx.animation.TranslateTransition;
@@ -15,9 +16,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
+import DevelopmentCards.*;
+
+/**
+ * This controller manages all the development card logic. It has association with the Single-GameFlow.Game controller.
+ * @author Talha Şen
+ * @version 29.11.2019
+ */
 
 public class MultiDevCardController {
     // Properties
@@ -34,10 +41,10 @@ public class MultiDevCardController {
     private double cardBoxShownLocation;
 
     // Constructor
-    public MultiDevCardController(Scene scene, SceneController controller)
+    public MultiDevCardController(Scene scene, MultiGameController controller)
     {
         this.scene = scene;
-        this.controller = (MultiGameController) controller;
+        this.controller = controller;
         initialize();
     }
 
@@ -72,7 +79,7 @@ public class MultiDevCardController {
             // Clear all the previous UI (important distinction) development cards from the card container.
             cardBox.getChildren().clear();
             // Get the development cards (logical unit ones) from the current player.
-            ArrayList<Card> cards = flowManager.getCurrentPlayer().getCards();
+            ArrayList<Card> cards = controller.getLocalPlayer().getCards();
             // Initialize an ArrayList for the UI development cards.
             ArrayList<ImageView> cardsInUI = new ArrayList<>();
             for (int i = 0; i < cards.size(); i++) {
@@ -107,35 +114,58 @@ public class MultiDevCardController {
                 int finalI = i;
                 temp.setOnMouseReleased(e ->
                 {
-                    // When the card is dropped, initialize out animation for the "play the card here" area of the UI.
-                    FadeOut animation = new FadeOut(cardPlayableArea);
-                    FadeOut animation2 = new FadeOut(cardDragLabel);
-                    animation.setOnFinished(event1 ->
-                    {
-                        cardPlayableArea.setVisible(false);
-                    });
-                    animation2.setOnFinished(event1 ->
-                    {
-                        cardDragLabel.setVisible(false);
-                    });
-                    animation.play();
-                    animation2.play();
-                    // Get the dropped location of the card
-                    Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
-                    Bounds playAreaPosition = cardPlayableArea.localToScene(cardPlayableArea.getBoundsInLocal());
-                    // Check if the dropped location of the card is inside the playable area, if it is play the card.
-                    // If not, send the card to its original location.
-                    /*if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
-                            playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                        controller.getGame().playDevelopmentCard( cards.get(finalI) );
-                        controller.getInfoController().setupLargestArmy();
-                        cardBox.getChildren().remove(temp);
-                    } else {
+                    if ( controller.getLocalPlayer() == flowManager.getCurrentPlayer() ) {
+                        // When the card is dropped, initialize out animation for the "play the card here" area of the UI.
+                        FadeOut animation = new FadeOut(cardPlayableArea);
+                        FadeOut animation2 = new FadeOut(cardDragLabel);
+                        animation.setOnFinished(event1 ->
+                        {
+                            cardPlayableArea.setVisible(false);
+                        });
+                        animation2.setOnFinished(event1 ->
+                        {
+                            cardDragLabel.setVisible(false);
+                        });
+                        animation.play();
+                        animation2.play();
+                        // Get the dropped location of the card
+                        Bounds rectanglePosition = temp.localToScene(temp.getBoundsInLocal());
+                        Bounds playAreaPosition = cardPlayableArea.localToScene(cardPlayableArea.getBoundsInLocal());
+                        // Check if the dropped location of the card is inside the playable area, if it is play the card.
+                        // If not, send the card to its original location.
+                        if (playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY()) ||
+                                playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
+                                playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
+                                playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
+                            if (cards.get(finalI).isPlayable()) {
+                                System.out.println("Current card playable and played");
+                                cardBox.getChildren().remove(temp);
+                                cards.get(finalI).play();
+                                ServerHandler.getInstance().playCard(cards.get(finalI).getName(), finalI);
+                                if (cards.get(finalI) instanceof YearOfPlenty) {
+                                    controller.getSelectionController().showResourceSelectionForPlenty();
+                                } else if (cards.get(finalI) instanceof Monopoly) {
+                                    controller.getSelectionController().showResourceSelectionForMonopoly();
+                                }
+                                cards.remove(cards.get(finalI));
+                                controller.getInfoController().setupCurrentPlayer();
+                                ServerHandler.getInstance().refreshInfos();
+                            } else {
+                                temp.setTranslateX(0);
+                                temp.setTranslateY(0);
+                                controller.getStatusController().informStatus(Response.ERROR_CARD_NOT_PLAYABLE);
+                            }
+                        } else {
+                            temp.setTranslateX(0);
+                            temp.setTranslateY(0);
+                            controller.getStatusController().informStatus(Response.ERROR_CARD_DRAGGED_OUTSIDE);
+                        }
+                    }
+                    else {
                         temp.setTranslateX(0);
                         temp.setTranslateY(0);
-                    } */
+                        controller.getStatusController().informStatus(Response.ERROR_NOT_PLAYER_TURN_CARD);
+                    }
                 });
                 // Add the card image to the ArrayList.
                 cardsInUI.add(temp);
@@ -155,7 +185,7 @@ public class MultiDevCardController {
 
         devCardsHover.setOnMouseEntered(event ->
         {
-            // If current player hovers of the "Development Card" part of the box in UI, show the card container to user.
+            // If current player hovers of the "Development DevelopmentCards.Card" part of the box in UI, show the card container to user.
             if ( cardBox.getTranslateY() == cardBoxHideLocation) {
                 TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
                 TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);

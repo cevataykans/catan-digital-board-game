@@ -4,6 +4,7 @@ import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
 import SceneManagement.SoundManager;
+import ServerCommunication.ServerHandler;
 
 public class YearOfPlenty extends Card {
     // Properties
@@ -22,8 +23,9 @@ public class YearOfPlenty extends Card {
     @Override
     public void play() {
         FlowManager flowManager = new FlowManager();
-
-        flowManager.addMust(Response.MUST_RESOURCE_SELECTION_PLENTY);
+        if (ServerHandler.getInstance().getStatus() != ServerHandler.Status.RECEIVER) {
+            flowManager.addMust(Response.MUST_RESOURCE_SELECTION_PLENTY);
+        }
         SoundManager.getInstance().playEffect(SoundManager.Effect.YEAR_OF_PLENTY);
     }
 }
