@@ -156,6 +156,7 @@ public class Player
 		new ResourceManager().payForStructure( StructureTile.REQUIREMENTS_FOR_CITY);
 
 		// Increase the score of the player by 2 and increase the player's city count by 1.
+		this.score -= StructureTile.VICTORY_POINTS_FOR_SETTLEMENT;
 		this.score += StructureTile.VICTORY_POINTS_FOR_CITY;
 		this.cityCount += 1;
 	}

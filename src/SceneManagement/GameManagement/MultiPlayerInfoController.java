@@ -423,6 +423,12 @@ public class MultiPlayerInfoController {
         factory.setWrapAround( true);
         cOreSpin.setValueFactory( factory);
 
+        oLumberSpin.getValueFactory().setValue( 0);
+        oWoolSpin.getValueFactory().setValue( 0);
+        oGrainSpin.getValueFactory().setValue( 0);
+        oBrickSpin.getValueFactory().setValue( 0);
+        oOreSpin.getValueFactory().setValue( 0);
+
         // Create the pop up instance and trade operations
         curPlayerTrade.setText( curPlayer.getName() );
         otherPlayerTrade.setText( otherPlayer.getName() );
