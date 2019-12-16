@@ -188,7 +188,7 @@ public class Game
      * Returns the development card stack data for processing.
      * @return Stack<Card> - development cards
      */
-    Stack<Card> getCardStack()
+    public Stack<Card> getCardStack()
     {
         return devCards;
     }
@@ -197,7 +197,7 @@ public class Game
      * Returns the current turn number players are playing.
      * @return the turn number.
      */
-    int getTurn()
+    public int getTurn()
     {
         return turnNumber;
     }
@@ -206,7 +206,7 @@ public class Game
      * sets the turn number
      * @param turnNumber turn number
      */
-    void setTurnNumber(int turnNumber)
+    public void setTurnNumber(int turnNumber)
     {
         this.turnNumber = turnNumber;
     }
@@ -215,7 +215,7 @@ public class Game
      * Gets the current status of the game, 0 - Initial phase, 1 - Game phase
      * @return int - the current game status
      */
-    int getGameStatus()
+    public int getGameStatus()
     {
         return gameStatus;
     }
@@ -224,7 +224,7 @@ public class Game
      * sets gamestatus
      * @param gameStatus gamestatus
      */
-    void setGameStatus(int gameStatus)
+    public void setGameStatus(int gameStatus)
     {
         this.gameStatus = gameStatus;
     }
@@ -233,7 +233,7 @@ public class Game
      * returns must queue
      * @return must
      */
-    Queue<Response> getMust(){
+    public Queue<Response> getMust(){
         return this.must;
     }
 
@@ -241,7 +241,7 @@ public class Game
      * returns player count
      * @return player count
      */
-    int getPlayerCount(){
+    public int getPlayerCount(){
         return playerCount;
     }
 
@@ -249,7 +249,7 @@ public class Game
      * returns the longest road player
      * @return longest road player
      */
-    Player getLongestRoadPlayer() {
+    public Player getLongestRoadPlayer() {
         return longestRoadPlayer;
     }
 
@@ -257,7 +257,7 @@ public class Game
      * sets the longest road player
      * @param longestRoadPlayer longest road player
      */
-    void setLongestRoadPlayer(Player longestRoadPlayer){
+    public void setLongestRoadPlayer(Player longestRoadPlayer){
         this.longestRoadPlayer = longestRoadPlayer;
     }
 
@@ -265,7 +265,7 @@ public class Game
      * returns the larget army player
      * @return largest army player
      */
-    Player getLargestArmyPlayer() {
+    public Player getLargestArmyPlayer() {
         return largestArmyPlayer;
     }
 
@@ -273,7 +273,7 @@ public class Game
      * sets the largest army player
      * @param largestArmyPlayer largest army player
      */
-    void setLargestArmyPlayer(Player largestArmyPlayer){
+    public void setLargestArmyPlayer(Player largestArmyPlayer){
         this.largestArmyPlayer = largestArmyPlayer;
     }
 
@@ -281,7 +281,7 @@ public class Game
      * returns the longest road
      * @return longest road
      */
-    int getLongestRoad(){
+    public int getLongestRoad(){
         return longestRoad;
     }
 
@@ -289,7 +289,7 @@ public class Game
      * sets the longest road
      * @param longestRoad longest road
      */
-    void setLongestRoad(int longestRoad){
+    public void setLongestRoad(int longestRoad){
         this.longestRoad = longestRoad;
     }
 
@@ -297,7 +297,7 @@ public class Game
      * returns the largest army
      * @return largest army
      */
-    int getLargestArmy(){
+    public int getLargestArmy(){
         return largestArmy;
     }
 
@@ -305,7 +305,7 @@ public class Game
      * sets teh largest army
      * @param largestArmy largest army
      */
-    void setLargestArmy(int largestArmy){
+    public void setLargestArmy(int largestArmy){
         this.largestArmy = largestArmy;
     }
 
@@ -313,7 +313,7 @@ public class Game
      * Retuns GameBoard for board related data flow.
      * @return GameBoard board.
      */
-    GameBoard getGameBoard()
+    public GameBoard getGameBoard()
     {
         return board;
     }
@@ -322,7 +322,7 @@ public class Game
      * Return the player arraylist for manager to manipulate & use
      * @return the player array in the game.
      */
-    ArrayList<Player> getPlayers()
+    public ArrayList<Player> getPlayers()
     {
         return this.players;
     }

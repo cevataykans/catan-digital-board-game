@@ -5,6 +5,7 @@ import GameFlow.Game;
 import GameFlow.ResourceManager;
 import GameFlow.Response;
 import SceneManagement.SoundManager;
+import ServerCommunication.ServerHandler;
 
 public class RoadBuilding extends Card {
     // Properties
@@ -28,9 +29,11 @@ public class RoadBuilding extends Card {
         flowManager.getCurrentPlayer().collectMaterial(ResourceManager.LUMBER, 2);
         flowManager.getCurrentPlayer().collectMaterial(ResourceManager.BRICK, 2);
 
-        // Make the player build 2 roads, give musts.
-        flowManager.addMust(Response.MUST_ROAD_BUILD);
-        flowManager.addMust(Response.MUST_ROAD_BUILD);
+        if (ServerHandler.getInstance().getStatus() != ServerHandler.Status.RECEIVER) {
+            // Make the player build 2 roads, give musts.
+            flowManager.addMust(Response.MUST_ROAD_BUILD);
+            flowManager.addMust(Response.MUST_ROAD_BUILD);
+        }
 
         SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
     }

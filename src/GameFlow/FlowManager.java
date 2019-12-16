@@ -137,8 +137,10 @@ public class FlowManager {
             if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER)
                 ServerHandler.getInstance().rollDice(firstDice, secondDice, discarded);
 
-            addMust( Response.MUST_INSIDE_TILE_SELECTION); // inside tile
-            addMust( Response.MUST_GET_NEIGHBOR); // get neighbors
+            if ( ServerHandler.getInstance().getStatus() != ServerHandler.Status.RECEIVER) {
+                addMust(Response.MUST_INSIDE_TILE_SELECTION); // inside tile
+                addMust(Response.MUST_GET_NEIGHBOR); // get neighbors
+            }
         }
         else
         {
@@ -199,6 +201,7 @@ public class FlowManager {
      * @param response must type
      */
     public void addMust( Response response){
+        System.out.println(response.toString() + " " + ServerHandler.getInstance().getStatus().toString());
         // Get the related data
         Queue<Response> must = Game.getInstance().getMust();
 

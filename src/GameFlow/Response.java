@@ -48,6 +48,7 @@ public enum Response {
     ERROR_NO_RESOURCE_FOR_CARD,
     ERROR_CARD_NOT_PLAYABLE,
     ERROR_CARD_DRAGGED_OUTSIDE,
+    ERROR_NOT_PLAYER_TURN_CARD,
     EKSIDOKUZ, // VAT DA FAK is DIS, displays only "-"?
     MUST_FREE_TURN,                                     // -1
     MUST_ROAD_BUILD,                                // 0

@@ -5,6 +5,7 @@ import GameFlow.Game;
 import GameFlow.ResourceManager;
 import Player.Player;
 import SceneManagement.SoundManager;
+import ServerCommunication.ServerHandler;
 
 import java.util.ArrayList;
 import java.util.concurrent.Flow;
@@ -27,7 +28,10 @@ public class PerfectlyBalanced extends Card {
     public void play() {
         ResourceManager resourceManager = new ResourceManager();
 
-        resourceManager.discardHalfOfResourcesWithoutCondition();
+        ArrayList<Integer> indexes = resourceManager.discardHalfOfResourcesWithoutCondition();
+        if (ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+            ServerHandler.getInstance().sendPerfectlyBalanced(indexes);
+        }
         SoundManager.getInstance().playEffect(SoundManager.Effect.PERFECTLY_BALANCED);
     }
 }

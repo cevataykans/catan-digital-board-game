@@ -18,6 +18,11 @@ export class UserRoutes{
             .post((req: Request, res: Response) => {
                 this.userController.login(req, res)
             });
+        app.route('/api/get')
+        .get((req, res) => {
+            res.send("Hello");
+            console.log("Hello");
+        })    
     }
 
 }

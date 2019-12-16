@@ -1,6 +1,10 @@
 package ServerCommunication;
 
-import DevelopmentCards.Card;
+import DevelopmentCards.*;
+import GameFlow.CardManager;
+import GameFlow.FlowManager;
+import GameFlow.Game;
+import GameFlow.ResourceManager;
 import Player.Player;
 import SceneManagement.GameEngine;
 import SceneManagement.MultiGameController;
@@ -19,7 +23,7 @@ public class ServerHandler {
     public enum Status{
         RECEIVER, SENDER
     }
-    private final String ADDRESS = "http://localhost:3000";
+    private final String ADDRESS = "http://139.179.210.161:3000";
     private final OkHttpClient httpClient = new OkHttpClient();
 
     public static ServerHandler serverHandler;
@@ -76,7 +80,7 @@ public class ServerHandler {
     }
 
     private void connect() throws URISyntaxException{
-        this.socket = IO.socket("http://localhost:3000");
+        this.socket = IO.socket(ADDRESS);
         this.socket.connect();
         listenEvents();
     }
@@ -197,6 +201,132 @@ public class ServerHandler {
 
             }
         });
+        this.socket.on("send-card-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                // Call related controller method
+                try{
+                    String cardName = obj.getString("cardName");
+                    FlowManager flowManager = new FlowManager();
+                    System.out.println("Receiver Card Bought");
+                    switch (cardName)
+                    {
+                        case "knight":
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Knight());
+                            break;
+                        case "monopoly":
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Monopoly());
+                            break;
+                        case "Road-Building":
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new RoadBuilding());
+                            break;
+                        case "Victory-Point":
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new VictoryPoint());
+                            break;
+                        case "Year-of-Plenty":
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new YearOfPlenty());
+                            break;
+                        case "fortune":
+                            break;
+                        case "balanced":
+                            break;
+                    }
+                    Game.getInstance().getCardStack().pop();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        this.socket.on("play-card-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                // Call related controller method
+                try{
+                    String cardName = obj.getString("cardName");
+                    Integer cardIndex = obj.getInt("cardIndex");
+                    FlowManager flowManager = new FlowManager();
+                    System.out.println("Receiver Card");
+                    switch (cardName)
+                    {
+                        case "knight":
+                            new Knight().play();
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            break;
+                        case "monopoly":
+                            new Monopoly().play();
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            break;
+                        case "Road-Building":
+                            new RoadBuilding().play();
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            break;
+                        case "Victory-Point":
+                            new VictoryPoint().play();
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            break;
+                        case "Year-of-Plenty":
+                            new YearOfPlenty().play();
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            break;
+                        case "fortune":
+                            break;
+                        case "balanced":
+                            break;
+                    }
+                    Game.getInstance().getCardStack().pop();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        this.socket.on("send-monopoly-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                // Call related controller method
+                try{
+                    CardManager cardManager = new CardManager();
+                    int material = obj.getInt("material");
+                    cardManager.playMonopoly(material);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        this.socket.on("send-plenty-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                // Call related controller method
+                try{
+                    CardManager cardManager = new CardManager();
+                    int material = obj.getInt("material");
+                    cardManager.playYearOfPlenty(material);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        this.socket.on("send-balanced-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                // Call related controller method
+                try{
+                    ResourceManager resourceManager = new ResourceManager();
+                    resourceManager.discardHalfOfResourcesWithoutCondition();
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
         this.socket.on("select-player-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
@@ -247,9 +377,19 @@ public class ServerHandler {
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
-                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
                 controller.getHarborController().receiveHarborTradeMessage();
+            }
+        });
+        this.socket.on("refresh-infos-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
+                // Call related controller method
+                controller.getInfoController().setupCurrentPlayer();
+                controller.getInfoController().setupOtherPlayers();
             }
         });
         this.socket.on("play-card-response", new Emitter.Listener() {
@@ -356,14 +496,6 @@ public class ServerHandler {
         socket.emit("end-turn");
     }
 
-    public void playCard(Card card){
-        String[] names = {"card"};
-        Card[] keys = new Card[1];
-        keys[0] = card;
-        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
-        socket.emit("play-card", data);
-    }
-
     public void rollDice(int firstDice, int secondDice){
         String[] names = {"firstDice", "secondDice"};
         Integer[] keys = new Integer[2];
@@ -381,6 +513,50 @@ public class ServerHandler {
         keys[2] = discarded;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("roll-dice", data);
+    }
+
+    public void sendDevCard(String cardName)
+    {
+        System.out.println("Sender Bought Card");
+        String[] names = {"cardName"};
+        String[] keys = new String[1];
+        keys[0] = cardName;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("send-card", data);
+    }
+
+    public void playCard(String cardName, int cardIndex){
+        System.out.println("Sender Play Card");
+        String[] names = {"cardName", "cardIndex"};
+        Object[] keys = new Object[2];
+        keys[0] = cardName;
+        keys[1] = cardIndex;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("play-card", data);
+    }
+
+    public void sendMonopoly(int material){
+        String[] names = {"material"};
+        Integer[] keys = new Integer[1];
+        keys[0] = material;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("send-monopoly", data);
+    }
+
+    public void sendYearOfPlenty(int material){
+        String[] names = {"material"};
+        Integer[] keys = new Integer[1];
+        keys[0] = material;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("send-plenty", data);
+    }
+
+    public void sendPerfectlyBalanced(ArrayList<Integer> indexes){
+        String[] names = {"indexes"};
+        Object[] keys = new Object[1];
+        keys[0] = indexes;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("send-balanced", data);
     }
 
     public void selectPlayer(Player player, int index){
@@ -430,6 +606,10 @@ public class ServerHandler {
         keys[2] = takeResIndex;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("harbor-trade", data);
+    }
+
+    public void refreshInfos() {
+        socket.emit("refresh-infos", null);
     }
 
     public void sendMessage(String userId, String message){

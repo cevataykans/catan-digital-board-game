@@ -107,6 +107,10 @@ public class MultiStatusController {
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", move the robber first by clicking and dragging!");
             }
+            else if ( resultCode == Response.ERROR_NOT_PLAYER_TURN_CARD)
+            {
+                statusText.setText( controller.getLocalPlayer().getName() + ", this is not your turn, you can't play the development card.");
+            }
             else if ( resultCode == Response.MUST_RESOURCE_SELECTION_MONOPOLY )
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", select a resource for monopoly card!");

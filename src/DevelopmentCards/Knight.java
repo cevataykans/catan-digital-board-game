@@ -3,7 +3,9 @@ package DevelopmentCards;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
+import GameFlow.TitleManager;
 import SceneManagement.SoundManager;
+import ServerCommunication.ServerHandler;
 
 public class Knight extends Card{
     // Properties
@@ -25,9 +27,15 @@ public class Knight extends Card{
     @Override
     public void play() {
         FlowManager flowManager = new FlowManager();
+        TitleManager titleManager = new TitleManager();
 
-        flowManager.addMust(Response.MUST_INSIDE_TILE_SELECTION);
-        flowManager.addMust(Response.MUST_GET_NEIGHBOR);
+        flowManager.getCurrentPlayer().incrementLargestArmy();
+        titleManager.updateLargestArmy();
+        if ( ServerHandler.getInstance().getStatus() != ServerHandler.Status.RECEIVER) {
+            flowManager.addMust(Response.MUST_INSIDE_TILE_SELECTION);
+            flowManager.addMust(Response.MUST_GET_NEIGHBOR);
+        }
         SoundManager.getInstance().playEffect(SoundManager.Effect.KNIGHT);
+
     }
 }

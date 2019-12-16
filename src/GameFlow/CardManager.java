@@ -3,6 +3,7 @@ package GameFlow;
 import DevelopmentCards.Card;
 import DevelopmentCards.Knight;
 import Player.Player;
+import ServerCommunication.ServerHandler;
 
 import java.util.ArrayList;
 import java.util.Stack;
@@ -31,12 +32,11 @@ public class CardManager
 		Card top = devCards.peek();
 		devCards.pop();
 
-		if( top instanceof Knight ){
-			flowManager.getCurrentPlayer().incrementLargestArmy();
-			titleManager.updateLargestArmy();
-		}
-
 		current.buyDevelopmentCard( Card.REQUIREMENTS_FOR_CARD , top);
+		if (ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER)
+		{
+			ServerHandler.getInstance().sendDevCard(top.getName());
+		}
 	}
 
 	/**
@@ -45,7 +45,6 @@ public class CardManager
 	public void makeCardsPlayable()
 	{
 		// Get the related data
-		Game game = Game.getInstance();
 		FlowManager flowManager = new FlowManager();
 		ArrayList<Card> cards = flowManager.getCurrentPlayer().getCards();
 
@@ -97,7 +96,10 @@ public class CardManager
 		FlowManager flowManager = new FlowManager();
 		Player currentP = flowManager.getCurrentPlayer();
 
-		currentP.collectMaterial( selectedMaterial, 1);
-		currentP.collectMaterial( selectedMaterial, 1);
+		currentP.collectMaterial( selectedMaterial, 2);
+		if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER)
+		{
+			ServerHandler.getInstance().sendYearOfPlenty(selectedMaterial);
+		}
 	}
 }
