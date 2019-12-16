@@ -56,6 +56,7 @@ public class MultiGameController extends SceneController {
     private MultiDevCardController devCardController;
     private MultiSelectionController selectionController;
     private MultiDiceController diceController;
+    private MultiHarborController harborController;
     private ChatController chatController;
 
     // Robber Related Properties
@@ -184,6 +185,7 @@ public class MultiGameController extends SceneController {
         devCardController = new MultiDevCardController(scene, this);
         selectionController = new MultiSelectionController(scene, this);
         diceController = new MultiDiceController(scene, this);
+        harborController = new MultiHarborController(scene, this);
         chatController = new ChatController(scene, this);
 
         // Adding listener to make the game board intractable.
@@ -629,7 +631,6 @@ public class MultiGameController extends SceneController {
 
                     // Refresh current player information.
                     infoController.setupCurrentPlayer();
-                    infoController.setupLongestRoad();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
                 }
         );
@@ -709,7 +710,6 @@ public class MultiGameController extends SceneController {
 
                     // Refreshing current player information
                     infoController.setupCurrentPlayer();
-                    infoController.setupLongestRoad();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
                 }
         );
@@ -853,8 +853,6 @@ public class MultiGameController extends SceneController {
                         () -> {
                             infoController.setupOtherPlayers();
                             infoController.setupCurrentPlayer();
-                            infoController.setupLargestArmy();
-                            infoController.setupLongestRoad();
                             diceController.setupDiceRoll();
                         }
                 );
@@ -908,8 +906,6 @@ public class MultiGameController extends SceneController {
                     () -> {
                         infoController.setupOtherPlayers();
                         infoController.setupCurrentPlayer();
-                        infoController.setupLargestArmy();
-                        infoController.setupLongestRoad();
                         diceController.setupDiceRoll();
                     }
             );
@@ -1052,6 +1048,10 @@ public class MultiGameController extends SceneController {
 
     public MultiDiceController getDiceController() {
         return diceController;
+    }
+
+    public MultiHarborController getHarborController() {
+        return harborController;
     }
 
     public ChatController getChatController() {

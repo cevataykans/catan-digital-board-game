@@ -269,6 +269,60 @@ export class GameEventController{
             socket.to(item).emit("select-player-response", data);
         });
     }
+
+    public sendTrade(socket, client, data): void {
+        const format: boolean = data != null && data.toGive != null && data.toTake != null && data.otherPlayer != null; // validation check
+        if(!format){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        // There is game
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("send-trade-response", data);
+        });
+    }
+
+    public confirmTrade(socket, client, data): void {
+        const format: boolean = data != null && data.toGive != null && data.toTake != null && data.otherPlayer != null; // validation check
+        if(!format){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        // There is game
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("confirm-trade-response", data);
+        });
+    }
+
+    public harborTrade(socket, client, data): void {
+        const format: boolean = data != null && data.harborType != null && data.giveResIndex != null && data.takeResIndex != null; // validation check
+        if(!format){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        // There is game
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("harbor-trade-response", data);
+        });
+    }
     
     public endTurn(socket, client): void {
         // Message is well formed

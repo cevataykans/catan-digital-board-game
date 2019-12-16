@@ -40,7 +40,15 @@ export class GameEventListener{
         client.on('select-player', data => {
             this.eventController.selectPlayer(socket, client, data);
         });
-
+        client.on('send-trade', data => {
+            this.eventController.sendTrade(socket, client, data);
+        });
+        client.on('confirm-trade', data => {
+            this.eventController.confirmTrade(socket, client, data);
+        });
+        client.on('harbor-trade', data => {
+            this.eventController.harborTrade(socket, client, data);
+        });
         client.on('end-turn', data => {
             this.eventController.endTurn(socket, client);
         })

@@ -220,6 +220,38 @@ public class ServerHandler {
                 // Call related controller method
             }
         });
+        this.socket.on("send-trade-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
+                // Call related controller method
+                System.out.println("received");
+                controller.getInfoController().receiveTradeOffer();
+            }
+        });
+        this.socket.on("confirm-trade-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
+                // Call related controller method
+                System.out.println("confirmed");
+                controller.getInfoController().confirmTrade();
+            }
+        });
+        this.socket.on("harbor-trade-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
+                JSONObject obj = (JSONObject) objects[0];
+                ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
+                // Call related controller method
+                controller.getHarborController().receiveHarborTradeMessage();
+            }
+        });
         this.socket.on("play-card-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
@@ -366,6 +398,38 @@ public class ServerHandler {
         keys[0] = resource;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("select-resource", data);
+    }
+
+    public void sendTrade(int[] toGive, int[] toTake, String otherPlayer) {
+        String[] names = {"toGive", "toTake", "otherPlayer"};
+        Object[] keys = new Object[3];
+        keys[0] = toGive;
+        keys[1] = toTake;
+        keys[2] = otherPlayer;
+        System.out.println("sending");
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("send-trade", data);
+    }
+
+    public void confirmTrade(int[] toGive, int[] toTake, String otherPlayer) {
+        String[] names = {"toGive", "toTake", "otherPlayer"};
+        Object[] keys = new Object[3];
+        keys[0] = toGive;
+        keys[1] = toTake;
+        keys[2] = otherPlayer;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("confirm-trade", data);
+    }
+
+    public void harborTrade(int harborType, int giveResIndex, int takeResIndex)
+    {
+        String[] names = {"harborType", "giveResIndex", "takeResIndex"};
+        Integer[] keys = new Integer[3];
+        keys[0] = harborType;
+        keys[1] = giveResIndex;
+        keys[2] = takeResIndex;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("harbor-trade", data);
     }
 
     public void sendMessage(String userId, String message){
