@@ -3,6 +3,7 @@ package DevelopmentCards;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
+import SceneManagement.SoundManager;
 
 public class Knight extends Card{
     // Properties
@@ -10,7 +11,7 @@ public class Knight extends Card{
     // Constructor
     public Knight()
     {
-        setName("DevelopmentCards.Knight");
+        setName("knight");
         setInformation("This special card allows you to change the position of the robber and steal" +
                 " a card from a neighboring player.");
     }
@@ -27,5 +28,6 @@ public class Knight extends Card{
 
         flowManager.addMust(Response.MUST_INSIDE_TILE_SELECTION);
         flowManager.addMust(Response.MUST_GET_NEIGHBOR);
+        SoundManager.getInstance().playEffect(SoundManager.Effect.KNIGHT);
     }
 }

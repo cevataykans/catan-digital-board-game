@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import GameFlow.CardManager;
 import GameFlow.FlowManager;
 import GameFlow.ResourceManager;
 import GameFlow.Response;
@@ -120,21 +121,17 @@ public class SingleSelectionController {
      * This method prepares a resource selection screen in the game's UI. It takes id a parameter which determines
      * what calls this function, monopoly or year of plenty cards. Then corresponding to this id the status is changed.
      * When the current player selects one of the resources, either monopoly or year of plenty functionality is called.
-     * @param id is the caller's identity.
      */
-    public void showResourceSelection(String id) {
+    public void showResourceSelectionForPlenty() {
         selectionBox.getChildren().clear();
-        // Change the status corresponding to the caller's identity.
-        if ( id == "MONOPOLY")
-        {
-            controller.getStatusController().informStatus(Response.MUST_RESOURCE_SELECTION_MONOPOLY); // todo not sure about here
-        }
-        else if ( id == "YEAROFPLENTY")
-        {
-            controller.getStatusController().informStatus(Response.MUST_RESOURCE_SELECTION_PLENTY); // todo not sure about here
-        }
+
+        // Change the status for year of plenty.
+        controller.getStatusController().informStatus(Response.MUST_RESOURCE_SELECTION_PLENTY);
+
         selectionLabel.setText("Choose Your Resource");
         // Initialize a list that will contain images of resources to be shown in the UI.
+        CardManager cardManager = new CardManager();
+        FlowManager flowManager = new FlowManager();
         ArrayList<ImageView> resources = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             switch (i) {
@@ -145,6 +142,11 @@ public class SingleSelectionController {
                     lumber.setOnMousePressed(e -> {
                         new FadeOutRight(selectionBox).play();
                         selectionBox.setVisible(false);
+                        cardManager.playYearOfPlenty(ResourceManager.LUMBER);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_PLENTY)
+                        {
+                            flowManager.doneMust();
+                        }
                     });
                     lumber.setX(25);
                     lumber.setY(100);
@@ -155,6 +157,11 @@ public class SingleSelectionController {
                     wool.setOnMousePressed(e -> {
                         new FadeOutRight(selectionBox).play();
                         selectionBox.setVisible(false);
+                        cardManager.playYearOfPlenty(ResourceManager.WOOL);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_PLENTY)
+                        {
+                            flowManager.doneMust();
+                        }
                     });
                     wool.setX(275);
                     wool.setY(100);
@@ -165,6 +172,11 @@ public class SingleSelectionController {
                     grain.setOnMousePressed(e -> {
                         new FadeOutRight(selectionBox).play();
                         selectionBox.setVisible(false);
+                        cardManager.playYearOfPlenty(ResourceManager.GRAIN);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_PLENTY)
+                        {
+                            flowManager.doneMust();
+                        }
                     });
                     grain.setX(525);
                     grain.setY(100);
@@ -175,6 +187,11 @@ public class SingleSelectionController {
                     brick.setOnMousePressed(e -> {
                         new FadeOutRight(selectionBox).play();
                         selectionBox.setVisible(false);
+                        cardManager.playYearOfPlenty(ResourceManager.GRAIN);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_PLENTY)
+                        {
+                            flowManager.doneMust();
+                        }
                     });
                     brick.setX(775);
                     brick.setY(100);
@@ -185,6 +202,111 @@ public class SingleSelectionController {
                     ore.setOnMousePressed(e -> {
                         new FadeOutRight(selectionBox).play();
                         selectionBox.setVisible(false);
+                        cardManager.playYearOfPlenty(ResourceManager.ORE);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_PLENTY)
+                        {
+                            flowManager.doneMust();
+                        }
+                    });
+                    ore.setX(1025);
+                    ore.setY(100);
+                    resources.add(ore);
+                    break;
+            }
+            // Add the resources to the selection screen.
+            resources.get(i).getStyleClass().add("resourceBox");
+            selectionBox.getChildren().add(resources.get(i));
+        }
+        // After current player chooses a resource, play an out animation for the selection screen.
+        new FadeInLeft(selectionBox).play();
+        selectionBox.setVisible(true);
+    }
+
+    public void showResourceSelectionForMonopoly() {
+        selectionBox.getChildren().clear();
+
+        // Change the status for monopoly.
+        controller.getStatusController().informStatus(Response.MUST_RESOURCE_SELECTION_MONOPOLY);
+
+        selectionLabel.setText("Choose Your Resource");
+        // Initialize a list that will contain images of resources to be shown in the UI.
+        CardManager cardManager = new CardManager();
+        FlowManager flowManager = new FlowManager();
+        ArrayList<ImageView> resources = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            switch (i) {
+                // Add every type of resource to the list with their corresponding images and animations.
+                // Resources are presented from left to right as: wood, wool, grain, brick and ore.
+                case 0:
+                    ImageView lumber = new ImageView("/images/wood.jpg");
+                    lumber.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                        cardManager.playMonopoly(ResourceManager.LUMBER);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_MONOPOLY)
+                        {
+                            flowManager.doneMust();
+                        }
+                    });
+                    lumber.setX(25);
+                    lumber.setY(100);
+                    resources.add(lumber);
+                    break;
+                case 1:
+                    ImageView wool = new ImageView("/images/sheep.jpg");
+                    wool.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                        cardManager.playMonopoly(ResourceManager.WOOL);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_MONOPOLY)
+                        {
+                            flowManager.doneMust();
+                        }
+                    });
+                    wool.setX(275);
+                    wool.setY(100);
+                    resources.add(wool);
+                    break;
+                case 2:
+                    ImageView grain = new ImageView("/images/grain.jpg");
+                    grain.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                        cardManager.playMonopoly(ResourceManager.GRAIN);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_MONOPOLY)
+                        {
+                            flowManager.doneMust();
+                        }
+                    });
+                    grain.setX(525);
+                    grain.setY(100);
+                    resources.add(grain);
+                    break;
+                case 3:
+                    ImageView brick = new ImageView("/images/brick.jpg");
+                    brick.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                        cardManager.playMonopoly(ResourceManager.BRICK);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_MONOPOLY)
+                        {
+                            flowManager.doneMust();
+                        }
+                    });
+                    brick.setX(775);
+                    brick.setY(100);
+                    resources.add(brick);
+                    break;
+                case 4:
+                    ImageView ore = new ImageView("/images/ore.jpg");
+                    ore.setOnMousePressed(e -> {
+                        new FadeOutRight(selectionBox).play();
+                        selectionBox.setVisible(false);
+                        cardManager.playMonopoly(ResourceManager.ORE);
+                        if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_MONOPOLY)
+                        {
+                            flowManager.doneMust();
+                        }
                     });
                     ore.setX(1025);
                     ore.setY(100);

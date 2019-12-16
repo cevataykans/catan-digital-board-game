@@ -2,6 +2,7 @@ package SceneManagement.GameManagement;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.Response;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
@@ -81,6 +82,8 @@ public class SingleDevCardController {
             ArrayList<ImageView> cardsInUI = new ArrayList<>();
             for (int i = 0; i < cards.size(); i++) {
                 // Get the card image corresponding to the current one in the player.
+                System.out.println(cards.get(i).getName());
+                System.out.println(cards.get(i).getInformation());
                 ImageView temp = new ImageView("/images/" + cards.get(i).getName() + ".png");
                 // Place the UI development card in the container.
                 if (i == 0) {
@@ -129,17 +132,34 @@ public class SingleDevCardController {
                     Bounds playAreaPosition = cardPlayableArea.localToScene(cardPlayableArea.getBoundsInLocal());
                     // Check if the dropped location of the card is inside the playable area, if it is play the card.
                     // If not, send the card to its original location.
-                    /*if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
+                    if (playAreaPosition.contains( rectanglePosition.getCenterX(), rectanglePosition.getCenterY() ) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                             playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                        controller.getGame().playDevelopmentCard( cards.get(finalI) );
-                        controller.getInfoController().setupLargestArmy();
-                        cardBox.getChildren().remove(temp);
+                        if ( cards.get(finalI).isPlayable()) {
+                            cardBox.getChildren().remove(temp);
+                            cards.get(finalI).play();
+                            if ( cards.get(finalI) instanceof YearOfPlenty)
+                            {
+                                controller.getSelectionController().showResourceSelectionForPlenty();
+                            }
+                            else if ( cards.get(finalI) instanceof Monopoly)
+                            {
+                                controller.getSelectionController().showResourceSelectionForMonopoly();
+                            }
+                            cards.remove(cards.get(finalI));
+                            controller.getInfoController().setupCurrentPlayer();
+                        }
+                        else {
+                            temp.setTranslateX(0);
+                            temp.setTranslateY(0);
+                            controller.getStatusController().informStatus(Response.ERROR_CARD_NOT_PLAYABLE);
+                        }
                     } else {
                         temp.setTranslateX(0);
                         temp.setTranslateY(0);
-                    } */
+                        controller.getStatusController().informStatus(Response.ERROR_CARD_DRAGGED_OUTSIDE);
+                    }
                 });
                 // Add the card image to the ArrayList.
                 cardsInUI.add(temp);

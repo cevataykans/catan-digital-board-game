@@ -3,6 +3,7 @@ package DevelopmentCards;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
+import SceneManagement.SoundManager;
 
 public class Monopoly extends Card {
     // Properties
@@ -10,7 +11,7 @@ public class Monopoly extends Card {
     // Constructor
     public Monopoly()
     {
-        setName("DevelopmentCards.Knight");
+        setName("monopoly");
         setInformation("This special card allows you to steal ALL of any one resource of your" +
                 " choice from all other players.");
     }
@@ -24,5 +25,6 @@ public class Monopoly extends Card {
         FlowManager flowManager = new FlowManager();
 
         flowManager.addMust(Response.MUST_RESOURCE_SELECTION_MONOPOLY);
+        SoundManager.getInstance().playEffect(SoundManager.Effect.MONOPOLY);
     }
 }

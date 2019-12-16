@@ -2,6 +2,7 @@ package DevelopmentCards;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import SceneManagement.SoundManager;
 import org.controlsfx.dialog.Wizard;
 
 public class VictoryPoint extends Card {
@@ -10,7 +11,7 @@ public class VictoryPoint extends Card {
     // Constructor
     public VictoryPoint()
     {
-        setName("Victory Point");
+        setName("Victory-Point");
         setInformation("This special card increases your score by 1 point.");
     }
 
@@ -22,5 +23,7 @@ public class VictoryPoint extends Card {
     public void play() {
         FlowManager flowManager = new FlowManager();
         flowManager.getCurrentPlayer().increaseScore( 1);
+
+        SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY_POINT);
     }
 }
