@@ -1,41 +1,49 @@
 package SceneManagement.GameManagement;
 
 import External.FillProgressIndicator;
-import GameFlow.FlowManager;
-import GameFlow.Game;
-import GameFlow.TitleManager;
+import GameFlow.*;
+import Player.Player;
 import SceneManagement.MultiGameController;
 import SceneManagement.SceneController;
-import SceneManagement.SingleGameController;
+import ServerCommunication.ServerHandler;
+import ServerCommunication.ServerInformation;
 import animatefx.animation.*;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.PopupWindow;
+import javafx.stage.StageStyle;
 import org.controlsfx.control.PopOver;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class MultiPlayerInfoController {
 
     // Properties
     private MultiGameController controller;
     private Scene scene;
-
-    private ArrayList<FillProgressIndicator> otherPlayers;
-    private ArrayList<Label> currPlayerResources;
+    private ArrayList<FillProgressIndicator> otherPlayerInfos;
+    private ArrayList<Player> otherPlayerOrders;
+    private Pulse currentPlayerCircleAnim;
+    private Pulse currentPlayerBoxAnim;
+    private ArrayList<Label> localPlayerResources;
     private boolean otherInfoShown = false;
     private AnchorPane otherInfoBox;
     private AnchorPane otherPlayerBox;
-    private AnchorPane currentPlayerBox;
-    private Label currentPlayerName;
+    private AnchorPane localPlayerBox;
+    private Label localPlayerName;
     private Label otherPlayerName;
     private ImageView currentLR;
     private ImageView currentLA;
@@ -47,6 +55,27 @@ public class MultiPlayerInfoController {
     private Label otherSettlementCount;
     private Label otherRoadCount;
     private Label otherCityCount;
+
+    // Trade Popup UI variables
+    private Parent tradeRoot;
+    private Button trade;
+    private Button cancel;
+    private Label curPlayerTrade;
+    private Label otherPlayerTrade;
+
+    // Spinners of current player in trade popup
+    private Spinner<Integer> cLumberSpin;
+    private Spinner<Integer> cWoolSpin;
+    private Spinner<Integer> cGrainSpin;
+    private Spinner<Integer> cBrickSpin;
+    private Spinner<Integer> cOreSpin;
+
+    // Spinners of other player in trade popup
+    private Spinner<Integer> oLumberSpin;
+    private Spinner<Integer> oWoolSpin;
+    private Spinner<Integer> oGrainSpin;
+    private Spinner<Integer> oBrickSpin;
+    private Spinner<Integer> oOreSpin;
 
     // Constructor
     public MultiPlayerInfoController(Scene scene, SceneController controller)
@@ -68,19 +97,28 @@ public class MultiPlayerInfoController {
     private void initialize() {
         // Add the other player representations as special progress indicators to the list.
         otherInfoBox = (AnchorPane) scene.lookup("#otherInfoBox");
-        otherPlayers = new ArrayList<>();
+        otherPlayerInfos = new ArrayList<>();
+        otherPlayerInfos.add(null);
+        otherPlayerInfos.add(null);
+        otherPlayerInfos.add(null);
 
-        otherPlayers.add(null);
-        otherPlayers.add(null);
-        otherPlayers.add(null);
+        FlowManager flowManager = new FlowManager();
+        otherPlayerOrders = new ArrayList<>();
+        for ( int i = 0; i < 4; i++)
+        {
+            if ( flowManager.getPlayer(i) != controller.getLocalPlayer())
+            {
+                otherPlayerOrders.add(flowManager.getPlayer(i));
+            }
+        }
 
         // Get the UI representations of other players' containers from the player information controller's fxml file.
-        currentPlayerBox = (AnchorPane) scene.lookup("#currentPlayerInf");
+        localPlayerBox = (AnchorPane) scene.lookup("#currentPlayerInf");
         otherPlayerBox = (AnchorPane) scene.lookup("#otherBox");
 
         // Get the UI representations of other players' names from the player information controller's fxml file.
-        currentPlayerName = (Label) scene.lookup("#currentName");
-        currentPlayerName.setAlignment(Pos.CENTER);
+        localPlayerName = (Label) scene.lookup("#currentName");
+        localPlayerName.setAlignment(Pos.CENTER);
         otherPlayerName = (Label) scene.lookup("#otherName");
         otherPlayerName.setAlignment(Pos.CENTER);
 
@@ -90,12 +128,12 @@ public class MultiPlayerInfoController {
         Label grainCount = (Label) scene.lookup("#grainCount");
         Label brickCount = (Label) scene.lookup("#brickCount");
         Label oreCount = (Label) scene.lookup("#oreCount");
-        currPlayerResources = new ArrayList<>();
-        currPlayerResources.add(lumberCount);
-        currPlayerResources.add(woolCount);
-        currPlayerResources.add(grainCount);
-        currPlayerResources.add(brickCount);
-        currPlayerResources.add(oreCount);
+        localPlayerResources = new ArrayList<>();
+        localPlayerResources.add(lumberCount);
+        localPlayerResources.add(woolCount);
+        localPlayerResources.add(grainCount);
+        localPlayerResources.add(brickCount);
+        localPlayerResources.add(oreCount);
 
         // Get the UI representations of other players' longest roads from the player information controller's fxml file.
         currentLR = (ImageView) scene.lookup("#currentLR");
@@ -114,10 +152,38 @@ public class MultiPlayerInfoController {
         otherCityCount = (Label) scene.lookup("#otherCityCount");
 
         // For initial start of the game, refresh/show all of the information related to all players.
+        try
+        {
+            tradeRoot = FXMLLoader.load( getClass().getResource("/UI/TradePopup.fxml"));
+            tradeRoot.getStylesheets().add(getClass().getResource("/UI/TradePopup.css").toExternalForm());
+
+            Scene tradeScene = new Scene( tradeRoot);
+            trade = (Button) tradeScene.lookup("#tradeButton");
+            cancel = (Button) tradeScene.lookup("#cancel");
+
+            cLumberSpin = (Spinner) tradeScene.lookup("#cLumberSpin");
+            cWoolSpin = (Spinner) tradeScene.lookup("#cWoolSpin");
+            cGrainSpin = (Spinner) tradeScene.lookup("#cGrainSpin");
+            cBrickSpin = (Spinner) tradeScene.lookup("#cBrickSpin");
+            cOreSpin = (Spinner) tradeScene.lookup("#cOreSpin");
+
+            oLumberSpin = (Spinner) tradeScene.lookup("#oLumberSpin");
+            oWoolSpin = (Spinner) tradeScene.lookup("#oWoolSpin");
+            oGrainSpin = (Spinner) tradeScene.lookup("#oGrainSpin");
+            oBrickSpin = (Spinner) tradeScene.lookup("#oBrickSpin");
+            oOreSpin = (Spinner) tradeScene.lookup("#oOreSpin");
+
+            curPlayerTrade = (Label) tradeScene.lookup("#offerer");
+            otherPlayerTrade = (Label) tradeScene.lookup("#offeree");
+        }
+        catch ( IOException e)
+        {
+            System.out.println( e);
+        }
+
+        // For initial start of the game, refresh/show all of the information related to all players.
         setupOtherPlayers();
         setupCurrentPlayer();
-        setupLongestRoad();
-        setupLargestArmy();
     }
 
     /**
@@ -125,7 +191,6 @@ public class MultiPlayerInfoController {
      */
     public void setupOtherPlayers() {
         // Get the game for access
-        Game game = Game.getInstance();
         FlowManager flowManager = new FlowManager();
 
         // Clear the box that contains the progress representations.
@@ -144,90 +209,63 @@ public class MultiPlayerInfoController {
         {
             // Initialize in animation for the all other player's representation in UI.
             FadeIn animationIn = new FadeIn(otherInfoBox);
-            // Initialize other1 player's representation in the UI.
-            FillProgressIndicator otherPlayer1;
-            otherPlayer1 = new FillProgressIndicator( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 1) % 4)
-                    .getColor().toString().substring(1));
-            otherPlayer1.setInnerCircleRadius(10);
-            otherPlayer1.setProgress( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 1) % 4).getScore() * 10);
-            otherPlayer1.setOnMouseEntered(event1 ->
-            {
-                // If the player information container is not already shown, show it.
-                if ( !otherInfoShown)
-                {
-                    otherInfoShown = true;
-                    new Pulse(otherPlayer1).play();
-                    showPlayer(1);
-                    //showTradePopup(other1);
-                }
-            });
-            otherPlayer1.setOnMouseExited(event2 ->
-            {
-                if ( otherInfoShown)
-                {
-                    // If the player information container is already shown, hide it.
-                    hidePlayer();
-                    //hideTradePopup(other1);
-                }
-            });
-            otherPlayers.set(0, otherPlayer1);
-            otherInfoBox.getChildren().add(otherPlayer1);
 
-            // Initialize other2 player's representation in the UI.
-            FillProgressIndicator otherPlayer2;
-            otherPlayer2 = new FillProgressIndicator( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 2) % 4)
-                    .getColor().toString().substring(1));
-            otherPlayer2.setProgress( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 2) % 4).getScore() * 10);
-            otherPlayer2.setTranslateY(otherPlayers.get(0).getTranslateY() + 150);
-            otherPlayer2.setOnMouseEntered(event1 ->
+            for ( int i = 0; i < 3; i++)
             {
-                if ( !otherInfoShown)
+                // Initialize other players' representation in the UI.
+                FillProgressIndicator otherPlayer;
+                otherPlayer = new FillProgressIndicator( otherPlayerOrders.get(i)
+                        .getColor().toString().substring(1));
+                otherPlayer.setInnerCircleRadius(10);
+                otherPlayer.setProgress( otherPlayerOrders.get(i).getScore() * 10);
+
+                if ( i > 0 )
+                {
+                    otherPlayer.setTranslateY( otherPlayerInfos.get( i - 1).getTranslateY() + 150);
+                }
+
+                int finalI = i;
+                otherPlayer.setOnMouseEntered(event1 ->
                 {
                     // If the player information container is not already shown, show it.
-                    otherInfoShown = true;
-                    new Pulse(otherPlayer2).play();
-                    showPlayer(2);
-                    //showTradePopup(other2);
-                }
-            });
-            otherPlayer2.setOnMouseExited(event2 ->
-            {
-                // If the player information container is already shown, hide it.
-                if ( otherInfoShown) {
-                    hidePlayer();
-                    //hideTradePopup(other2);
-                }
-            });
-            otherPlayers.set(1, otherPlayer2);
-            otherInfoBox.getChildren().add(otherPlayer2);
-
-            // Initialize other3 player's representation in the UI.
-            FillProgressIndicator otherPlayer3;
-            otherPlayer3 = new FillProgressIndicator( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 3) % 4)
-                    .getColor().toString().substring(1));
-            otherPlayer3.setProgress( flowManager.getPlayer(( flowManager.getCurrentPlayerIndex() + 3) % 4).getScore() * 10);
-            otherPlayer3.setTranslateY(otherPlayers.get(1).getTranslateY() + 150);
-            otherPlayer3.setOnMouseEntered(event1 ->
-            {
-                if ( !otherInfoShown)
+                    if ( !otherInfoShown)
+                    {
+                        otherInfoShown = true;
+                        showPlayer(finalI);
+                        //showTradePopup(other1);
+                    }
+                });
+                otherPlayer.setOnMouseExited(event2 ->
                 {
-                    // If the player information container is not already shown, show it.
-                    otherInfoShown = true;
-                    new Pulse(otherPlayer3).play();
-                    showPlayer(3);
-                    //showTradePopup(other3);
+                    if ( otherInfoShown)
+                    {
+                        // If the player information container is already shown, hide it.
+                        hidePlayer();
+                        //hideTradePopup(other1);
+                    }
+                });
+
+                otherPlayer.setOnMouseClicked( event3 ->
+                {
+                    if ( controller.getLocalPlayer() == flowManager.getCurrentPlayer()) {
+                        // Trade can be done only if player is in free turn
+                        //if ( new FlowManager().checkMust() == Response.MUST_FREE_TURN)
+                        //{
+                        showTradePopup(otherPlayer, finalI);
+                        //}
+                    }
+                });
+
+                otherPlayerInfos.set(i, otherPlayer);
+                otherInfoBox.getChildren().add(otherPlayer);
+                if ( otherPlayerOrders.get(i) == flowManager.getCurrentPlayer())
+                {
+                    currentPlayerCircleAnim = new Pulse(otherPlayerInfos.get(i));
+                    currentPlayerCircleAnim.setSpeed(0.5);
+                    currentPlayerCircleAnim.setCycleCount(AnimationFX.INDEFINITE);
+                    currentPlayerCircleAnim.play();
                 }
-            });
-            otherPlayer3.setOnMouseExited(event2 ->
-            {
-                // If the player information container is already shown, hide it.
-                if ( otherInfoShown) {
-                    hidePlayer();
-                    //hideTradePopup(other3);
-                }
-            });
-            otherPlayers.set(2, otherPlayer3);
-            otherInfoBox.getChildren().add(otherPlayer3);
+            }
 
             animationIn.setSpeed(3);
             animationIn.play();
@@ -238,31 +276,40 @@ public class MultiPlayerInfoController {
      * This function refreshes/sets up the information of the current player.
      */
     public void setupCurrentPlayer() {
-
-        // Get game for accessing data
-        Game game = Game.getInstance();
         FlowManager flowManager = new FlowManager();
-
         // Initialize out animation for previous representation of current player with 3x the normal speed.
-        FadeOut infoOut = new FadeOut(currentPlayerBox);
+        FadeOut infoOut = new FadeOut(localPlayerBox);
         infoOut.setSpeed(3);
         infoOut.setOnFinished(event ->
         {
-            FadeIn infoIn = new FadeIn(currentPlayerBox);
+            FadeIn infoIn = new FadeIn(localPlayerBox);
             // Sets current player's container's style to the current player's color.
-            currentPlayerBox.getStyleClass().clear();
-            currentPlayerBox.getStyleClass().add( flowManager.getCurrentPlayer().getColor().toString().substring(1) + "PlayerBox");
+            localPlayerBox.getStyleClass().clear();
+            localPlayerBox.getStyleClass().add( controller.getLocalPlayer().getColor().toString().substring(1) + "PlayerBox");
             // Set current player's name in information container to current player's name.
-            currentPlayerName.setText( flowManager.getCurrentPlayer().getName());
+            localPlayerName.setText( controller.getLocalPlayer().getName());
             // Set current player's score in information container to current player's score.
             //playerScores.get(0).setProgress( game.getCurrentPlayer().getScore() * 1.0 / 10);
             // Get the resources of the current player.
-            int playercurrPlayerResources[] =  flowManager.getCurrentPlayer().getResources();
+            int logicLocalPlayerResources[] =  controller.getLocalPlayer().getResources();
 
             // Set each of the current player's resource representations in UI to current player's actual resource counts.
-            for ( int i = 0; i < currPlayerResources.size(); i++)
+            for ( int i = 0; i < localPlayerResources.size(); i++)
             {
-                currPlayerResources.get(i).setText("" + playercurrPlayerResources[i]);
+                localPlayerResources.get(i).setText("" + logicLocalPlayerResources[i]);
+            }
+
+            if ( controller.getLocalPlayer() == flowManager.getCurrentPlayer())
+            {
+                currentPlayerBoxAnim = new Pulse(localPlayerBox);
+                currentPlayerBoxAnim.setSpeed(0.5);
+                currentPlayerBoxAnim.setCycleCount(AnimationFX.INDEFINITE);
+                currentPlayerBoxAnim.play();
+            }
+            else if ( currentPlayerBoxAnim != null)
+            {
+                currentPlayerBoxAnim.stop();
+                currentPlayerBoxAnim = null;
             }
 
             infoIn.setSpeed(3);
@@ -277,36 +324,46 @@ public class MultiPlayerInfoController {
      */
     private void showPlayer(int otherIndex)
     {
-        // Get game for accessing data
-        Game game = Game.getInstance();
         FlowManager flowManager = new FlowManager();
 
         otherPlayerBox.getStyleClass().clear();
-        otherPlayerBox.getStyleClass().add( flowManager
-                .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4)
+        otherPlayerBox.getStyleClass().add( otherPlayerOrders.get(otherIndex)
                 .getColor().toString().substring(1) + "PlayerBox");
-        otherPlayerName.setText( flowManager
-                .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getName());
+        otherPlayerName.setText( otherPlayerOrders.get(otherIndex).getName());
 
-        otherSettlementImage.setImage(new Image("/images/settlement" +  flowManager
-                .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
-        otherRoadImage.setImage(new Image("/images/road" +  flowManager
-                .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
-        otherCityImage.setImage(new Image("/images/city" +  flowManager
-                .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getColor() + ".png"));
+        otherSettlementImage.setImage(new Image("/images/settlement" +  otherPlayerOrders.get(otherIndex).getColor() + ".png"));
+        otherRoadImage.setImage(new Image("/images/road" +  otherPlayerOrders.get(otherIndex).getColor() + ".png"));
+        otherCityImage.setImage(new Image("/images/city" +  otherPlayerOrders.get(otherIndex).getColor() + ".png"));
 
-        otherSettlementCount.setText("" +  flowManager
-                .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getSettlementCount());
+        otherSettlementCount.setText("" +  otherPlayerOrders.get(otherIndex).getSettlementCount());
 
-        otherRoadCount.setText("" +  flowManager
-                .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getRoadCount());
+        otherRoadCount.setText("" +  otherPlayerOrders.get(otherIndex).getRoadCount());
 
-        otherCityCount.setText("" +  flowManager
-                .getPlayer(( flowManager.getCurrentPlayerIndex() + otherIndex) % 4).getCityCount());
+        otherCityCount.setText("" +  otherPlayerOrders.get(otherIndex).getCityCount());
+
+        TitleManager titleMan = new TitleManager();
+        if ( otherPlayerOrders.get(otherIndex) == titleMan.getLongestRoadPlayer() )
+        {
+            otherLR.setVisible( true);
+        }
+        else
+        {
+            otherLR.setVisible( false);
+        }
+
+        if ( otherPlayerOrders.get(otherIndex) == titleMan.getLargestArmyPlayer() )
+        {
+            otherLA.setVisible( true);
+        }
+        else
+        {
+            otherLA.setVisible(  false);
+        }
 
         // Initialize in animation for the other player's information box.
         otherPlayerBox.setVisible(true);
         ZoomIn showAnim = new ZoomIn(otherPlayerBox);
+        showAnim.setSpeed( 5);
         showAnim.play();
     }
 
@@ -327,40 +384,230 @@ public class MultiPlayerInfoController {
     }
 
     /**
-     * WORK IN PROGRESS - WILL PROBABLY BE DEPRECATED
-     * @param owner
+     * Open the trade pop up when clicked on the other player circle.
+     * @param owner is the node circle of the clicked player
+     * @param playerIndex is the arrow index from player, 0 - top, 1 - middle, 2, bottom
+     * If you need to access real players from game, you need to increase this value by one because second player is 0
+     * 0 indexed here, last playaer is 2 indexed etc.
      */
-    private void showTradePopup(Node owner)
+    private void showTradePopup(Node owner, int playerIndex)
     {
-        try {
-            Parent tradeRoot = FXMLLoader.load(getClass().getResource("/UI/TradePopup.fxml"));
-            tradeRoot.getStylesheets().add(getClass().getResource("/UI/TradePopup.css").toExternalForm());
-            PopOver tradePopup = new PopOver(tradeRoot);
-            tradePopup.setTitle("Trade");
-            tradePopup.setArrowLocation(PopOver.ArrowLocation.LEFT_TOP);
-            tradePopup.setAnchorLocation(PopupWindow.AnchorLocation.WINDOW_TOP_LEFT);
-            tradePopup.show(owner);
-        }
-        catch (IOException e)
+        // Adjust current player spinners for max resource limit
+        FlowManager flow = new FlowManager();
+        Player curPlayer = flow.getCurrentPlayer();
+        Player otherPlayer = otherPlayerOrders.get(playerIndex);
+        System.out.println(curPlayer.getName());
+        System.out.println(otherPlayer.getName());
+
+        // Get the current player resources for adjusting
+        int[] curResources = curPlayer.getResources();
+
+        // Adjust the limit for all current player resources
+        var factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, curResources[ ResourceManager.LUMBER], 0);
+        factory.setWrapAround( true);
+        cLumberSpin.setValueFactory( factory);
+
+        factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, curResources[ ResourceManager.WOOL], 0);
+        factory.setWrapAround( true);
+        cWoolSpin.setValueFactory( factory);
+
+        factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, curResources[ ResourceManager.GRAIN], 0);
+        factory.setWrapAround( true);
+        cGrainSpin.setValueFactory( factory);
+
+        factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, curResources[ ResourceManager.BRICK], 0);
+        factory.setWrapAround( true);
+        cBrickSpin.setValueFactory( factory);
+
+        factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, curResources[ ResourceManager.ORE], 0);
+        factory.setWrapAround( true);
+        cOreSpin.setValueFactory( factory);
+
+        // Create the pop up instance and trade operations
+        curPlayerTrade.setText( curPlayer.getName() );
+        otherPlayerTrade.setText( otherPlayer.getName() );
+        PopOver tradePopup = new PopOver( tradeRoot);
+        tradePopup.setTitle("Trade");
+
+        // Depending on the clicked player index, adjust arrow location -> 0 - top, 1 - middle, 2 - bottom
+        if ( playerIndex == 0)
         {
-            System.out.println(e);
+            tradePopup.setArrowLocation( PopOver.ArrowLocation.RIGHT_TOP );
+        }
+        else if ( playerIndex == 2)
+        {
+            tradePopup.setArrowLocation( PopOver.ArrowLocation.RIGHT_BOTTOM );
+        }
+        else
+        {
+            tradePopup.setArrowLocation( PopOver.ArrowLocation.RIGHT_CENTER);
+        }
+        tradePopup.setArrowSize( 20);
+        tradePopup.setAnchorLocation(PopupWindow.AnchorLocation.WINDOW_TOP_LEFT);
+        tradePopup.show( owner);
+
+        // Ask for confirmation, then perform trade if accepted.
+        trade.setOnMouseClicked( mouseEvent ->
+        {
+            if ( tradePopup.isShowing() )
+            {
+                // Get the resources for displaying information.
+                int[] toGive = {0, 0, 0, 0, 0};
+                int[] toTake = {0, 0, 0, 0, 0};
+
+                // These values are set in a way that they cannot be set to an amount that player does not have, do not worry!
+                toGive[ ResourceManager.LUMBER] = cLumberSpin.getValue();
+                toGive[ ResourceManager.WOOL] = cWoolSpin.getValue();
+                toGive[ ResourceManager.GRAIN] = cGrainSpin.getValue();
+                toGive[ ResourceManager.BRICK] = cBrickSpin.getValue();
+                toGive[ ResourceManager.ORE] = cOreSpin.getValue();
+
+                // In tradeWithPlayer function, resource check is made!
+                toTake[ ResourceManager.LUMBER] = oLumberSpin.getValue();
+                toTake[ ResourceManager.WOOL] = oWoolSpin.getValue();
+                toTake[ ResourceManager.GRAIN] = oGrainSpin.getValue();
+                toTake[ ResourceManager.BRICK] = oBrickSpin.getValue();
+                toTake[ ResourceManager.ORE] = oOreSpin.getValue();
+                ServerHandler.getInstance().sendTrade(toGive, toTake, otherPlayer.getName());
+                tradePopup.hide(javafx.util.Duration.seconds(0.2));
+            }
+        });
+
+        // Close the pop up
+        cancel.setOnMouseClicked( mouseEvent ->
+        {
+            if ( tradePopup.isShowing() )
+            {
+                tradePopup.hide( javafx.util.Duration.seconds( 0.2));
+            }
+        });
+
+    }
+
+    public void receiveTradeOffer() {
+        JSONObject obj = ServerInformation.getInstance().getInformation();
+        ServerInformation.getInstance().deleteInformation();
+        String otherPlayerName = null;
+        try {
+            otherPlayerName = obj.getString("otherPlayer");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        System.out.println(otherPlayerName);
+        System.out.println(controller.getLocalPlayer().getName());
+        if ( controller.getLocalPlayer().getName().equals(otherPlayerName)) {
+            JSONArray toGive = null;
+            JSONArray toTake = null;
+            try {
+                toGive = obj.getJSONArray("toGive");
+                toTake = obj.getJSONArray("toTake");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            JSONArray finalToGive = toGive;
+            JSONArray finalToTake = toTake;
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.initStyle(StageStyle.UTILITY);
+
+                    // Create a beautiful icon for catan dialog
+                    ImageView icon = new ImageView("/images/catanIcon.png");
+                    icon.setFitHeight(48);
+                    icon.setFitWidth(48);
+                    alert.getDialogPane().setGraphic(icon);
+
+                    ResourceManager resManager = new ResourceManager();
+                    FlowManager flowManager = new FlowManager();
+                    Player curPlayer = flowManager.getCurrentPlayer();
+                    Player localPlayer = controller.getLocalPlayer();
+
+                    alert.setHeaderText("Trade Offer by:   " + curPlayer.getName() + "   to:   " + localPlayer.getName());
+                    try {
+                        alert.setContentText("Offers: \t\t\t Wants: "
+                                + "\nLumber: " + finalToGive.get(ResourceManager.LUMBER) + "\t\t Lumber: " + finalToTake.get(ResourceManager.LUMBER)
+                                + "\nWool: " + finalToGive.get(ResourceManager.WOOL) + "\t\t\t Wool: " + finalToTake.get(ResourceManager.WOOL)
+                                + "\nGrain: " + finalToGive.get(ResourceManager.GRAIN) + "\t\t Grain: " + finalToTake.get(ResourceManager.GRAIN)
+                                + "\nBrick: " + finalToGive.get(ResourceManager.BRICK) + "\t\t\t Brick: " + finalToTake.get(ResourceManager.BRICK)
+                                + "\nOre: " + finalToGive.get(ResourceManager.ORE) + "\t\t\t Ore: " + finalToTake.get(ResourceManager.ORE)
+                        );
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    Optional<ButtonType> result = alert.showAndWait();
+                    if (result.get() == ButtonType.OK) {
+                        int[] toGiveArray = new int[5];
+                        int[] toTakeArray = new int[5];
+
+                        for ( int i = 0; i < 5; i++)
+                        {
+                            try {
+                                toGiveArray[i] = finalToGive.getInt(i);
+                                toTakeArray[i] = finalToTake.getInt(i);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        // From the point of view of current player
+                        if (resManager.tradeWithPlayer(curPlayer, localPlayer, toGiveArray, toTakeArray)) {
+                            // Trade successfuly made, close pop up, update current player UI
+                            setupCurrentPlayer();
+                            ServerHandler.getInstance().confirmTrade(toGiveArray, toTakeArray, controller.getLocalPlayer().getName());
+                        } else {
+                            controller.getStatusController().informStatus(Response.ERROR_PLAYER_REFUSED_TRADE);
+                        }
+                    } else {
+                        controller.getStatusController().informStatus(Response.ERROR_PLAYER_REFUSED_TRADE);
+                    }
+                }
+            });
         }
     }
 
-    /**
-     * WORK IN PROGRESS - WILL PROBABLY BE DEPRECATED
-     * @param owner
-     */
-    private void hideTradePopup(Node owner)
-    {
+    public void confirmTrade() {
+        FlowManager flowManager = new FlowManager();
+        JSONObject obj = ServerInformation.getInstance().getInformation();
+        ServerInformation.getInstance().deleteInformation();
+        try {
+            String otherPlayerName = obj.getString("otherPlayer");
+            if ( !controller.getLocalPlayer().getName().equals(otherPlayerName))
+            {
+                System.out.println("updated");
+                JSONArray toGive = obj.getJSONArray("toGive");
+                JSONArray toTake = obj.getJSONArray("toTake");
 
+                int[] toGiveArray = new int[5];
+                int[] toTakeArray = new int[5];
+                for ( int i = 0; i < 5; i++)
+                {
+                    toGiveArray[i] = toGive.getInt(i);
+                    toTakeArray[i] = toTake.getInt(i);
+                }
+
+                ResourceManager resManager = new ResourceManager();
+                Player otherPlayer = null;
+                for ( int i = 0; i < 4; i++)
+                {
+                    if ( flowManager.getPlayer(i).getName().equals(otherPlayerName))
+                    {
+                        otherPlayer = flowManager.getPlayer(i);
+                    }
+                }
+                resManager.tradeWithPlayer(flowManager.getCurrentPlayer(), otherPlayer, toGiveArray, toTakeArray);
+                setupCurrentPlayer();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * This function scans every player to see if they have longest road card. If one has it, their longest road card
      * is shown in the UI.
      */
-    public void setupLongestRoad() {
+    /*public void setupLongestRoad() {
 
         // Get game for accessing data
         Game game = Game.getInstance();
@@ -393,13 +640,13 @@ public class MultiPlayerInfoController {
             }
         }
         setupOtherPlayers();
-    }
+    }*/
 
     /**
      * This function scans every player to see if they have largest army card. If one has it, their largest army card
      * is shown in the UI.
      */
-    public void setupLargestArmy() {
+    /*public void setupLargestArmy() {
 
         // Get game for accessing data
         Game game = Game.getInstance();
@@ -432,21 +679,5 @@ public class MultiPlayerInfoController {
             }
         }
         setupOtherPlayers();
-    }
-
-    /**
-     * This function plays an animation for every resource types and amounts every player gains after rolling the dice,
-     * its purpose is to highlight the resource distributions after a dice roll.
-     */
-    public void highlightResourceCollection() {
-
-    }
-
-    /**
-     * This function plays an animation for the resource types and amounts current player gains after an action involving
-     * resource collection/discarding.
-     */
-    public void highlightCurrentPlayerResourceGain() {
-
-    }
+    }*/
 }
