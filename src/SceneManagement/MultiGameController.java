@@ -41,7 +41,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MultiGameController extends SceneController {
-    private HashMap<Point2D, Integer> settlementMap = new HashMap<>();
+    private HashMap<Point2D, ImageView> settlementMap = new HashMap<>();
 
     // Properties
     private ArrayList<Player> players;
@@ -49,7 +49,10 @@ public class MultiGameController extends SceneController {
     private AnchorPane gameBox;
     private Button buyDevelopmentCard;
     private Button endTurn;
+
+    // Highlight related properties
     private boolean highlightOn = false;
+    private ImageView highImg = null;
 
     // Sub Controllers
     private MultiPlayerInfoController infoController;
@@ -223,11 +226,12 @@ public class MultiGameController extends SceneController {
             if (localPlayer == flowManager.getCurrentPlayer()) {
                 // Allow the action to be processed for game board UI if only game board related must, be done
                 Response response = flowManager.checkMust();
-                if ((response == Response.MUST_ROAD_BUILD ||
+                if ( ( response == Response.MUST_ROAD_BUILD ||
                         response == Response.MUST_SETTLEMENT_BUILD ||
                         response == Response.MUST_CITY_BUILD ||
-                        response == Response.MUST_INSIDE_TILE_SELECTION)
-                        && !highlightOn) {
+                        response == Response.MUST_INSIDE_TILE_SELECTION )
+                        && !highlightOn)
+                {
                     // Getting the mouse coordinates.
                     int x = PixelProcessor.processX(mouseEvent2.getX());
                     int y = PixelProcessor.processY(mouseEvent2.getY());
@@ -235,70 +239,66 @@ public class MultiGameController extends SceneController {
                     // Checking if the hovered coordinate is a game tile.
                     Response structureCheck = boardManager.checkTile(x, y);
                     // Check if the hovered tile is a constructable road.
-                    if (structureCheck == Response.INFORM_ROAD_CAN_BE_BUILT) {
+                    if ( structureCheck == Response.INFORM_ROAD_CAN_BE_BUILT)
+                    {
                         // Get the road image with the current player's color.
                         ImageView roadHighlight = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor()
                                 + ".png");
+                        roadHighlight.setOpacity( 0.65);
+                        this.highImg = roadHighlight;
                         // Set its rotation depending on the hexagon side and sets its x depending on rotation.
                         setRoadRotation(roadHighlight, x, y);
                         // Set road highlight's y corresponding to the hexagon side.
-                        roadHighlight.setY(y * 30 + 35);
-                        roadHighlight.setOnMouseExited(event ->
-                        {
-                            // When user exits the road highlight, remove it from UI with an fade out animation.
-                            FadeOut highlightOut = new FadeOut(roadHighlight);
-                            highlightOut.setSpeed(2);
-                            highlightOut.setOnFinished(event1 ->
-                            {
-                                // Remove the road highlight and set the highlight boolean to false so that the player
-                                // can view other highlights.
-                                gameBox.getChildren().remove(roadHighlight);
-                                highlightOn = false;
-                            });
-                            highlightOut.play();
-                        });
+                        roadHighlight.setY( y * 30 + 35);
                         // Add the road highlight to the UI.
                         gameBox.getChildren().add(roadHighlight);
-                        // Initialize an in animation for the road highlight with 2x the normal speed.
-                        FadeIn highlightIn = new FadeIn(roadHighlight);
-                        highlightIn.setSpeed(2);
-                        highlightIn.play();
                         // Set the highlight boolean to true so that user can't view multiple highlights in the same/other
                         // place(s).
                         highlightOn = true;
                     }
                     // Check if the hovered tile is a constructable settlement.
-                    else if (structureCheck == Response.INFORM_SETTLEMENT_CAN_BE_BUILT) {
+                    else if ( structureCheck == Response.INFORM_SETTLEMENT_CAN_BE_BUILT)
+                    {
                         // Get the settlement image with the current player's color.
                         ImageView settlementHighlight = new ImageView("/images/settlement" + flowManager.getCurrentPlayer()
                                 .getColor() + ".png");
+                        settlementHighlight.setOpacity( 0.65);
+                        this.highImg = settlementHighlight;
                         // Set its x depending on the hexagin corner.
-                        settlementHighlight.setX(PixelProcessor.getXToDisplay());
+                        settlementHighlight.setX( PixelProcessor.getXToDisplay() );
                         // Set road highlight's y corresponding to the hexagon corner.
-                        settlementHighlight.setY(PixelProcessor.getYToDisplay(y));
-                        settlementHighlight.setOnMouseExited(event ->
-                        {
-                            // When user exits the settlement highlight, remove it from UI with an fade out animation.
-                            FadeOut highlightOut = new FadeOut(settlementHighlight);
-                            highlightOut.setSpeed(2);
-                            highlightOut.setOnFinished(event1 ->
-                            {
-                                // Remove the settlement highlight and set the highlight boolean to false so that the player
-                                // can view other highlights.
-                                gameBox.getChildren().remove(settlementHighlight);
-                                highlightOn = false;
-                            });
-                            highlightOut.play();
-                        });
+                        settlementHighlight.setY( PixelProcessor.getYToDisplay( y) );
                         // Add the settlement highlight to the UI.
                         gameBox.getChildren().add(settlementHighlight);
-                        // Initialize an in animation for the settlement highlight with 2x the normal speed.
-                        FadeIn highlightIn = new FadeIn(settlementHighlight);
-                        highlightIn.setSpeed(2);
-                        highlightIn.play();
                         // Set the highlight boolean to true so that user can't view multiple highlights in the same/other
                         // place(s).
                         highlightOn = true;
+                    }
+                }
+
+                // This will definetely (hopefully) destroy an image to prevent hover bug bi making region check
+                if ( highlightOn && this.highImg != null )
+                {
+                    // Location of the mouse
+                    Double mouseX = mouseEvent2.getX();
+                    Double mouseY = mouseEvent2.getY();
+
+                    // Width and height of the image
+                    Double imageWidth = this.highImg.getImage().getWidth();
+                    Double imageHeight = this.highImg.getImage().getHeight();
+
+                    // Location of the image
+                    Double imageX = this.highImg.getX();
+                    Double imageY = this.highImg.getY();
+
+                    // If mouse is not in the region of image, this also almost covers the road with rotated scenario, np
+                    if ( !(mouseX >= imageX && mouseY >= imageY && mouseX <= imageX + imageWidth && mouseY <= imageY + imageHeight) )
+                    {
+                        // Remove the road highlight and set the highlight boolean to false so that the player
+                        // can view other highlights.
+                        gameBox.getChildren().remove( this.highImg);
+                        this.highImg = null;
+                        highlightOn = false;
                     }
                 }
             }
@@ -347,6 +347,9 @@ public class MultiGameController extends SceneController {
                         break;
                     case H:
                         robber.setImage(new Image("/images/hakan.jpeg", 45, 70, false, false));
+                        break;
+                    case G:
+                        robber.setImage(new Image("/images/goose.png", 45, 70, false, false));
                 }
             }
         });
@@ -638,7 +641,7 @@ public class MultiGameController extends SceneController {
 
                     // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
                     // city images when the player upgrades settlement to city.
-                    settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
+                    settlementMap.put(new Point2D(x, y), structure);
 
                     // Refresh current player information.
                     infoController.setupCurrentPlayer();
@@ -824,7 +827,7 @@ public class MultiGameController extends SceneController {
         Platform.runLater(
                 () -> {
                     // Switching the corresponding settlement image with city image via an out-in animation.
-                    ImageView settlement = (ImageView) gameBox.getChildren().get(settlementMap.get(new Point2D(x, y)));
+                    ImageView settlement = settlementMap.get( new Point2D( x, y) );
                     // Initializing and playing a zoom out animation for the settlement image.
                     ZoomOut settlementOut = new ZoomOut(settlement);
                     settlementOut.setOnFinished(event ->

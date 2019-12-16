@@ -36,14 +36,17 @@ import org.controlsfx.dialog.Wizard;
  */
 public class SingleGameController extends SceneController
 {
-    private HashMap<Point2D, Integer> settlementMap = new HashMap<>();
+    private HashMap<Point2D, ImageView> settlementMap = new HashMap<>();
 
     // Properties
     private ArrayList<Player> players;
     private AnchorPane gameBox;
     private Button buyDevelopmentCard;
     private Button endTurn;
+
+    // Highlight related properties
     private boolean highlightOn = false;
+    private ImageView highImg = null;
 
     // Sub Controllers
     private SinglePlayerInfoController infoController;
@@ -188,31 +191,15 @@ public class SingleGameController extends SceneController
                 {
                     // Get the road image with the current player's color.
                     ImageView roadHighlight = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor()
-                                                            + ".png");
+                            + ".png");
+                    roadHighlight.setOpacity( 0.65);
+                    this.highImg = roadHighlight;
                     // Set its rotation depending on the hexagon side and sets its x depending on rotation.
                     setRoadRotation(roadHighlight, x, y);
                     // Set road highlight's y corresponding to the hexagon side.
                     roadHighlight.setY( y * 30 + 35);
-                    roadHighlight.setOnMouseExited(event ->
-                    {
-                        // When user exits the road highlight, remove it from UI with an fade out animation.
-                        FadeOut highlightOut = new FadeOut(roadHighlight);
-                        highlightOut.setSpeed(2);
-                        highlightOut.setOnFinished(event1 ->
-                        {
-                            // Remove the road highlight and set the highlight boolean to false so that the player
-                            // can view other highlights.
-                            gameBox.getChildren().remove(roadHighlight);
-                            highlightOn = false;
-                        });
-                        highlightOut.play();
-                    });
                     // Add the road highlight to the UI.
                     gameBox.getChildren().add(roadHighlight);
-                    // Initialize an in animation for the road highlight with 2x the normal speed.
-                    FadeIn highlightIn = new FadeIn(roadHighlight);
-                    highlightIn.setSpeed(2);
-                    highlightIn.play();
                     // Set the highlight boolean to true so that user can't view multiple highlights in the same/other
                     // place(s).
                     highlightOn = true;
@@ -223,33 +210,43 @@ public class SingleGameController extends SceneController
                     // Get the settlement image with the current player's color.
                     ImageView settlementHighlight = new ImageView("/images/settlement" + flowManager.getCurrentPlayer()
                             .getColor() + ".png");
+                    settlementHighlight.setOpacity( 0.65);
+                    this.highImg = settlementHighlight;
                     // Set its x depending on the hexagin corner.
                     settlementHighlight.setX( PixelProcessor.getXToDisplay() );
                     // Set road highlight's y corresponding to the hexagon corner.
                     settlementHighlight.setY( PixelProcessor.getYToDisplay( y) );
-                    settlementHighlight.setOnMouseExited(event ->
-                    {
-                        // When user exits the settlement highlight, remove it from UI with an fade out animation.
-                        FadeOut highlightOut = new FadeOut(settlementHighlight);
-                        highlightOut.setSpeed(2);
-                        highlightOut.setOnFinished(event1 ->
-                        {
-                            // Remove the settlement highlight and set the highlight boolean to false so that the player
-                            // can view other highlights.
-                            gameBox.getChildren().remove(settlementHighlight);
-                            highlightOn = false;
-                        });
-                        highlightOut.play();
-                    });
                     // Add the settlement highlight to the UI.
                     gameBox.getChildren().add(settlementHighlight);
-                    // Initialize an in animation for the settlement highlight with 2x the normal speed.
-                    FadeIn highlightIn = new FadeIn(settlementHighlight);
-                    highlightIn.setSpeed(2);
-                    highlightIn.play();
                     // Set the highlight boolean to true so that user can't view multiple highlights in the same/other
                     // place(s).
                     highlightOn = true;
+                }
+            }
+
+            // This will definetely (hopefully) destroy an image to prevent hover bug bi making region check
+            if ( highlightOn && this.highImg != null )
+            {
+                // Location of the mouse
+                Double mouseX = mouseEvent2.getX();
+                Double mouseY = mouseEvent2.getY();
+
+                // Width and height of the image
+                Double imageWidth = this.highImg.getImage().getWidth();
+                Double imageHeight = this.highImg.getImage().getHeight();
+
+                // Location of the image
+                Double imageX = this.highImg.getX();
+                Double imageY = this.highImg.getY();
+
+                // If mouse is not in the region of image, this also almost covers the road with rotated scenario, np
+                if ( !(mouseX >= imageX && mouseY >= imageY && mouseX <= imageX + imageWidth && mouseY <= imageY + imageHeight) )
+                {
+                    // Remove the road highlight and set the highlight boolean to false so that the player
+                    // can view other highlights.
+                    gameBox.getChildren().remove( this.highImg);
+                    this.highImg = null;
+                    highlightOn = false;
                 }
             }
         });
@@ -293,6 +290,8 @@ public class SingleGameController extends SceneController
                 case E: performEndTurnButtonEvent();
                         break;
                 case H: robber.setImage( new Image("/images/hakan.jpeg", 45, 70, false, false) );
+                        break;
+                case G: robber.setImage( new Image("/images/goose.png", 45, 70, false, false) );
             }
         });
     }
@@ -455,7 +454,7 @@ public class SingleGameController extends SceneController
                     // It is known that place is a inside tile, do must!
                     flowManager.doneMust();
                     robber.setX( PixelProcessor.getXToDisplay() );
-                    robber.setY( PixelProcessor.getYToDisplay( movedY) );
+                    robber.setY( PixelProcessor.getYToDisplay( movedY) - 30 );
                     boardManager.changeRobber( movedX, movedY);
                     SoundManager.getInstance().playEffect(SoundManager.Effect.ROBBER);
 
@@ -518,12 +517,13 @@ public class SingleGameController extends SceneController
 
             // Putting the settlement image to the settlement map, a map that is used to switch settlement images with
             // city images when the player upgrades settlement to city.
-            settlementMap.put(new Point2D(x, y), gameBox.getChildren().lastIndexOf(structure));
+            settlementMap.put(new Point2D(x, y), structure);
 
             // Refresh current player information.
             infoController.setupCurrentPlayer();
-            //infoController.setupLongestRoad();
+
             SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
+            checkWinCondition();
         }
     }
 
@@ -565,8 +565,10 @@ public class SingleGameController extends SceneController
 
             // Refreshing current player information
             infoController.setupCurrentPlayer();
-            //infoController.setupLongestRoad();
+
             SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
+
+            checkWinCondition();
 
             // If its initial state, player has to immediately end the turn.
             if ( flowManager.checkMust() == Response.MUST_END_TURN )
@@ -642,21 +644,24 @@ public class SingleGameController extends SceneController
             structure.setY( PixelProcessor.getYToDisplay( y) );
 
             // Switching the corresponding settlement image with city image via an out-in animation.
-            ImageView settlement = (ImageView) gameBox.getChildren().get(settlementMap.get(new Point2D(x, y)));
+            ImageView settlement = settlementMap.get( new Point2D( x, y) );
             // Initializing and playing a zoom out animation for the settlement image.
-            ZoomOut settlementOut = new ZoomOut(settlement);
+            ZoomOut settlementOut = new ZoomOut( settlement);
             settlementOut.setOnFinished(event ->
             {
                 // When the settlement out animation finishes, a zoom in animation for city is played.
                 gameBox.getChildren().remove(settlement);
                 ZoomIn cityIn = new ZoomIn(structure);
+                cityIn.setSpeed( 1);
                 cityIn.play();
                 gameBox.getChildren().add(structure);
+                SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
             });
+            settlementOut.setSpeed( 2);
             settlementOut.play();
 
             infoController.setupCurrentPlayer();
-            SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
+            checkWinCondition();
         }
     }
 
@@ -788,6 +793,31 @@ public class SingleGameController extends SceneController
         }
         else{
             statusController.informStatus(mustCheckCode);
+        }
+    }
+
+    public void checkWinCondition()
+    {
+        Player curPlayer = new FlowManager().getCurrentPlayer();
+
+        // For test, you can decrease this to 2!
+        if ( curPlayer.getScore() >= 10)
+        {
+            Alert alert = new Alert( Alert.AlertType.INFORMATION);
+
+            // Create a beautiful icon for catan dialog
+            ImageView icon = new ImageView("/images/catanIcon.png");
+            icon.setFitHeight(48);
+            icon.setFitWidth(48);
+            alert.getDialogPane().setGraphic( icon);
+
+            // TODO show player ranking
+            alert.setTitle( "Catan");
+            alert.setHeaderText("Player " + curPlayer.getName() + " has won!" + "\n\nPlayer scores:");
+            alert.setContentText("1-) " + curPlayer.getName() );
+
+            alert.showAndWait();
+            // TODO :( could not implemented it
         }
     }
 
