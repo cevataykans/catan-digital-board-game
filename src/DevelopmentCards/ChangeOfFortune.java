@@ -3,6 +3,7 @@ package DevelopmentCards;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
+import SceneManagement.SoundManager;
 
 public class ChangeOfFortune extends Card {
     // Properties
@@ -10,7 +11,7 @@ public class ChangeOfFortune extends Card {
     // Constructor
     public ChangeOfFortune()
     {
-        setName("Change Of Fortune");
+        setName("monopoly");
         setInformation("This special card allows you to re-roll the dice after it is rolled, if you did not like the" +
                 " previous results");
     }
@@ -24,5 +25,6 @@ public class ChangeOfFortune extends Card {
         FlowManager flowManager = new FlowManager();
 
         flowManager.addMust(Response.MUST_ROLL_DICE);
+        SoundManager.getInstance().playEffect(SoundManager.Effect.CHANGE_OF_FORTUNE);
     }
 }

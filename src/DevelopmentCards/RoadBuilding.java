@@ -2,7 +2,9 @@ package DevelopmentCards;
 
 import GameFlow.FlowManager;
 import GameFlow.Game;
+import GameFlow.ResourceManager;
 import GameFlow.Response;
+import SceneManagement.SoundManager;
 
 public class RoadBuilding extends Card {
     // Properties
@@ -10,7 +12,7 @@ public class RoadBuilding extends Card {
     // Constructor
     public RoadBuilding()
     {
-        setName("Road Building");
+        setName("Road-Building");
         setInformation("This special card allows you to build 2 roads freely.");
     }
 
@@ -22,7 +24,14 @@ public class RoadBuilding extends Card {
     public void play() {
         FlowManager flowManager = new FlowManager();
 
+        // Add 2 road resources to the player.
+        flowManager.getCurrentPlayer().collectMaterial(ResourceManager.LUMBER, 2);
+        flowManager.getCurrentPlayer().collectMaterial(ResourceManager.BRICK, 2);
+
+        // Make the player build 2 roads, give musts.
         flowManager.addMust(Response.MUST_ROAD_BUILD);
         flowManager.addMust(Response.MUST_ROAD_BUILD);
+
+        SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
     }
 }

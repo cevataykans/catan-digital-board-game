@@ -130,6 +130,14 @@ public class SingleStatusController {
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resource for a card!");
             }
+            else if ( resultCode == Response.ERROR_CARD_NOT_PLAYABLE)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", development card is not playable this turn.");
+            }
+            else if ( resultCode == Response.ERROR_CARD_DRAGGED_OUTSIDE)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", please drag the card inside the playable area.");
+            }
             else
             {
                 statusText.setText( "Function could not detect the error, lol, exploded!");

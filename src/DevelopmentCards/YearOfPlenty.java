@@ -3,6 +3,7 @@ package DevelopmentCards;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
+import SceneManagement.SoundManager;
 
 public class YearOfPlenty extends Card {
     // Properties
@@ -10,7 +11,7 @@ public class YearOfPlenty extends Card {
     // Constructor
     public YearOfPlenty()
     {
-        setName("Year Of Plenty");
+        setName("Year-of-Plenty");
         setInformation("This special card allows you to gain 2 resources of your choice from the bank");
     }
 
@@ -23,5 +24,6 @@ public class YearOfPlenty extends Card {
         FlowManager flowManager = new FlowManager();
 
         flowManager.addMust(Response.MUST_RESOURCE_SELECTION_PLENTY);
+        SoundManager.getInstance().playEffect(SoundManager.Effect.YEAR_OF_PLENTY);
     }
 }
