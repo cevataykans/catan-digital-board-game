@@ -16,7 +16,7 @@ public class PerfectlyBalanced extends Card {
     // Constructor
     public PerfectlyBalanced()
     {
-        setName("knight");
+        setName("Perfectly-Balanced");
         setInformation("This special card discards half of ALL players' resources.");
     }
 

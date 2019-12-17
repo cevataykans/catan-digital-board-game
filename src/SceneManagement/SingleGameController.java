@@ -1,6 +1,8 @@
 package SceneManagement;
 
 import DevelopmentCards.Card;
+import DevelopmentCards.ChangeOfFortune;
+import DevelopmentCards.PerfectlyBalanced;
 import Player.Player;
 import SceneManagement.GameManagement.*;
 import animatefx.animation.*;
