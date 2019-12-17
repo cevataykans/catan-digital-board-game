@@ -157,6 +157,17 @@ public class Game
         return null;
     }
 
+    /**
+     * Terminate the game when the game ends! must only be called by flow manager when single player ends!
+     */
+    public static void terminateGameData()
+    {
+        if ( game != null )
+        {
+            game = null;
+        }
+    }
+
     // Functions
     /**
      * Initializes the game via initializing gameboard, players, robber and the turn.

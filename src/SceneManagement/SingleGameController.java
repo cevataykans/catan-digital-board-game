@@ -21,9 +21,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import GameFlow.*;
 import GameBoard.*;
@@ -64,7 +62,6 @@ public class SingleGameController extends SceneController
     private double distYRob = 0;
     private double initialRobX;
     private double initialRobY;
-
 
     // Constructor
     public SingleGameController(Stage stage, ArrayList<Player> players) throws IOException
@@ -796,12 +793,31 @@ public class SingleGameController extends SceneController
         }
     }
 
+    /**
+     * GAME MUST BE NOT IN FULL SCREEN OTHERWISE IT CRASHES!!!
+     * Checks the current player score. If it is greater than or equal to 10, terminates the game bu displaying scores.
+     * Then, returns to main menu.
+     */
     public void checkWinCondition()
     {
-        Player curPlayer = new FlowManager().getCurrentPlayer();
+        class SortByScore implements Comparator<Player>
+        {
+            public int compare( Player a, Player b)
+            {
+                if ( a.getScore() <= b.getScore() )
+                {
+                    return a.getScore();
+                }
+                else
+                {
+                    return b.getScore();
+                }
+            }
+        }
 
+        Player curPlayer = new FlowManager().getCurrentPlayer();
         // For test, you can decrease this to 2!
-        if ( curPlayer.getScore() >= 10)
+        if ( curPlayer.getScore() >= 4)
         {
             Alert alert = new Alert( Alert.AlertType.INFORMATION);
 
@@ -811,13 +827,23 @@ public class SingleGameController extends SceneController
             icon.setFitWidth(48);
             alert.getDialogPane().setGraphic( icon);
 
-            // TODO show player ranking
+            // Showing player rankings
             alert.setTitle( "Catan");
             alert.setHeaderText("Player " + curPlayer.getName() + " has won!" + "\n\nPlayer scores:");
-            alert.setContentText("1-) " + curPlayer.getName() );
+            Collections.sort( players, new SortByScore() );
+            alert.setContentText("1-) " + players.get( 3).getName() + " - Score: " + players.get( 3).getScore()
+                                +"\n2-) " + players.get( 2).getName() + " - Score: " + players.get( 2).getScore()
+                                +"\n3-) " + players.get( 1).getName() + " - Score: " + players.get( 1).getScore()
+                                +"\n4-) " + players.get( 0).getName() + " - Score: " + players.get( 0).getScore()
+            );
 
             alert.showAndWait();
-            // TODO :( could not implemented it
+            try
+            {
+                new FlowManager().terminateData(); // throws null pointer exception? dont know why
+                GameEngine.getInstance().setController(0); // may throw an error
+            }
+            catch ( Exception e) { System.out.println( e); }
         }
     }
 

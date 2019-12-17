@@ -139,6 +139,14 @@ public class SingleDevCardController {
                         if ( cards.get(finalI).isPlayable()) {
                             cardBox.getChildren().remove(temp);
                             cards.get(finalI).play();
+                            if ( cards.get(finalI) instanceof VictoryPoint)
+                            {
+                                this.controller.checkWinCondition();
+                            }
+                            if ( cards.get(finalI) instanceof Knight)
+                            {
+                                this.controller.checkWinCondition();
+                            }
                             if ( cards.get(finalI) instanceof YearOfPlenty)
                             {
                                 controller.getSelectionController().showResourceSelectionForPlenty();
