@@ -69,6 +69,10 @@ export class GameEventListener{
             this.eventController.confirmTrade(socket, client, data);
         });
 
+        client.on('refuse-trade', data => {
+            this.eventController.refuseTrade(socket, client, data);
+        });
+
         client.on('harbor-trade', data => {
             this.eventController.harborTrade(socket, client, data);
         });
@@ -86,7 +90,11 @@ export class GameEventListener{
         })
 
         client.on('disconnect', data => {
-            console.log('disconnected' + client.id);
+            this.eventController.disconnectPlayer(socket, client);
+        })
+
+        client.on('finish', data => {
+            this.eventController.finishGame(socket, client, data);
         })
     }
 }

@@ -35,6 +35,9 @@ public enum Response {
     INFORM_CITY_CAN_BE_BUILT,                       // 2
     INFORM_INSIDE_TILE,                             // 3
     INFORM_SEA_TILE,                                // 4
+    INFORM_WAIT_FOR_TRADE_RESPONSE,                 // 5
+    INFORM_ACCEPT_TRADE,                            // 6
+    INFORM_REFUSE_TRADE,                            // 7
     ERROR_NO_CONNECTION_FOR_ROAD,                   // -1
     ERROR_NO_CONNECTION_FOR_SETTLEMENT,             // -2
     ERROR_THERE_IS_NEAR_BUILDING_FOR_SETTLEMENT,    // -3
@@ -62,4 +65,5 @@ public enum Response {
     MUST_GET_NEIGHBOR,                              // 8
     MUST_GET_HALF_RESOURCE_PERFECT_BALANCE,         // 9
     MUST_PLAYER_GETS_POINT,                         // 10
+    MUST_WAITING_FOR_TRADE                          // 11
 }

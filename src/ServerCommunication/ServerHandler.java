@@ -115,7 +115,7 @@ public class ServerHandler {
                     int x = obj.getInt("x");
                     int y = obj.getInt("y");
 
-                    controller.buildSettlement(null, x, y);
+                    controller.receiveBuildSettlement(x, y);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -132,7 +132,7 @@ public class ServerHandler {
                     int x = obj.getInt("x");
                     int y = obj.getInt("y");
 
-                    controller.buildCity(null, x, y);
+                    controller.receiveBuildCity(x, y);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -149,7 +149,7 @@ public class ServerHandler {
                     int x = obj.getInt("x");
                     int y = obj.getInt("y");
 
-                    controller.buildRoad(null, x, y);
+                    controller.receiveBuildRoad(x, y);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -364,12 +364,21 @@ public class ServerHandler {
         this.socket.on("confirm-trade-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-                setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
                 ServerInformation.getInstance().addInformation(obj); // Put the data to the information queue
                 // Call related controller method
                 System.out.println("confirmed");
                 controller.getInfoController().confirmTrade();
+            }
+        });
+
+        this.socket.on("refuse-trade-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                JSONObject obj = (JSONObject) objects[0];
+                // Call related controller method
+                System.out.println("refused");
+                controller.getInfoController().refuseTrade();
             }
         });
         this.socket.on("harbor-trade-response", new Emitter.Listener() {
@@ -435,6 +444,13 @@ public class ServerHandler {
             public void call(Object... objects) {
                 // Print error!!!
                 System.out.println("GAMES FULL ERROR");
+            }
+        });
+
+        this.socket.on("disconnect-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                // Finish the game and return to matchmaking screen
             }
         });
     }
@@ -594,6 +610,14 @@ public class ServerHandler {
         keys[2] = otherPlayer;
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("confirm-trade", data);
+    }
+
+    public void refuseTrade(String otherPlayer){
+        String[] names = {"otherPlayer"};
+        Object[] keys = new Object[1];
+        keys[0] = otherPlayer;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
+        socket.emit("refuse-trade", data);
     }
 
     public void harborTrade(int harborType, int giveResIndex, int takeResIndex)

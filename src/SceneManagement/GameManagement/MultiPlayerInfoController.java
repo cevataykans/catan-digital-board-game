@@ -475,6 +475,8 @@ public class MultiPlayerInfoController {
                 toTake[ ResourceManager.BRICK] = oBrickSpin.getValue();
                 toTake[ ResourceManager.ORE] = oOreSpin.getValue();
                 ServerHandler.getInstance().sendTrade(toGive, toTake, otherPlayer.getName());
+                controller.getStatusController().informStatus(Response.INFORM_WAIT_FOR_TRADE_RESPONSE);
+                flow.addMust(Response.MUST_WAITING_FOR_TRADE);
                 tradePopup.hide(javafx.util.Duration.seconds(0.2));
             }
         });
@@ -501,6 +503,9 @@ public class MultiPlayerInfoController {
         }
         System.out.println(otherPlayerName);
         System.out.println(controller.getLocalPlayer().getName());
+        if(!controller.getLocalPlayer().getName().equals(otherPlayerName)){
+            controller.getStatusController().informStatus(Response.INFORM_WAIT_FOR_TRADE_RESPONSE);
+        }
         if ( controller.getLocalPlayer().getName().equals(otherPlayerName)) {
             JSONArray toGive = null;
             JSONArray toTake = null;
@@ -512,6 +517,7 @@ public class MultiPlayerInfoController {
             }
             JSONArray finalToGive = toGive;
             JSONArray finalToTake = toTake;
+            String finalName = otherPlayerName;
             Platform.runLater(new Runnable() {
                 @Override
                 public void run() {
@@ -562,10 +568,12 @@ public class MultiPlayerInfoController {
                             setupCurrentPlayer();
                             ServerHandler.getInstance().confirmTrade(toGiveArray, toTakeArray, controller.getLocalPlayer().getName());
                         } else {
+                            ServerHandler.getInstance().refuseTrade(finalName);
                             controller.getStatusController().informStatus(Response.ERROR_PLAYER_REFUSED_TRADE);
                         }
                     } else {
-                        controller.getStatusController().informStatus(Response.ERROR_PLAYER_REFUSED_TRADE);
+                        ServerHandler.getInstance().refuseTrade(finalName);
+
                     }
                 }
             });
@@ -575,38 +583,46 @@ public class MultiPlayerInfoController {
     public void confirmTrade() {
         FlowManager flowManager = new FlowManager();
         JSONObject obj = ServerInformation.getInstance().getInformation();
-        ServerInformation.getInstance().deleteInformation();
         try {
             String otherPlayerName = obj.getString("otherPlayer");
-            if ( !controller.getLocalPlayer().getName().equals(otherPlayerName))
+            System.out.println("updated");
+            JSONArray toGive = obj.getJSONArray("toGive");
+            JSONArray toTake = obj.getJSONArray("toTake");
+
+            int[] toGiveArray = new int[5];
+            int[] toTakeArray = new int[5];
+            for ( int i = 0; i < 5; i++)
             {
-                System.out.println("updated");
-                JSONArray toGive = obj.getJSONArray("toGive");
-                JSONArray toTake = obj.getJSONArray("toTake");
-
-                int[] toGiveArray = new int[5];
-                int[] toTakeArray = new int[5];
-                for ( int i = 0; i < 5; i++)
-                {
-                    toGiveArray[i] = toGive.getInt(i);
-                    toTakeArray[i] = toTake.getInt(i);
-                }
-
-                ResourceManager resManager = new ResourceManager();
-                Player otherPlayer = null;
-                for ( int i = 0; i < 4; i++)
-                {
-                    if ( flowManager.getPlayer(i).getName().equals(otherPlayerName))
-                    {
-                        otherPlayer = flowManager.getPlayer(i);
-                    }
-                }
-                resManager.tradeWithPlayer(flowManager.getCurrentPlayer(), otherPlayer, toGiveArray, toTakeArray);
-                setupCurrentPlayer();
+                toGiveArray[i] = toGive.getInt(i);
+                toTakeArray[i] = toTake.getInt(i);
             }
+
+            ResourceManager resManager = new ResourceManager();
+            Player otherPlayer = null;
+            for ( int i = 0; i < 4; i++)
+            {
+                if ( flowManager.getPlayer(i).getName().equals(otherPlayerName))
+                {
+                    otherPlayer = flowManager.getPlayer(i);
+                }
+            }
+            resManager.tradeWithPlayer(flowManager.getCurrentPlayer(), otherPlayer, toGiveArray, toTakeArray);
+            setupCurrentPlayer();
+            if(controller.getLocalPlayer() == flowManager.getCurrentPlayer())
+                flowManager.doneMust();
+            controller.getStatusController().informStatus(Response.INFORM_ACCEPT_TRADE);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void refuseTrade(){
+        FlowManager flowManager = new FlowManager();
+        if(controller.getLocalPlayer() == flowManager.getCurrentPlayer()){
+            flowManager.doneMust();
+        }
+        controller.getStatusController().informStatus(Response.INFORM_REFUSE_TRADE);
     }
 
     /**
