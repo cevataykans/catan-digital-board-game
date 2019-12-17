@@ -14,6 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -25,6 +26,7 @@ public class LoginController extends SceneController {
     PasswordField password;
     Button loginButton;
     Label registerButton;
+    ImageView goBack;
 
     // Constructor
     public LoginController(Stage stage) throws IOException
@@ -110,6 +112,28 @@ public class LoginController extends SceneController {
                     e.printStackTrace();
                 }
             }
+        });
+
+        goBack = (ImageView) scene.lookup("#goBack");
+        goBack.setOnMouseClicked(event ->
+        {
+            // Initializing closing animation for help scene.
+            FadeOut animation2 = new FadeOut(root);
+            animation2.setSpeed(3.5);
+            animation2.setOnFinished(event1 ->
+            {
+                try
+                {
+                    // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
+                    root.setVisible(false);
+                    GameEngine.getInstance().setController(0);
+                }
+                catch (IOException e)
+                {
+                    System.out.println(e);
+                }
+            });
+            animation2.play();
         });
 
         stage.setScene(scene);

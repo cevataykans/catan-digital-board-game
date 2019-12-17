@@ -240,10 +240,14 @@ public class SinglePlayerInfoController {
                 otherPlayer.setOnMouseClicked( event3 ->
                 {
                     // Trade can be done only if player is in free turn
-                    //if ( new FlowManager().checkMust() == Response.MUST_FREE_TURN)
-                    //{
+                    if ( new FlowManager().checkMust() == Response.MUST_FREE_TURN)
+                    {
                         showTradePopup(otherPlayer, index - 1);
-                    //}
+                    }
+                    else
+                    {
+                        controller.getStatusController().informStatus(flowManager.checkMust());
+                    }
                 });
 
                 otherPlayers.set(i, otherPlayer);
