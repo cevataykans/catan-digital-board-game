@@ -40,4 +40,11 @@ export class GameQueue{
         return false;
     }
 
+    public getWaitingPlayers(): string[] {
+        let result: string[] = [];
+        this.queue.forEach((item) => {
+            result.push(item.socketId);
+        });
+        return result;
+    }
 }

@@ -3,6 +3,7 @@ package SceneManagement;
 import ServerCommunication.ServerHandler;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -33,7 +34,7 @@ public class MatchmakingController extends SceneController{
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Matchmaking.fxml"));
         scene = stage.getScene();
-        playerCount = 0;
+        playerCount = 1;
         initialize(stage);
     }
 
@@ -52,6 +53,7 @@ public class MatchmakingController extends SceneController{
 
         loading = (ProgressIndicator) scene.lookup("#loading");
         foundPlayers = (Label) scene.lookup("#foundPlayers");
+        foundPlayers.setText("" + playerCount);
         totalPlayers = (Label) scene.lookup("#totalLabel");
         searchLabel = (Label) scene.lookup("#searchLabel");
         searchLabel.setAlignment(Pos.CENTER);
@@ -107,11 +109,19 @@ public class MatchmakingController extends SceneController{
         });
     }
 
-    public void increaseFoundPlayers() {
-        if (playerCount < 4)
-        {
-            playerCount++;
-            foundPlayers.setText("" + playerCount);
-        }
+    public void foundPlayerCount(int foundPlayerCount) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                if (playerCount < 4)
+                {
+                    foundPlayers.setText("" + foundPlayerCount);
+                }
+                else
+                {
+                    searchLabel.setText("Players found, game is starting...");
+                }
+            }
+        });
     }
 }

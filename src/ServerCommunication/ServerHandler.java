@@ -24,7 +24,7 @@ public class ServerHandler {
     public enum Status{
         RECEIVER, SENDER
     }
-    private final String ADDRESS = "http://139.179.103.162:3000";
+    private final String ADDRESS = "http://139.179.210.161:3000";
     private final OkHttpClient httpClient = new OkHttpClient();
 
     public static ServerHandler serverHandler;
@@ -90,8 +90,14 @@ public class ServerHandler {
         this.socket.on("found-player-response", new Emitter.Listener() { // Start message from the server
             @Override
             public void call(Object... objects) {
-                MatchmakingController controller = (MatchmakingController) GameEngine.getInstance().getController();
-                controller.increaseFoundPlayers();
+                JSONObject obj = (JSONObject) objects[0];
+                try {
+                    int count = obj.getInt("number");
+                    MatchmakingController controller = (MatchmakingController) GameEngine.getInstance().getController();
+                    controller.foundPlayerCount(count);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         });
         this.socket.on("game-request-response", new Emitter.Listener() { // Start message from the server
