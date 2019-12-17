@@ -1,15 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" styleClass="anchor" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1536.0" styleClass="anchor" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <Button fx:id="startMatchmaking" layoutX="174.0" layoutY="178.0" mnemonicParsing="false" text="Start Matchmaking">
+    <Label fx:id="foundPlayers" layoutX="721.0" layoutY="386.0" prefHeight="55.0" prefWidth="26.0" text="0" visible="false">
+      <font>
+        <Font name="System Bold Italic" size="40.0" fx:id="x1" />
+      </font>
+      <textFill>
+        <Color blue="1.000" green="0.161" red="0.000" fx:id="x2" />
+      </textFill>
+    </Label>
+    <Separator fx:id="separator" layoutX="766.0" layoutY="338.0" orientation="VERTICAL" prefHeight="150.0" visible="false" />
+    <Label fx:id="totalLabel" font="$x1" layoutX="799.0" layoutY="385.0" prefHeight="55.0" prefWidth="26.0" text="4" textFill="$x2" visible="false" />
+    <Label fx:id="searchLabel" layoutX="642.0" layoutY="565.0" prefWidth="265.0" text="Searchin For Players..." textFill="WHITE" visible="false">
+      <font>
+        <Font name="System Italic" size="25.0" />
+      </font>
+    </Label>
+    <ProgressIndicator fx:id="loading" layoutX="596.0" layoutY="271.0" prefHeight="282.0" prefWidth="345.0" progress="-1.0" visible="false" />
+    <Button fx:id="startMatchmaking" layoutX="621.0" layoutY="380.0" maxHeight="64.0" maxWidth="295.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="295.0" text="Start Matchmaking" visible="true">
       <font>
         <Font size="25.0" />
       </font>
     </Button>
+    <ImageView fx:id="goBack" fitHeight="74.82608032226562" fitWidth="101.2352857705937" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/goBackToMain.png" />
+      </image>
+    </ImageView>
   </children>
 </AnchorPane>

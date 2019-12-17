@@ -259,6 +259,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.LUMBER);
+                        ServerHandler.getInstance().refreshInfos();
                         controller.getInfoController().setupCurrentPlayer();
                     });
                     lumber.setX(25);
@@ -276,6 +277,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.WOOL);
+                        ServerHandler.getInstance().refreshInfos();
                         controller.getInfoController().setupCurrentPlayer();
                     });
                     wool.setX(275);
@@ -293,6 +295,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.GRAIN);
+                        ServerHandler.getInstance().refreshInfos();
                         controller.getInfoController().setupCurrentPlayer();
                     });
                     grain.setX(525);
@@ -310,6 +313,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.BRICK);
+                        ServerHandler.getInstance().refreshInfos();
                         controller.getInfoController().setupCurrentPlayer();
                     });
                     brick.setX(775);
@@ -327,6 +331,7 @@ public class MultiSelectionController {
                             flowManager.doneMust();
                         }
                         ServerHandler.getInstance().sendMonopoly(ResourceManager.ORE);
+                        ServerHandler.getInstance().refreshInfos();
                         controller.getInfoController().setupCurrentPlayer();
                     });
                     ore.setX(1025);

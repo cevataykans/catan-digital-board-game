@@ -18,7 +18,7 @@
     </ImageView>
     <AnchorPane fx:id="currentPlayerInf" layoutX="51.0" layoutY="588.0" prefHeight="200.0" prefWidth="200.0">
       <children>
-        <ProgressIndicator fx:id="currentScore" cache="false" disable="false" prefHeight="92.0" prefWidth="105.0" progress="0.0" style="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="48.0" AnchorPane.rightAnchor="47.0" AnchorPane.topAnchor="68.0" />
+        <ProgressIndicator fx:id="currentScore" cache="false" disable="false" prefHeight="92.0" prefWidth="105.0" progress="0.0" style="" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="49.0" AnchorPane.rightAnchor="46.0" AnchorPane.topAnchor="68.0" />
         <ImageView fitHeight="24.88063873196638" fitWidth="17.023594856262207" layoutX="92.0" layoutY="32.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@../images/grain.png" />
@@ -53,9 +53,9 @@
         <Label fx:id="grainCount" font="$x3" layoutX="95.0" layoutY="5.0" text="0" textFill="#fff500" />
         <Label fx:id="brickCount" font="$x3" layoutX="154.0" layoutY="30.0" text="0" textFill="#cc0000" />
         <Label fx:id="oreCount" font="$x3" layoutX="174.0" layoutY="81.0" text="0" textFill="#404040" />
-        <Label fx:id="currentName" layoutY="164.0" text="Player 4" textAlignment="CENTER" AnchorPane.leftAnchor="62.5" AnchorPane.rightAnchor="61.5">
+        <Label fx:id="currentName" layoutY="165.0" prefWidth="117.0526123046875" text="Player 4" textAlignment="CENTER" AnchorPane.leftAnchor="42.98" AnchorPane.rightAnchor="39.97">
           <font>
-            <Font size="20.0" fx:id="x2" />
+            <Font size="16.0" />
           </font>
         </Label>
         <ImageView fx:id="currentLR" fitHeight="53.35257039794669" fitWidth="46.26935857435025" layoutX="9.0" layoutY="117.0" pickOnBounds="true" preserveRatio="true" visible="false">
@@ -77,6 +77,8 @@
         <Label fx:id="currentGIncrease" font="$x5" layoutX="91.0" layoutY="-10.0" text="+0" visible="false" />
         <Label fx:id="currentBIncrease" font="$x5" layoutX="150.0" layoutY="16.0" text="+0" visible="false" />
         <Label fx:id="currentOIncrease" font="$x5" layoutX="170.0" layoutY="62.0" text="+0" visible="false" />
+        <Label layoutX="18.0" layoutY="171.0" text="LR" />
+        <Label layoutX="157.0" layoutY="169.0" text="LA" />
       </children>
     </AnchorPane>
     <AnchorPane fx:id="gameBox" layoutX="418.0" layoutY="117.0" opacity="1.0" prefHeight="671.0" prefWidth="729.0" styleClass="gameBox" />

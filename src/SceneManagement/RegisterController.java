@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -25,6 +26,7 @@ public class RegisterController extends SceneController{
     PasswordField passwordConfirm;
     Label passwordsDontMatch;
     Button registerButton;
+    ImageView goBack;
 
     // Constructor
     public RegisterController(Stage stage) throws IOException
@@ -114,6 +116,28 @@ public class RegisterController extends SceneController{
                 notMatchAnim.setCycleCount(AnimationFX.INDEFINITE);
                 notMatchAnim.play();
             }
+        });
+
+        goBack = (ImageView) scene.lookup("#goBack");
+        goBack.setOnMouseClicked(event ->
+        {
+            // Initializing closing animation for help scene.
+            FadeOut animation2 = new FadeOut(root);
+            animation2.setSpeed(3.5);
+            animation2.setOnFinished(event1 ->
+            {
+                try
+                {
+                    // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
+                    root.setVisible(false);
+                    GameEngine.getInstance().setController(4);
+                }
+                catch (IOException e)
+                {
+                    System.out.println(e);
+                }
+            });
+            animation2.play();
         });
     }
 }

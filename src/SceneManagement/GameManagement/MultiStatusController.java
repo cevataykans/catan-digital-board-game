@@ -165,6 +165,58 @@ public class MultiStatusController {
                 }
                 statusText.setText(otherPlayerName + " accepted the offer!");
             }
+            else if(resultCode == Response.INFORM_ROAD_CAN_BE_BUILT)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " you can build a road at that spot.");
+            }
+            else if(resultCode == Response.INFORM_SETTLEMENT_CAN_BE_BUILT)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " you can build a settlement at that spot.");
+            }
+            else if(resultCode == Response.INFORM_CITY_CAN_BE_BUILT)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " you can build a city at that spot.");
+            }
+            else if(resultCode == Response.INFORM_INSIDE_TILE)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " that is inside a hexagon.");
+            }
+            else if(resultCode == Response.INFORM_SEA_TILE)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " that is inside sea.");
+            }
+            else if(resultCode == Response.INFORM_ROLL_DICE)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " roll the dice to start the turn.");
+            }
+            else if(resultCode == Response.ERROR_OUTSIDE_GAMEBOARD)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " that place is not inside the game area.");
+            }
+            else if ( resultCode == Response.ERROR_CARD_NOT_PLAYABLE)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", development card is not playable this turn.");
+            }
+            else if ( resultCode == Response.ERROR_CARD_DRAGGED_OUTSIDE)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", please drag the card inside the playable area.");
+            }
+            else if ( resultCode == Response.MUST_GET_HALF_RESOURCE_PERFECT_BALANCE)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", please satisfy Thanos.");
+            }
+            else if ( resultCode == Response.MUST_PLAYER_GETS_POINT)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", please get a point.");
+            }
+            else if ( resultCode == Response.MUST_WAITING_FOR_TRADE)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", wait for the trade offeree to respond.");
+            }
+            else if ( resultCode == Response.MUST_FREE_TURN)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", do your actions .");
+            }
             else
             {
                 statusText.setText( "Function could not detect the error, lol, exploded!");

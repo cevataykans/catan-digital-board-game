@@ -35,9 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MultiGameController extends SceneController {
@@ -215,7 +213,9 @@ public class MultiGameController extends SceneController {
                     // Checking if the clicked coordinate is a game tile
                     createDialog(boardManager.checkTile(x, y), x, y);
                 } else {
-                    statusController.informStatus(flowManager.checkMust());
+                    if ( response != Response.MUST_FREE_TURN) {
+                        statusController.informStatus(flowManager.checkMust());
+                    }
                 }
             }
         });
@@ -649,6 +649,7 @@ public class MultiGameController extends SceneController {
                     // Refresh current player information.
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
+                    checkWinCondition();
                 }
         );
     }
@@ -737,6 +738,7 @@ public class MultiGameController extends SceneController {
                     // Refreshing current player information
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
+                    checkWinCondition();
                 }
         );
     }
@@ -862,6 +864,7 @@ public class MultiGameController extends SceneController {
 
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
+                    checkWinCondition();
                 }
         );
     }
@@ -906,7 +909,12 @@ public class MultiGameController extends SceneController {
                     public void handle(WorkerStateEvent event) {
                         Platform.runLater(
                                 () -> {
-                                    statusController.informStatus(Response.EKSIDOKUZ);
+                                    if ( Game.getInstance().getGameStatus() == 1) {
+                                        statusController.informStatus(Response.INFORM_ROLL_DICE);
+                                    }
+                                    else {
+                                        statusController.informStatus(Response.MUST_SETTLEMENT_BUILD);
+                                    }
                                     devCardController.setupDevelopmentCards();
                                 }
                         );
@@ -960,7 +968,12 @@ public class MultiGameController extends SceneController {
                 public void handle(WorkerStateEvent event) {
                     Platform.runLater(
                             () -> {
-                                statusController.informStatus(Response.EKSIDOKUZ);
+                                if ( Game.getInstance().getGameStatus() == 1) {
+                                    statusController.informStatus(Response.INFORM_ROLL_DICE);
+                                }
+                                else {
+                                    statusController.informStatus(Response.MUST_SETTLEMENT_BUILD);
+                                }
                                 devCardController.setupDevelopmentCards();
                             }
                     );
@@ -1066,6 +1079,60 @@ public class MultiGameController extends SceneController {
         }
         else{
             statusController.informStatus(mustCheckCode);
+        }
+    }
+
+    public void checkWinCondition()
+    {
+        class SortByScore implements Comparator<Player>
+        {
+            public int compare( Player a, Player b)
+            {
+                if ( a.getScore() <= b.getScore() )
+                {
+                    return a.getScore();
+                }
+                else
+                {
+                    return b.getScore();
+                }
+            }
+        }
+
+        Player curPlayer = new FlowManager().getCurrentPlayer();
+        // For test, you can decrease this to 2!
+        if ( curPlayer.getScore() >= 10)
+        {
+            SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
+            Alert alert = new Alert( Alert.AlertType.INFORMATION);
+
+            // Create a beautiful icon for catan dialog
+            ImageView icon = new ImageView("/images/catanIcon.png");
+            icon.setFitHeight(48);
+            icon.setFitWidth(48);
+            alert.getDialogPane().setGraphic( icon);
+
+            // Showing player rankings
+            alert.setTitle( "Catan");
+            alert.setHeaderText("Player " + curPlayer.getName() + " has won!" + "\n\nPlayer scores:");
+            Collections.sort( players, new SortByScore() );
+            alert.setContentText("1-) " + players.get( 3).getName() + " - Score: " + players.get( 3).getScore()
+                    +"\n2-) " + players.get( 2).getName() + " - Score: " + players.get( 2).getScore()
+                    +"\n3-) " + players.get( 1).getName() + " - Score: " + players.get( 1).getScore()
+                    +"\n4-) " + players.get( 0).getName() + " - Score: " + players.get( 0).getScore()
+            );
+            FlowManager flowManager = new FlowManager();
+            if ( getLocalPlayer() == flowManager.getCurrentPlayer())
+            {
+                ServerHandler.getInstance().finishGame();
+            }
+            alert.showAndWait();
+            try
+            {
+                new FlowManager().terminateData(); // throws null pointer exception? dont know why
+                GameEngine.getInstance().setController(0); // may throw an error
+            }
+            catch ( Exception e) { System.out.println( e); }
         }
     }
 

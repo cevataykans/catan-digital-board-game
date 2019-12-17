@@ -3,3 +3,11 @@
     -fx-background-repeat: no-repeat;
     -fx-background-size: cover, auto;
 }
+
+#goBack {
+    -fx-opacity: 0.5;
+}
+
+#goBack:hover {
+    -fx-opacity: 1;
+}

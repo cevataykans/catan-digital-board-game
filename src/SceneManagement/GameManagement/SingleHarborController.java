@@ -111,70 +111,58 @@ public class SingleHarborController
 	 */
 	private void setupHarborTrade()
 	{
+		FlowManager flowManager = new FlowManager();
 		// Setup the trade button so that harbor trade pop up will open. Player harbors are also checked here
 		this.tradeGameButton.setOnMouseClicked( mouseEvent ->
 		{
-			FlowManager flow = new FlowManager();
-			Player curPlayer = flow.getCurrentPlayer();
+			if ( flowManager.checkMust() == Response.MUST_FREE_TURN) {
+				Player curPlayer = flowManager.getCurrentPlayer();
 
-			// Check player harbors, if player has that one, make it functional, else make it not clickable
+				// Check player harbors, if player has that one, make it functional, else make it not clickable
 
-			if ( curPlayer.hasHarbor( Harbor.HarborType.THREE_TO_ONE ) )
-			{
-				this.trade3.setVisible( true);
+				if (curPlayer.hasHarbor(Harbor.HarborType.THREE_TO_ONE)) {
+					this.trade3.setVisible(true);
+				} else {
+					this.trade3.setVisible(false);
+				}
+
+				if (curPlayer.hasHarbor(Harbor.HarborType.TWO_TO_ONE_LUMBER)) {
+					this.tradeLumber2.setVisible(true);
+				} else {
+					this.tradeLumber2.setVisible(false);
+				}
+
+				if (curPlayer.hasHarbor(Harbor.HarborType.TWO_TO_ONE_WOOL)) {
+					this.tradeWool2.setVisible(true);
+				} else {
+					this.tradeWool2.setVisible(false);
+				}
+
+				if (curPlayer.hasHarbor(Harbor.HarborType.TWO_TO_ONE_GRAIN)) {
+					this.tradeGrain2.setVisible(true);
+				} else {
+					this.tradeGrain2.setVisible(false);
+				}
+
+				if (curPlayer.hasHarbor(Harbor.HarborType.TWO_TO_ONE_BRICK)) {
+					this.tradeBrick2.setVisible(true);
+				} else {
+					this.tradeBrick2.setVisible(false);
+				}
+
+				if (curPlayer.hasHarbor(Harbor.HarborType.TWO_TO_ONE_ORE)) {
+					this.tradeOre2.setVisible(true);
+				} else {
+					this.tradeOre2.setVisible(false);
+				}
+
+				// Show Trade
+				showTradePopup(tradeGameButton);
 			}
 			else
 			{
-				this.trade3.setVisible( false);
+				parentController.getStatusController().informStatus(flowManager.checkMust());
 			}
-
-			if ( curPlayer.hasHarbor( Harbor.HarborType.TWO_TO_ONE_LUMBER ) )
-			{
-				this.tradeLumber2.setVisible( true);
-			}
-			else
-			{
-				this.tradeLumber2.setVisible( false);
-			}
-
-			if ( curPlayer.hasHarbor( Harbor.HarborType.TWO_TO_ONE_WOOL ) )
-			{
-				this.tradeWool2.setVisible( true);
-			}
-			else
-			{
-				this.tradeWool2.setVisible( false);
-			}
-
-			if ( curPlayer.hasHarbor( Harbor.HarborType.TWO_TO_ONE_GRAIN ) )
-			{
-				this.tradeGrain2.setVisible( true);
-			}
-			else
-			{
-				this.tradeGrain2.setVisible( false);
-			}
-
-			if ( curPlayer.hasHarbor( Harbor.HarborType.TWO_TO_ONE_BRICK ) )
-			{
-				this.tradeBrick2.setVisible( true);
-			}
-			else
-			{
-				this.tradeBrick2.setVisible( false);
-			}
-
-			if ( curPlayer.hasHarbor( Harbor.HarborType.TWO_TO_ONE_ORE ) )
-			{
-				this.tradeOre2.setVisible( true);
-			}
-			else
-			{
-				this.tradeOre2.setVisible( false);
-			}
-
-			// Show Trade
-			showTradePopup( tradeGameButton);
 		});
 
 		// Setup the trade button functionalities

@@ -13,5 +13,10 @@
     <PasswordField fx:id="passwordField" layoutX="487.0" layoutY="389.0" prefHeight="48.0" prefWidth="562.0" promptText="Passworrd" />
     <Button fx:id="loginButton" layoutX="707.0" layoutY="516.0" mnemonicParsing="false" prefHeight="48.0" prefWidth="123.0" text="Login" />
     <Label fx:id="registerButton" layoutX="800.0" layoutY="461.0" text="Don't have an account? Register Here" textFill="RED" underline="true" />
+    <ImageView id="goBack" fitHeight="74.82608032226562" fitWidth="101.2352857705937" layoutX="14.0" layoutY="14.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/goBackToMain.png" />
+      </image>
+    </ImageView>
   </children>
 </AnchorPane>

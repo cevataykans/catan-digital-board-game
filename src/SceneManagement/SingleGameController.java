@@ -70,6 +70,9 @@ public class SingleGameController extends SceneController
     {
         root = FXMLLoader.load(getClass().getResource("/UI/SingleGame.fxml"));
         scene = stage.getScene();
+        int[] temp = {0, 0, 0, 0 ,0};
+        players.get(0).buyDevelopmentCard(temp, new PerfectlyBalanced());
+        players.get(0).buyDevelopmentCard(temp, new ChangeOfFortune());
         this.players = players;
         initialize(stage);
     }
@@ -164,7 +167,9 @@ public class SingleGameController extends SceneController
             }
             else
             {
-                statusController.informStatus( flowManager.checkMust() );
+                if ( response != Response.MUST_FREE_TURN) {
+                    statusController.informStatus(flowManager.checkMust());
+                }
             }
         });
 
@@ -698,7 +703,12 @@ public class SingleGameController extends SceneController
             sleeper2.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
                 @Override
                 public void handle(WorkerStateEvent event) {
-                    statusController.informStatus(Response.EKSIDOKUZ);
+                    if ( Game.getInstance().getGameStatus() == 1) {
+                        statusController.informStatus(Response.INFORM_ROLL_DICE);
+                    }
+                    else {
+                        statusController.informStatus(Response.MUST_SETTLEMENT_BUILD);
+                    }
                     devCardController.setupDevelopmentCards();
                 }
             });
@@ -796,7 +806,7 @@ public class SingleGameController extends SceneController
     }
 
     /**
-     * GAME MUST BE NOT IN FULL SCREEN OTHERWISE IT CRASHES!!!
+     * --- Game must be in a stable screen size to not crash/bug out. ---
      * Checks the current player score. If it is greater than or equal to 10, terminates the game bu displaying scores.
      * Then, returns to main menu.
      */
@@ -819,8 +829,9 @@ public class SingleGameController extends SceneController
 
         Player curPlayer = new FlowManager().getCurrentPlayer();
         // For test, you can decrease this to 2!
-        if ( curPlayer.getScore() >= 4)
+        if ( curPlayer.getScore() >= 10)
         {
+            SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
             Alert alert = new Alert( Alert.AlertType.INFORMATION);
 
             // Create a beautiful icon for catan dialog
