@@ -62,4 +62,5 @@ public enum Response {
     MUST_GET_NEIGHBOR,                              // 8
     MUST_GET_HALF_RESOURCE_PERFECT_BALANCE,         // 9
     MUST_PLAYER_GETS_POINT,                         // 10
+    MUST_TRADE                                      // 11
 }

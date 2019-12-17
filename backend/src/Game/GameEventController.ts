@@ -30,6 +30,33 @@ export class GameEventController{
         return newGameId;
     }
 
+    public disconnectPlayer(socket, client): void {
+        // If diconnected player was waiting for a game, discard from the queue
+        let result = this.gameQueue.deletePlayerFromQueue(client.id);
+        if(result)
+            return;
+        // If disconnected player was playing a game, finish the game
+        const gameId = this.players[client.id];
+        if(gameId == null) // Was not playing a game
+            return;
+        // Was playing a game
+        this.finishGame(gameId);
+        const players = this.games[gameId].getPlayersSockets(client.id);
+        players.forEach((item) => {
+            socket.to(item).emit("disconnect-response", {"message": "Player has disconnected"});
+        })
+    }
+
+    public finish(socket, client, data): void {
+        // Message is well formed
+        const gameId: number = this.players[client.id];
+        if(gameId == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        this.finishGame(gameId);
+    }
+
     public finishGame(gameId: number){
         this.freeGameIds.push(gameId);
     }
@@ -60,23 +87,6 @@ export class GameEventController{
         if(game == null)
             return null;
         return game.getPlayersSockets(socketId);
-    }
-
-    public disconnect(socket, client, data): void {
-        // If diconnected player was waiting for a game, discard from the queue
-        let result = this.gameQueue.deletePlayerFromQueue(client.id);
-        if(result)
-            return;
-        // If disconnected player was playing a game, finish the game
-        const gameId = this.players[client.id];
-        if(gameId == null) // Was not playing a game
-            return;
-        // Was playing a game
-        this.finishGame(gameId);
-        const players = this.games[gameId].getPlayersSockets(client.id);
-        players.forEach((item) => {
-            socket.to(item).emit("disconnect-response", {"message": "Player has disconnected"});
-        })
     }
 
     public gameRequest(socket, client, data): void {

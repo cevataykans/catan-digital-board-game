@@ -592,22 +592,24 @@ public class MultiGameController extends SceneController {
                 ServerHandler.getInstance().buildSettlement(x, y, PixelProcessor.getHexIndex(), PixelProcessor.getTileIndex());
             }
         }
-        else // RECEIVER
-        {
-            JSONObject obj = ServerInformation.getInstance().getInformation();
-            ServerInformation.getInstance().deleteInformation();
-            int hexIndex = 0;
-            int tileIndex = 0;
-            try {
-                hexIndex = obj.getInt("hexIndex");
-                tileIndex = obj.getInt("tileIndex");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            PixelProcessor.setHexIndex(hexIndex);
-            PixelProcessor.setTileIndex(tileIndex);
-            showSettlement(flowManager, x, y);
+    }
+
+    public void receiveBuildSettlement(int x, int y)
+    {
+        FlowManager flowManager = new FlowManager();
+        JSONObject obj = ServerInformation.getInstance().getInformation();
+        ServerInformation.getInstance().deleteInformation();
+        int hexIndex = 0;
+        int tileIndex = 0;
+        try {
+            hexIndex = obj.getInt("hexIndex");
+            tileIndex = obj.getInt("tileIndex");
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+        PixelProcessor.setHexIndex(hexIndex);
+        PixelProcessor.setTileIndex(tileIndex);
+        showSettlement(flowManager, x, y);
     }
 
     /**
@@ -661,42 +663,51 @@ public class MultiGameController extends SceneController {
     {
         FlowManager flowManager = new FlowManager();
 
-        if ( localPlayer == flowManager.getCurrentPlayer()) {
-            alert.setHeaderText("Building a Road");
-            alert.setContentText("Do you want to build a road?");
+        alert.setHeaderText("Building a Road");
+        alert.setContentText("Do you want to build a road?");
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                // Check if the user obligated to build a road
-                if (flowManager.checkMust() == Response.MUST_ROAD_BUILD) {
-                    flowManager.doneMust();
-                }
-
-                showRoad(flowManager, x, y);
-                ServerHandler.getInstance().buildRoad(x, y, PixelProcessor.getHexIndex(), PixelProcessor.getTileIndex());
-
-                // If its initial state, player has to immediately end the turn.
-                if (flowManager.checkMust() == Response.MUST_END_TURN) {
-                    performEndTurnButtonEvent();
-                }
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            // Check if the user obligated to build a road
+            if (flowManager.checkMust() == Response.MUST_ROAD_BUILD) {
+                flowManager.doneMust();
             }
-        }
-        else //RECEIVER
-        {
-            JSONObject obj = ServerInformation.getInstance().getInformation();
-            ServerInformation.getInstance().deleteInformation();
-            int hexIndex = 0;
-            int tileIndex = 0;
-            try {
-                hexIndex = obj.getInt("hexIndex");
-                tileIndex = obj.getInt("tileIndex");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            PixelProcessor.setHexIndex(hexIndex);
-            PixelProcessor.setTileIndex(tileIndex);
+
             showRoad(flowManager, x, y);
+            ServerHandler.getInstance().buildRoad(x, y, PixelProcessor.getHexIndex(), PixelProcessor.getTileIndex());
+
+            // If its initial state, player has to immediately end the turn.
+            if (flowManager.checkMust() == Response.MUST_END_TURN) {
+                performEndTurnButtonEvent();
+            }
         }
+
+    }
+
+    /**
+     * Shows the road belonging to the current player in the UI (called for every client).
+     * @param x is the x coordinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    public void receiveBuildRoad(int x, int y)
+    {
+        FlowManager flowManager = new FlowManager();
+
+
+        JSONObject obj = ServerInformation.getInstance().getInformation();
+        ServerInformation.getInstance().deleteInformation();
+        int hexIndex = 0;
+        int tileIndex = 0;
+        try {
+            hexIndex = obj.getInt("hexIndex");
+            tileIndex = obj.getInt("tileIndex");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        PixelProcessor.setHexIndex(hexIndex);
+        PixelProcessor.setTileIndex(tileIndex);
+        showRoad(flowManager, x, y);
+
     }
 
     /**
@@ -770,37 +781,46 @@ public class MultiGameController extends SceneController {
     {
         FlowManager flowManager = new FlowManager();
 
-        if ( localPlayer == flowManager.getCurrentPlayer()) {
-            alert.setHeaderText("Upgrading To City");
-            alert.setContentText("Do you want to upgrade your settlement to a city?");
+        alert.setHeaderText("Upgrading To City");
+        alert.setContentText("Do you want to upgrade your settlement to a city?");
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                // Check if the user obligated to build a city
-                if (flowManager.checkMust() == Response.MUST_CITY_BUILD) {
-                    flowManager.doneMust();
-                }
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            // Check if the user obligated to build a city
+            if (flowManager.checkMust() == Response.MUST_CITY_BUILD) {
+                flowManager.doneMust();
+            }
 
-                showCity(flowManager, x, y);
-                ServerHandler.getInstance().buildCity(x, y, PixelProcessor.getHexIndex(), PixelProcessor.getTileIndex());
-            }
-        }
-        else // RECEIVER
-        {
-            JSONObject obj = ServerInformation.getInstance().getInformation();
-            ServerInformation.getInstance().deleteInformation();
-            int hexIndex = 0;
-            int tileIndex = 0;
-            try {
-                hexIndex = obj.getInt("hexIndex");
-                tileIndex = obj.getInt("tileIndex");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            PixelProcessor.setHexIndex(hexIndex);
-            PixelProcessor.setTileIndex(tileIndex);
             showCity(flowManager, x, y);
+            ServerHandler.getInstance().buildCity(x, y, PixelProcessor.getHexIndex(), PixelProcessor.getTileIndex());
         }
+
+    }
+
+    /**
+     * Shows the city belonging to the current player in the UI (called for every client).
+     * @param alert is the dialog prompting confirmation of upgrading to the city
+     * @param x is the x coordinate in the game board
+     * @param y is the y coordinate in the game board
+     */
+    public void receiveBuildCity( int x, int y)
+    {
+        FlowManager flowManager = new FlowManager();
+
+        JSONObject obj = ServerInformation.getInstance().getInformation();
+        ServerInformation.getInstance().deleteInformation();
+        int hexIndex = 0;
+        int tileIndex = 0;
+        try {
+            hexIndex = obj.getInt("hexIndex");
+            tileIndex = obj.getInt("tileIndex");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        PixelProcessor.setHexIndex(hexIndex);
+        PixelProcessor.setTileIndex(tileIndex);
+        showCity(flowManager, x, y);
+
     }
 
 

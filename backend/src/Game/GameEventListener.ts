@@ -86,7 +86,11 @@ export class GameEventListener{
         })
 
         client.on('disconnect', data => {
-            console.log('disconnected' + client.id);
+            this.eventController.disconnectPlayer(socket, client);
+        })
+
+        client.on('finish', data => {
+            this.eventController.finishGame(socket, client, data);
         })
     }
 }
