@@ -251,5 +251,18 @@ public class FlowManager {
         must.remove();
     }
 
+    //*****************************************************************************************************************
+    //
+    // Data Control
+    //
+    //*****************************************************************************************************************
 
+    /**
+     * Terminates the flow by resetting game data for a new game.
+     */
+    public void terminateData()
+    {
+        Game.terminateGameData();
+        ResourceDistributer.terminateResourceDistributerData();
+    }
 }
