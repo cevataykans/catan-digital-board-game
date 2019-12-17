@@ -799,7 +799,6 @@ public class MultiGameController extends SceneController {
 
     /**
      * Shows the city belonging to the current player in the UI (called for every client).
-     * @param alert is the dialog prompting confirmation of upgrading to the city
      * @param x is the x coordinate in the game board
      * @param y is the y coordinate in the game board
      */

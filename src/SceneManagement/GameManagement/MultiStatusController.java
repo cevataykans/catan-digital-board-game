@@ -2,11 +2,13 @@ package SceneManagement.GameManagement;
 
 import SceneManagement.MultiGameController;
 import SceneManagement.SingleGameController;
+import ServerCommunication.ServerInformation;
 import animatefx.animation.*;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import GameFlow.*;
+import org.json.JSONObject;
 
 /**
  * This controller manages all the player andd resource selection logic. It has association with the Single-GameFlow.Game controller.
@@ -134,6 +136,34 @@ public class MultiStatusController {
             else if( resultCode == Response.ERROR_NO_RESOURCE_FOR_CARD )
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resource for a card!");
+            }
+            else if(resultCode == Response.INFORM_WAIT_FOR_TRADE_RESPONSE)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " made an offer!");
+            }
+            else if(resultCode == Response.INFORM_REFUSE_TRADE)
+            {
+                JSONObject obj = ServerInformation.getInstance().getInformation();
+                ServerInformation.getInstance().deleteInformation();
+                String otherPlayerName = "";
+                try{
+                    otherPlayerName = obj.getString("otherPlayer");
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                statusText.setText(otherPlayerName + " refused the offer!");
+            }
+            else if(resultCode == Response.INFORM_ACCEPT_TRADE)
+            {
+                JSONObject obj = ServerInformation.getInstance().getInformation();
+                ServerInformation.getInstance().deleteInformation();
+                String otherPlayerName = "";
+                try{
+                    otherPlayerName = obj.getString("otherPlayer");
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+                statusText.setText(otherPlayerName + " accepted the offer!");
             }
             else
             {

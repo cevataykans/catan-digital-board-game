@@ -69,6 +69,10 @@ export class GameEventListener{
             this.eventController.confirmTrade(socket, client, data);
         });
 
+        client.on('refuse-trade', data => {
+            this.eventController.refuseTrade(socket, client, data);
+        });
+
         client.on('harbor-trade', data => {
             this.eventController.harborTrade(socket, client, data);
         });
