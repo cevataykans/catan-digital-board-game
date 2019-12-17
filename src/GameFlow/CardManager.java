@@ -1,6 +1,7 @@
 package GameFlow;
 
 import DevelopmentCards.Card;
+import DevelopmentCards.ChangeOfFortune;
 import DevelopmentCards.Knight;
 import Player.Player;
 import ServerCommunication.ServerHandler;
@@ -51,7 +52,9 @@ public class CardManager
 		// Iterate over each card to make it playable
 		for ( Card tempCard : cards)
 		{
-			tempCard.makePlayable();
+			if ( !(tempCard instanceof ChangeOfFortune)) {
+				tempCard.makePlayable();
+			}
 		}
 	}
 

@@ -11,7 +11,7 @@ public class ChangeOfFortune extends Card {
     // Constructor
     public ChangeOfFortune()
     {
-        setName("monopoly");
+        setName("Change-of-Fortune");
         setInformation("This special card allows you to re-roll the dice after it is rolled, if you did not like the" +
                 " previous results");
     }

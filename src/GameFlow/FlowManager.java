@@ -102,32 +102,37 @@ public class FlowManager {
      * rolls dice, collect resources and return dices
      * @return dice numbers for both dice
      */
-    public ArrayList<Integer> rollDice(){
+    public ArrayList<Integer> rollDice() {
+        int firstDice = 0;
+        int secondDice = 0;
+        if (ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER) {
+            JSONObject obj = ServerInformation.getInstance().getInformation();
+            try {
+                firstDice = obj.getInt("firstDice");
+                secondDice = obj.getInt("secondDice");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            firstDice = (int) (Math.random() * 6 + 1);
+            secondDice = (int) (Math.random() * 6 + 1);
+        }
+
+        ArrayList<Integer> ret = new ArrayList<>();
+        ret.add(firstDice);
+        ret.add(secondDice);
+
+        return ret;
+    }
+
+    public void collectResourcesForDice(ArrayList<Integer> results) {
         // Get the related data
         Game game = Game.getInstance();
         GameBoard board = game.getGameBoard();
 
-        int firstDice = 0;
-        int secondDice = 0;
-        if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER){
-            JSONObject obj = ServerInformation.getInstance().getInformation();
-            try{
-                firstDice = obj.getInt("firstDice");
-                secondDice = obj.getInt("secondDice");
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-        else{
-            firstDice =  ( int)( Math.random() * 6 + 1 );
-            secondDice =  ( int)( Math.random() * 6 + 1 );
-        }
-
-
-        ArrayList<Integer> ret = new ArrayList<>();
-        ret.add( firstDice);
-        ret.add( secondDice);
+        // Get the 2 die results.
+        int firstDice = results.get(0);
+        int secondDice = results.get(1);
 
         // After the dice is rolled, players must collect resource and current player must be able to play previously
         // bought development cards!
@@ -152,8 +157,6 @@ public class FlowManager {
         }
 
         new CardManager().makeCardsPlayable();
-
-        return ret;
     }
 
     /**
