@@ -156,6 +156,7 @@ public class SingleDevCardController {
                                 controller.getSelectionController().showResourceSelectionForMonopoly();
                             }
                             cards.remove(cards.get(finalI));
+                            setupDevelopmentCards();
                             controller.getInfoController().setupCurrentPlayer();
                         }
                         else {

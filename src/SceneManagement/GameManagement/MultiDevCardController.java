@@ -142,12 +142,21 @@ public class MultiDevCardController {
                                 cardBox.getChildren().remove(temp);
                                 cards.get(finalI).play();
                                 ServerHandler.getInstance().playCard(cards.get(finalI).getName(), finalI);
+                                if ( cards.get(finalI) instanceof VictoryPoint)
+                                {
+                                    this.controller.checkWinCondition();
+                                }
+                                if ( cards.get(finalI) instanceof Knight)
+                                {
+                                    this.controller.checkWinCondition();
+                                }
                                 if (cards.get(finalI) instanceof YearOfPlenty) {
                                     controller.getSelectionController().showResourceSelectionForPlenty();
                                 } else if (cards.get(finalI) instanceof Monopoly) {
                                     controller.getSelectionController().showResourceSelectionForMonopoly();
                                 }
                                 cards.remove(cards.get(finalI));
+                                setupDevelopmentCards();
                                 controller.getInfoController().setupCurrentPlayer();
                                 ServerHandler.getInstance().refreshInfos();
                             } else {

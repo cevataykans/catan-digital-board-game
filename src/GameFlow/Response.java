@@ -35,6 +35,7 @@ public enum Response {
     INFORM_CITY_CAN_BE_BUILT,                       // 2
     INFORM_INSIDE_TILE,                             // 3
     INFORM_SEA_TILE,                                // 4
+    INFORM_ROLL_DICE,
     INFORM_WAIT_FOR_TRADE_RESPONSE,                 // 5
     INFORM_ACCEPT_TRADE,                            // 6
     INFORM_REFUSE_TRADE,                            // 7
@@ -52,7 +53,6 @@ public enum Response {
     ERROR_CARD_NOT_PLAYABLE,
     ERROR_CARD_DRAGGED_OUTSIDE,
     ERROR_NOT_PLAYER_TURN_CARD,
-    EKSIDOKUZ, // VAT DA FAK is DIS, displays only "-"?
     MUST_FREE_TURN,                                     // -1
     MUST_ROAD_BUILD,                                // 0
     MUST_SETTLEMENT_BUILD,                          // 1

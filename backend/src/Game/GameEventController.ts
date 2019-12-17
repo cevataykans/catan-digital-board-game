@@ -47,7 +47,7 @@ export class GameEventController{
         })
     }
 
-    public finish(socket, client, data): void {
+    public finish(socket, client): void {
         // Message is well formed
         const gameId: number = this.players[client.id];
         if(gameId == null){
@@ -55,6 +55,10 @@ export class GameEventController{
             return;
         }
         this.finishGame(gameId);
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("finish-game-response");
+        });
     }
 
     public finishGame(gameId: number){

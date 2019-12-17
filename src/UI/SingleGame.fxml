@@ -53,9 +53,9 @@
         <Label fx:id="grainCount" font="$x3" layoutX="95.0" layoutY="5.0" text="0" textFill="#fff500" />
         <Label fx:id="brickCount" font="$x3" layoutX="154.0" layoutY="30.0" text="0" textFill="#cc0000" />
         <Label fx:id="oreCount" font="$x3" layoutX="174.0" layoutY="81.0" text="0" textFill="#404040" />
-        <Label fx:id="currentName" layoutY="164.0" text="Player 4" textAlignment="CENTER" AnchorPane.leftAnchor="62.5" AnchorPane.rightAnchor="61.5">
+        <Label fx:id="currentName" layoutY="168.0" prefWidth="113.0" text="Player 4" textAlignment="CENTER" AnchorPane.leftAnchor="42.0" AnchorPane.rightAnchor="45.0">
           <font>
-            <Font size="20.0" fx:id="x2" />
+            <Font size="16.0" />
           </font>
         </Label>
         <ImageView fx:id="currentLR" fitHeight="53.35257039794669" fitWidth="46.26935857435025" layoutX="9.0" layoutY="117.0" pickOnBounds="true" preserveRatio="true" visible="false">
@@ -77,6 +77,8 @@
         <Label fx:id="currentGIncrease" font="$x5" layoutX="91.0" layoutY="-10.0" text="+0" visible="false" />
         <Label fx:id="currentBIncrease" font="$x5" layoutX="150.0" layoutY="16.0" text="+0" visible="false" />
         <Label fx:id="currentOIncrease" font="$x5" layoutX="170.0" layoutY="62.0" text="+0" visible="false" />
+        <Label layoutX="23.0" layoutY="174.0" text="LR" />
+        <Label layoutX="158.0" layoutY="174.0" text="LA" />
       </children>
     </AnchorPane>
     <AnchorPane fx:id="gameBox" layoutX="418.0" layoutY="117.0" opacity="1.0" prefHeight="671.0" prefWidth="729.0" styleClass="gameBox" />

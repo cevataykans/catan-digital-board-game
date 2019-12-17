@@ -1,5 +1,6 @@
 package SceneManagement.GameManagement;
 
+import SceneManagement.MultiGameController;
 import SceneManagement.SingleGameController;
 import animatefx.animation.*;
 import javafx.geometry.Pos;
@@ -45,6 +46,7 @@ public class SingleStatusController {
      */
     public void informStatus(Response resultCode)
     {
+        System.out.println(resultCode.toString());
         FlowManager flowManager = new FlowManager();
 
         // Initialize an out animation for the previous status.
@@ -130,6 +132,38 @@ public class SingleStatusController {
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", not enough resource for a card!");
             }
+            else if(resultCode == Response.INFORM_WAIT_FOR_TRADE_RESPONSE)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " made an offer!");
+            }
+            else if(resultCode == Response.INFORM_ROAD_CAN_BE_BUILT)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " you can build a road at that spot.");
+            }
+            else if(resultCode == Response.INFORM_SETTLEMENT_CAN_BE_BUILT)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " you can build a settlement at that spot.");
+            }
+            else if(resultCode == Response.INFORM_CITY_CAN_BE_BUILT)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " you can build a city at that spot.");
+            }
+            else if(resultCode == Response.INFORM_INSIDE_TILE)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " that is inside a hexagon.");
+            }
+            else if(resultCode == Response.INFORM_SEA_TILE)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " that is inside sea.");
+            }
+            else if(resultCode == Response.INFORM_ROLL_DICE)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " roll the dice to start the turn.");
+            }
+            else if(resultCode == Response.ERROR_OUTSIDE_GAMEBOARD)
+            {
+                statusText.setText(flowManager.getCurrentPlayer().getName() + " that place is not inside the game area.");
+            }
             else if ( resultCode == Response.ERROR_CARD_NOT_PLAYABLE)
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", development card is not playable this turn.");
@@ -137,6 +171,18 @@ public class SingleStatusController {
             else if ( resultCode == Response.ERROR_CARD_DRAGGED_OUTSIDE)
             {
                 statusText.setText( flowManager.getCurrentPlayer().getName() + ", please drag the card inside the playable area.");
+            }
+            else if ( resultCode == Response.MUST_GET_HALF_RESOURCE_PERFECT_BALANCE)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", please satisfy Thanos.");
+            }
+            else if ( resultCode == Response.MUST_PLAYER_GETS_POINT)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", please get a point.");
+            }
+            else if ( resultCode == Response.MUST_WAITING_FOR_TRADE)
+            {
+                statusText.setText( flowManager.getCurrentPlayer().getName() + ", wait for the trade offeree to respond.");
             }
             else
             {
