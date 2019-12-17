@@ -411,6 +411,24 @@ export class GameEventController{
         });
     }
 
+    public refuseTrade(socket, client, data): void {
+        const format: boolean = data != null && data.otherPlayer != null; // validation check
+        if(!format){ // Message received by the server is not well formed!!!
+            client.emit("invalid-information-error", {"message": "Wrong format"}); 
+            return;
+        }
+        // Message is well formed
+        const otherPlayers: string[] = this.findOtherPlayers(client.id);
+        if(otherPlayers == null){
+            client.emit("no-game-error", {"message": "You are not in a game"});
+            return;
+        }
+        // There is game
+        otherPlayers.forEach((item) => {
+            socket.to(item).emit("refuse-trade-response", data);
+        });
+    }
+
     public harborTrade(socket, client, data): void {
         const format: boolean = data != null && data.harborType != null && data.giveResIndex != null && data.takeResIndex != null; // validation check
         if(!format){ // Message received by the server is not well formed!!!
