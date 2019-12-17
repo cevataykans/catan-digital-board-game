@@ -239,7 +239,8 @@ public class MultiGameController extends SceneController {
                     // Checking if the hovered coordinate is a game tile.
                     Response structureCheck = boardManager.checkTile(x, y);
                     // Check if the hovered tile is a constructable road.
-                    if ( structureCheck == Response.INFORM_ROAD_CAN_BE_BUILT)
+                    if ( structureCheck == Response.INFORM_ROAD_CAN_BE_BUILT
+                            && (flowManager.checkMust() == Response.MUST_FREE_TURN || flowManager.checkMust() == Response.MUST_ROAD_BUILD))
                     {
                         // Get the road image with the current player's color.
                         ImageView roadHighlight = new ImageView("/images/road" + flowManager.getCurrentPlayer().getColor()
@@ -257,7 +258,8 @@ public class MultiGameController extends SceneController {
                         highlightOn = true;
                     }
                     // Check if the hovered tile is a constructable settlement.
-                    else if ( structureCheck == Response.INFORM_SETTLEMENT_CAN_BE_BUILT)
+                    else if ( structureCheck == Response.INFORM_SETTLEMENT_CAN_BE_BUILT &&
+                            (flowManager.checkMust() == Response.MUST_FREE_TURN || flowManager.checkMust() == Response.MUST_SETTLEMENT_BUILD))
                     {
                         // Get the settlement image with the current player's color.
                         ImageView settlementHighlight = new ImageView("/images/settlement" + flowManager.getCurrentPlayer()
@@ -482,12 +484,16 @@ public class MultiGameController extends SceneController {
                         + PixelProcessor.processY( e.getY() ) );
                 if ( flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION )
                 {
-                    //robber.setTranslateX(robber.getTranslateX() + (e.getX() - xRob.get()));
-                    //robber.setTranslateY(robber.getTranslateY() + (e.getY() - yRob.get()));
-
                     // source : https://blogs.oracle.com/vaibhav/image-drag-with-mouse-in-javafx
                     robber.setX( e.getX() - distXRob );
                     robber.setY( e.getY() - distYRob );
+                    if ( robber.getX() < 0 || robber.getX() > 660 || robber.getY() < 0 || robber.getY() > 610)
+                    {
+                        e.consume();
+                        robber.setX( initialRobX );
+                        robber.setY( initialRobY );
+                        statusController.informStatus( Response.ERROR_OUTSIDE_GAMEBOARD );
+                    }
                 }
                 else
                 {
