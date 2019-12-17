@@ -139,6 +139,16 @@ public class MultiDiceController {
                     flowManager.collectResourcesForDice(results);
                 }
             }
+            else
+            {
+                ArrayList<Integer> results = flowManager.rollDice();
+
+                // Set die result images taken from the logic.
+                die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
+                die2.setImage(new Image("/images/die" + results.get(1) + ".png"));
+
+                flowManager.collectResourcesForDice(results);
+            }
         }
         else
         {
