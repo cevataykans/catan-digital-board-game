@@ -115,7 +115,7 @@ public class ServerHandler {
                     int x = obj.getInt("x");
                     int y = obj.getInt("y");
 
-                    controller.buildSettlement(null, x, y);
+                    controller.receiveBuildSettlement(x, y);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -132,7 +132,7 @@ public class ServerHandler {
                     int x = obj.getInt("x");
                     int y = obj.getInt("y");
 
-                    controller.buildCity(null, x, y);
+                    controller.receiveBuildCity(x, y);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -149,7 +149,7 @@ public class ServerHandler {
                     int x = obj.getInt("x");
                     int y = obj.getInt("y");
 
-                    controller.buildRoad(null, x, y);
+                    controller.receiveBuildRoad(x, y);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -437,6 +437,13 @@ public class ServerHandler {
                 System.out.println("GAMES FULL ERROR");
             }
         });
+
+        this.socket.on("disconnect-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                // Finish the game and return to matchmaking screen
+            }
+        })
     }
 
 
