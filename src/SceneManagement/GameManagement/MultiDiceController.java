@@ -1,5 +1,7 @@
 package SceneManagement.GameManagement;
 
+import DevelopmentCards.Card;
+import DevelopmentCards.ChangeOfFortune;
 import GameFlow.FlowManager;
 import GameFlow.Response;
 import SceneManagement.MultiGameController;
@@ -11,10 +13,14 @@ import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
 import javafx.concurrent.Task;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.concurrent.Flow;
 
 public class MultiDiceController {
@@ -118,14 +124,21 @@ public class MultiDiceController {
 
             // Clear the roll action from the Flow Manager as it is already done, roll the dice in the logic itself
             // and distribute resources to the players that needs to collect resources from the hexagons.
-            if(controller.getLocalPlayer() == flowManager.getCurrentPlayer())
+            if(controller.getLocalPlayer() == flowManager.getCurrentPlayer()) {
                 flowManager.doneMust();
-            ArrayList<Integer> results = flowManager.rollDice();
-            System.out.println("Status: " + ServerHandler.getInstance().getStatus().toString() + "first dice: " + results.get(0) + " second dice: " + results.get(1));
+                ArrayList<Integer> results = flowManager.rollDice();
 
-            // Set die result images taken from the logic.
-            die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
-            die2.setImage(new Image("/images/die" + results.get(1) + ".png"));
+                // Set die result images taken from the logic.
+                die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
+                die2.setImage(new Image("/images/die" + results.get(1) + ".png"));
+                boolean fortunePlayed = checkChangeOfFortune(results);
+                if ( fortunePlayed == true){
+                    setupDiceRoll();
+                }
+                else {
+                    flowManager.collectResourcesForDice(results);
+                }
+            }
         }
         else
         {
@@ -134,4 +147,39 @@ public class MultiDiceController {
         }
     }
 
+    private boolean checkChangeOfFortune(ArrayList<Integer> results) {
+        FlowManager flowManager = new FlowManager();
+        ArrayList<Card> devCards = flowManager.getCurrentPlayer().getCards();
+
+        for ( Card card : devCards) {
+            if ( card instanceof ChangeOfFortune) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.initStyle(StageStyle.UTILITY);
+
+                // Create a beautiful icon for catan dialog
+                ImageView icon = new ImageView("/images/catanIcon.png");
+                icon.setFitHeight(48);
+                icon.setFitWidth(48);
+                alert.getDialogPane().setGraphic(icon);
+
+                alert.setHeaderText("Change Of Fortune");
+                alert.setContentText("Die results are:\nDie1: " + results.get(0) + "\nDie2: " + results.get(1) +
+                        "\nDo you want to play the Change Of Fortune card to re-roll the dice?");
+
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == ButtonType.OK) {
+                    card.play();
+                    devCards.remove(card);
+                    controller.getDevCardController().setupDevelopmentCards();
+                    ServerHandler.getInstance().playCard(card.getName(), devCards.indexOf(card));
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
 }
