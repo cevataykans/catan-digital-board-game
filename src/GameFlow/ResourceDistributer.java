@@ -54,6 +54,18 @@ public class ResourceDistributer
 	}
 
 	/**
+	 * Terminates resource distributer data for a new game when the game ends. Must only be called by flow manager when
+	 * game ends.
+	 */
+	public static void terminateResourceDistributerData()
+	{
+		if ( distributor != null )
+		{
+			distributor = null;
+		}
+	}
+
+	/**
 	 * This function adds a resource node to distribute to the player
 	 * @param player player who puchases the building tile.
 	 * @param tile is board[ y][ x] for getting start points.
