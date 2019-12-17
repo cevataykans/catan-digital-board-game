@@ -94,7 +94,7 @@ export class GameEventListener{
         })
 
         client.on('finish', data => {
-            this.eventController.finish(socket, client);
+            this.eventController.finish(socket, client, data);
         })
     }
 }

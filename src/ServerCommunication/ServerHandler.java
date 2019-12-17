@@ -24,7 +24,7 @@ public class ServerHandler {
     public enum Status{
         RECEIVER, SENDER
     }
-    private final String ADDRESS = "http://139.179.210.161:3000";
+    private final String ADDRESS = "http://139.179.103.162:3000";
     private final OkHttpClient httpClient = new OkHttpClient();
 
     public static ServerHandler serverHandler;
