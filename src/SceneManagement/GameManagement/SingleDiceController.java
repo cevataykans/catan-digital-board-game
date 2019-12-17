@@ -131,9 +131,7 @@ public class SingleDiceController {
                 // Set die result images taken from the logic.
                 die1.setImage(new Image("/images/die" + results.get(0) + ".png"));
                 die2.setImage(new Image("/images/die" + results.get(1) + ".png"));
-                System.out.println(results);
                 boolean fortunePlayed = checkChangeOfFortune(results);
-                System.out.println(results);
                 if ( fortunePlayed == true){
                     setupDiceRoll();
                 }

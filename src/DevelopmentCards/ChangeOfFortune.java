@@ -4,6 +4,7 @@ import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
 import SceneManagement.SoundManager;
+import ServerCommunication.ServerHandler;
 
 public class ChangeOfFortune extends Card {
     // Properties
@@ -24,7 +25,9 @@ public class ChangeOfFortune extends Card {
     public void play() {
         FlowManager flowManager = new FlowManager();
 
-        flowManager.addMust(Response.MUST_ROLL_DICE);
+        if (ServerHandler.getInstance().getStatus() != ServerHandler.Status.RECEIVER) {
+            flowManager.addMust(Response.MUST_ROLL_DICE);
+        }
         SoundManager.getInstance().playEffect(SoundManager.Effect.CHANGE_OF_FORTUNE);
     }
 }
