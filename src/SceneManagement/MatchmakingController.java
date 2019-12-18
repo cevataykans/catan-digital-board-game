@@ -27,14 +27,12 @@ public class MatchmakingController extends SceneController{
     Label totalPlayers;
     Label searchLabel;
     Separator separator;
-    int playerCount;
 
     // Constructor
     public MatchmakingController(Stage stage) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Matchmaking.fxml"));
         scene = stage.getScene();
-        playerCount = 1;
         initialize(stage);
     }
 
@@ -53,7 +51,7 @@ public class MatchmakingController extends SceneController{
 
         loading = (ProgressIndicator) scene.lookup("#loading");
         foundPlayers = (Label) scene.lookup("#foundPlayers");
-        foundPlayers.setText("" + playerCount);
+        foundPlayers.setText("" + 1);
         totalPlayers = (Label) scene.lookup("#totalLabel");
         searchLabel = (Label) scene.lookup("#searchLabel");
         searchLabel.setAlignment(Pos.CENTER);
@@ -112,11 +110,11 @@ public class MatchmakingController extends SceneController{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (playerCount < 4)
+                if (foundPlayerCount <= 4)
                 {
                     foundPlayers.setText("" + foundPlayerCount);
                 }
-                else
+                if ( foundPlayerCount == 4)
                 {
                     searchLabel.setText("Players found, game is starting...");
                 }

@@ -81,7 +81,7 @@
         <Label layoutX="158.0" layoutY="174.0" text="LA" />
       </children>
     </AnchorPane>
-    <AnchorPane fx:id="gameBox" layoutX="418.0" layoutY="117.0" opacity="1.0" prefHeight="671.0" prefWidth="729.0" styleClass="gameBox" />
+    <AnchorPane fx:id="gameBox" layoutX="418.0" layoutY="117.0" opacity="1.0" prefHeight="671.0" prefWidth="729.0" styleClass="gameBox" visible="true" />
     <AnchorPane fx:id="cardBox" layoutX="423.0" layoutY="869.0" prefHeight="67.22509765625" prefWidth="725.0" styleClass="cardBox" />
     <Rectangle fx:id="cardPlayArea" arcHeight="5.0" arcWidth="5.0" fill="#ffcccc35" height="200.0" layoutX="422.0" layoutY="511.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="686.0" />
     <Label fx:id="cardDragLabel" layoutX="691.0" layoutY="601.0" text="Drag Here To Play" textFill="#292929" visible="false">
@@ -278,5 +278,12 @@
     <Label fx:id="other3BIncrease" font="$x5" layoutX="1512.0" layoutY="571.0" text="+0" visible="false" />
     <Label fx:id="other3OIncrease" font="$x5" layoutX="1512.0" layoutY="596.0" text="+0" visible="false" />
     <AnchorPane fx:id="otherInfoBox" layoutX="1368.0" layoutY="192.0" prefHeight="401.0" prefWidth="123.0" visible="true" />
+    <AnchorPane fx:id="escPopup" layoutX="668.0" layoutY="312.0" prefHeight="200.0" prefWidth="200.0" visible="true">
+      <children>
+        <Button fx:id="continue" layoutX="64.0" layoutY="30.0" mnemonicParsing="false" text="Continue" />
+        <Button fx:id="mainMenu" layoutX="57.0" layoutY="87.0" mnemonicParsing="false" text="Main Menu" />
+        <Button fx:id="exitGame" layoutX="62.0" layoutY="143.0" mnemonicParsing="false" text="Exit Game" />
+      </children>
+    </AnchorPane>
   </children>
 </AnchorPane>
