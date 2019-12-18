@@ -43,6 +43,7 @@ public class MultiPlayerInfoController {
     private AnchorPane otherInfoBox;
     private AnchorPane otherPlayerBox;
     private AnchorPane localPlayerBox;
+    private ProgressIndicator localScore;
     private Label localPlayerName;
     private Label otherPlayerName;
     private ImageView currentLR;
@@ -116,6 +117,7 @@ public class MultiPlayerInfoController {
         localPlayerBox = (AnchorPane) scene.lookup("#currentPlayerInf");
         otherPlayerBox = (AnchorPane) scene.lookup("#otherBox");
         currentPlayerBoxAnim = new Pulse(localPlayerBox);
+        localScore = (ProgressIndicator) scene.lookup("#currentScore");
 
         // Get the UI representations of other players' names from the player information controller's fxml file.
         localPlayerName = (Label) scene.lookup("#currentName");
@@ -288,17 +290,17 @@ public class MultiPlayerInfoController {
         infoOut.setOnFinished(event ->
         {
             FadeIn infoIn = new FadeIn(localPlayerBox);
-            // Sets current player's container's style to the current player's color.
+            // Sets local player's container's style to the current player's color.
             localPlayerBox.getStyleClass().clear();
             localPlayerBox.getStyleClass().add( controller.getLocalPlayer().getColor().toString().substring(1) + "PlayerBox");
-            // Set current player's name in information container to current player's name.
+            // Set local player's name in information container to current player's name.
             localPlayerName.setText( controller.getLocalPlayer().getName());
-            // Set current player's score in information container to current player's score.
-            //playerScores.get(0).setProgress( game.getCurrentPlayer().getScore() * 1.0 / 10);
-            // Get the resources of the current player.
+            // Set local player's score in information container to current player's score.
+            localScore.setProgress( controller.getLocalPlayer().getScore() * 1.0 / 10);
+            // Get the resources of the local player.
             int logicLocalPlayerResources[] =  controller.getLocalPlayer().getResources();
 
-            // Set each of the current player's resource representations in UI to current player's actual resource counts.
+            // Set each of the local player's resource representations in UI to current player's actual resource counts.
             for ( int i = 0; i < localPlayerResources.size(); i++)
             {
                 localPlayerResources.get(i).setText("" + logicLocalPlayerResources[i]);

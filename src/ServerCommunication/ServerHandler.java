@@ -24,7 +24,7 @@ public class ServerHandler {
     public enum Status{
         RECEIVER, SENDER
     }
-    private final String ADDRESS = "http://localhost:3000";
+    private final String ADDRESS = "http://139.179.200.68:3000";
     private final OkHttpClient httpClient = new OkHttpClient();
 
     public static ServerHandler serverHandler;
@@ -464,7 +464,6 @@ public class ServerHandler {
             @Override
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
-                JSONObject obj = (JSONObject) objects[0];
                 // Call related controller method
                 controller.getInfoController().setupCurrentPlayer();
                 controller.getInfoController().setupOtherPlayers();

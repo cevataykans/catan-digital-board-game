@@ -72,6 +72,11 @@ public class MultiGameController extends SceneController {
     private double initialRobX;
     private double initialRobY;
 
+    // ESC Popup Properties
+    private AnchorPane escPopup;
+    private Button continueButton;
+    private Button mainMenuButton;
+    private Button exitButton;
 
     // Constructor
     public MultiGameController(Stage stage) throws IOException
@@ -183,6 +188,11 @@ public class MultiGameController extends SceneController {
 
         setupGameBoard( tiles); // Game is configured here
         setupRobber(); // Robber is configured here
+
+        escPopup = (AnchorPane) scene.lookup("#escPopup");
+        continueButton = (Button) scene.lookup("#continue");
+        mainMenuButton = (Button) scene.lookup("#mainMenu");
+        exitButton = (Button) scene.lookup("#exitGame");
 
         // Initializing all the sub controllers that will handle the game's other logic.
         infoController = new MultiPlayerInfoController(scene, this);
@@ -347,14 +357,48 @@ public class MultiGameController extends SceneController {
         scene.setOnKeyPressed(event -> {
             if (localPlayer == flowManager.getCurrentPlayer()) {
                 switch (event.getCode()) {
-                    case E:
-                        performEndTurnButtonEvent();
+                    case E: performEndTurnButtonEvent();
                         break;
-                    case H:
-                        robber.setImage(new Image("/images/hakan.jpeg", 45, 70, false, false));
+                    case H: robber.setImage( new Image("/images/hakan.jpeg", 45, 70, false, false) );
                         break;
-                    case G:
-                        robber.setImage(new Image("/images/goose.png", 45, 70, false, false));
+                    case G: robber.setImage( new Image("/images/goose.png", 45, 70, false, false) );
+                        break;
+                    case ESCAPE:
+                        if ( escPopup.isVisible()) {
+                            escPopup.setVisible(false);
+                        }
+                        else {
+                            escPopup.setVisible(true);
+                        }
+                        continueButton.setOnMouseClicked(event1 -> {
+                            escPopup.setVisible(false);
+                        });
+                        mainMenuButton.setOnMouseClicked(event1 -> {
+                            // Initializing closing animation for game scene.
+                            FadeOut animation2 = new FadeOut(root);
+                            animation2.setSpeed(3.5);
+                            animation2.setOnFinished(event2 ->
+                            {
+                                try
+                                {
+                                    // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
+                                    root.setVisible(false);
+                                    GameEngine.getInstance().setController(0);
+                                }
+                                catch (IOException e)
+                                {
+                                    System.out.println(e);
+                                }
+                            });
+                            animation2.play();
+                        });
+                        exitButton.setOnMouseClicked(event1 -> {
+                            Platform.exit();
+                            System.exit(0);
+                        });
+                        break;
+                    default:
+                        break;
                 }
             }
         });
