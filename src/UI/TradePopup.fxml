@@ -104,8 +104,6 @@
         <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="9"/>
       </valueFactory>
     </Spinner>
-    <Label fx:id="offeror" layoutX="39.0" layoutY="38.0" text="Label" textFill="WHITE" />
-    <Label fx:id="offeree" layoutX="233.0" layoutY="38.0" text="Label" textFill="WHITE" />
     <Button fx:id="cancel" layoutX="192.0" layoutY="277.0" mnemonicParsing="false" text="Cancel" />
   </children>
 </AnchorPane>
