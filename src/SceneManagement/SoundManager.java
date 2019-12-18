@@ -29,6 +29,7 @@ public class SoundManager {
 
     private Map<Backtrack, MediaPlayer> backtracks;
     private MediaPlayer currentBacktrack;
+    private double masterVolume = 0.5;
 
     private Map<Effect, MediaPlayer> effects;
     private MediaPlayer currentEffect;
@@ -92,7 +93,7 @@ public class SoundManager {
         MediaPlayer mp = mediaPlayer;
         Timer timer = new Timer(5, null);
         timer.addActionListener(new ActionListener() {
-            double soundLevel = 0.5;
+            double soundLevel = masterVolume;
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(soundLevel <= 0){
@@ -116,9 +117,9 @@ public class SoundManager {
             double soundLevel = 0;
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(soundLevel >= 0.5){
+                if(soundLevel >= masterVolume){
                     timer.stop();
-                    mp.setVolume(0.5);
+                    mp.setVolume(masterVolume);
                 }
                 else{
                     mp.setVolume(soundLevel);
@@ -129,4 +130,12 @@ public class SoundManager {
         timer.start();
     }
 
+    public double getMasterVolume() {
+        return masterVolume;
+    }
+
+    public void setMasterVolume(double masterVolume) {
+        this.masterVolume = masterVolume;
+        this.currentBacktrack.setVolume(masterVolume);
+    }
 }
