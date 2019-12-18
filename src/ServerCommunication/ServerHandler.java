@@ -526,6 +526,7 @@ public class ServerHandler {
             @Override
             public void call(Object... objects) {
                 controller.finishTheGameForDisconnection();
+                logout();
             }
         });
     }
