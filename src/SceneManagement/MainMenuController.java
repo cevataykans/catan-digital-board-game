@@ -3,6 +3,8 @@ package SceneManagement;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
@@ -10,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -27,6 +30,7 @@ public class MainMenuController extends SceneController{
     Button playOnlineButton;
     Button helpButton;
     Button exitButton;
+    Slider masterVolume;
 
     // Constructor
     public MainMenuController(Stage stage) throws IOException
@@ -80,6 +84,8 @@ public class MainMenuController extends SceneController{
         playOnlineButton = (Button) scene.lookup("#playOnlineButton");
         helpButton = (Button) scene.lookup("#helpButton");
         exitButton = (Button) scene.lookup("#exitButton");
+        masterVolume = (Slider) scene.lookup("#masterVolume");
+        masterVolume.setValue(SoundManager.getInstance().getMasterVolume());
 
         // Play Local button changes scene to Player Selection
         playLocalButton.setOnMouseClicked(event -> {
@@ -158,6 +164,13 @@ public class MainMenuController extends SceneController{
                 System.exit(0);
             });
             animation2.play();
+        });
+
+        masterVolume.valueProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                SoundManager.getInstance().setMasterVolume(newValue.doubleValue());
+            }
         });
     }
 }
