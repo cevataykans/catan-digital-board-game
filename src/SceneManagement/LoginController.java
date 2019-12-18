@@ -32,7 +32,7 @@ public class LoginController extends SceneController {
     public LoginController(Stage stage) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Login.fxml"));
-        scene = new Scene(root, Color.BLACK);
+        scene = stage.getScene();
         initialize(stage);
     }
 
