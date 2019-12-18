@@ -122,6 +122,7 @@ public class ServerHandler {
             e.printStackTrace();
         }
         this.socket.connect();
+        this.connected = true;
         listenEvents();
     }
 
