@@ -53,6 +53,11 @@ public class ServerInformation {
                 e.printStackTrace();
             }
         }
+        try{
+            resultObject.put("token", ServerHandler.getInstance().getToken());
+        } catch(Exception e){
+            e.printStackTrace();
+        }
         return resultObject;
     }
 

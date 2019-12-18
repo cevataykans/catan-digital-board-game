@@ -96,7 +96,10 @@ export class GameEventController{
             return;
         }
         const result: any[] = this.gameQueue.addPlayer(client.id, data.userId);
-        if(result != null){ // It means gameQueue.addPlayer returns players for a game.
+        if(result == null){
+            this.updateWaitingPlayers(socket);
+        }
+        else{ // It means gameQueue.addPlayer returns players for a game.
             // shuffle the players
             const shuffledPlayers = this.shuffle(result);
             let playerIds: string[] = [];
@@ -147,6 +150,16 @@ export class GameEventController{
         console.log('gamerequest done');
 
     }
+
+    private updateWaitingPlayers(socket): void {
+        let waitingPlayers: string[] = this.gameQueue.getWaitingPlayers();
+        const data = {
+            "number": waitingPlayers.length
+        }
+        waitingPlayers.forEach((item) => {
+            socket.to(item).emit("found-player-response", data);
+        })
+    } 
 
     public rollDice(socket, client, data): void {
         const result: boolean = data != null && data.firstDice != null && data.secondDice != null; // validation check

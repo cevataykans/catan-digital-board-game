@@ -9,6 +9,15 @@ export class GameQueue{
     }
 
     public addPlayer(socketId: string, name: string): any[]{
+        let alreadyInQueue: boolean = false;
+        this.queue.forEach((item) => {
+            if(item.userId == name)
+                alreadyInQueue = true;
+        })
+
+        if(alreadyInQueue)
+            return;
+            
         if(this.queue.length < this.NUMBER_OF_PLAYERS - 1){
             const player = {
                 "userId": name,
@@ -38,6 +47,14 @@ export class GameQueue{
             }
         })
         return false;
+    }
+
+    public getWaitingPlayers(): string[] {
+        let result: string[] = [];
+        this.queue.forEach((item) => {
+            result.push(item.socketId);
+        });
+        return result;
     }
 
 }

@@ -1,6 +1,7 @@
 package SceneManagement;
 
 import Player.Player;
+import ServerCommunication.ServerHandler;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
