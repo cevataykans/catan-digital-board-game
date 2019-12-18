@@ -24,7 +24,7 @@ public class ServerHandler {
     public enum Status{
         RECEIVER, SENDER
     }
-    private final String ADDRESS = "http://139.179.103.162:3000";
+    private final String ADDRESS = "http://localhost:3000";
     private final OkHttpClient httpClient = new OkHttpClient();
 
     public static ServerHandler serverHandler;
@@ -41,8 +41,9 @@ public class ServerHandler {
     private ServerHandler(){
         this.status = null;
         this.socket = null;
-        this.token = null;
+        this.token = "";
         this.connected = false;
+        this.userId = "";
     }
 
     public static ServerHandler getInstance(){
@@ -68,6 +69,7 @@ public class ServerHandler {
         String token = result.split("token")[1].substring(3).split("\"")[0];
         this.token = token;
         System.out.println(token);
+        connect();
         return true;
     }
 
@@ -104,20 +106,44 @@ public class ServerHandler {
         String result = sendPost(names, keys, "/api/user/logout");
         if(result.equals("Failed"))
             return false;
-        this.token = null;
-        this.userId = null;
+        this.token = "";
+        this.userId = "";
+        this.connected = false;
+        this.socket.disconnect();
         return true;
     }
 
-    private void connect() throws URISyntaxException{
+    private void connect(){
         if(connected)
             return;
-        this.socket = IO.socket(ADDRESS);
+        try{
+            this.socket = IO.socket(ADDRESS);
+        } catch (URISyntaxException e){
+            e.printStackTrace();
+        }
         this.socket.connect();
         listenEvents();
     }
 
+    private void sendUserId(){
+        System.out.println("send");
+        String[] names = {"userId", "token"};
+        String[] keys = new String[2];
+        keys[0] = this.userId;
+        keys[1] = this.token;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
+        this.socket.emit("userId-response", data);
+    }
+
     public void listenEvents() {
+        this.socket.on("userId-request", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                System.out.println("request");
+                sendUserId();
+            }
+        });
+
         this.socket.on("found-player-response", new Emitter.Listener() { // Start message from the server
             @Override
             public void call(Object... objects) {
@@ -500,14 +526,13 @@ public class ServerHandler {
         this.socket.on("disconnect-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-                // Finish the game and return to matchmaking screen
+                controller.finishTheGameForDisconnection();
             }
         });
     }
 
 
-    public void gameRequest() throws URISyntaxException {
-        this.connect();
+    public void gameRequest(){
         String[] names = {"userId"};
         String[] keys = new String[1];
         keys[0] = this.userId;
@@ -558,7 +583,8 @@ public class ServerHandler {
     }
 
     public void endTurn(){
-        socket.emit("end-turn");
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
+        socket.emit("end-turn", data);
     }
 
     public void rollDice(int firstDice, int secondDice){
@@ -682,7 +708,8 @@ public class ServerHandler {
     }
 
     public void refreshInfos() {
-        socket.emit("refresh-infos", null);
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
+        socket.emit("refresh-infos", data);
     }
 
     public void sendMessage(String userId, String message){
@@ -694,7 +721,10 @@ public class ServerHandler {
         socket.emit("send-message", data);
     }
 
-    public void finishGame() { socket.emit("finish-game", null);}
+    public void finishGame() {
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
+        socket.emit("finish-game", data);
+    }
 
     public Status getStatus(){
         return this.status;
@@ -722,4 +752,5 @@ public class ServerHandler {
     public String getToken(){
         return this.token;
     }
+
 }

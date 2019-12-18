@@ -53,6 +53,9 @@ export class UserDBService {
                 password: newPassword
             };
             console.log("New psw: " + newPassword);
+            let user = await UserModel.findOne({userId: body.userId});
+            if(!user.online)
+                return;
             let result = await UserModel.findOneAndUpdate({userId: body.userId}, data, {new: true});
             if(!result) throw new UserPasswordChangeError();
         } catch(err){

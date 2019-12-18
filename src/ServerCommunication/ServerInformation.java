@@ -55,6 +55,18 @@ public class ServerInformation {
         }
         try{
             resultObject.put("token", ServerHandler.getInstance().getToken());
+            resultObject.put("userId", ServerHandler.getInstance().getUserId());
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return resultObject;
+    }
+
+    public JSONObject JSONObjectFactory(){
+        JSONObject resultObject = new JSONObject();
+        try{
+            resultObject.put("token", ServerHandler.getInstance().getToken());
+            resultObject.put("userId", ServerHandler.getInstance().getUserId());
         } catch(Exception e){
             e.printStackTrace();
         }
@@ -64,8 +76,9 @@ public class ServerInformation {
     public Request buildRequest(String[] names, String[] keys, String address){
         // form parameters
         FormBody.Builder builder = new FormBody.Builder();
-        for(int i = 0 ; i < names.length ; i++)
+        for(int i = 0 ; i < names.length; i++) {
             builder.add(names[i], keys[i]);
+        }
 
         FormBody formBody = builder.build();
 

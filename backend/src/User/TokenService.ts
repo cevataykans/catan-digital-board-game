@@ -27,6 +27,9 @@ export class TokenService{
     }
 
     checkTokenForGame(data): void{
+        if(data == null){
+            console.log("data is null");
+        }
         const token = data.token;
         if (!token)
             throw new NoAccess();

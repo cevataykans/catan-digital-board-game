@@ -12,6 +12,18 @@ export class GameEventListener{
     }
 
     public listenEvents(socket, client): void {
+
+        client.on('userId-response', data => {
+            console.log("checkpoint1");
+            try{
+                this.tokenService.checkTokenForGame(data);
+                this.eventController.saveUserId(client, data);
+            }
+            catch(error){
+                console.log("Authentication Error");
+            }
+        })
+
         client.on('game-request', data => {
             try{
                 this.tokenService.checkTokenForGame(data);
@@ -214,17 +226,20 @@ export class GameEventListener{
         })
 
         client.on('disconnect', data => {
+            console.log("disconnected");
             this.eventController.disconnectPlayer(socket, client);
         })
 
         client.on('finish', data => {
             try{
                 this.tokenService.checkTokenForGame(data);
-                this.eventController.finish(socket, client, data);
+                this.eventController.finish(socket, client);
             }
             catch(error){
                 console.log("Authentication Error");
             }
-        })
+        });
+
+        this.eventController.requestUserId(socket, client);
     }
 }

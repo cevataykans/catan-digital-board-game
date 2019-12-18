@@ -1,17 +1,22 @@
 import {Game} from "./Game";
 import {GameQueue} from "./GameQueue";
+import { UserDBService } from "../User/UserDBService";
 
 export class GameEventController{
 
     private gameQueue: GameQueue;
     private games;
     private players;
+    private userIds;
     private freeGameIds: number[];
+    private userDBService: UserDBService;
 
     constructor(){
+        this.userDBService = new UserDBService();
         this.gameQueue = new GameQueue();
         this.games = {};
         this.players = {};
+        this.userIds = {};
         this.freeGameIds = [];
         for(let i = 0 ; i < 1000; i++){
             this.freeGameIds.push(i);
@@ -30,7 +35,20 @@ export class GameEventController{
         return newGameId;
     }
 
-    public disconnectPlayer(socket, client): void {
+    public saveUserId(client, data){
+        if(data == null || data.userId == null)
+            return;
+        this.userIds[client.id] = data.userId;
+        console.log("saved");
+    }
+
+    public async disconnectPlayer(socket, client): Promise<void> {
+        const user = {
+            userId: this.userIds[client.id],
+            password: ""
+        };
+        console.log(user + " has disconnected!");
+        await this.userDBService.logout(user);
         // If diconnected player was waiting for a game, discard from the queue
         let result = this.gameQueue.deletePlayerFromQueue(client.id);
         if(result)
@@ -45,6 +63,11 @@ export class GameEventController{
         players.forEach((item) => {
             socket.to(item).emit("disconnect-response", {"message": "Player has disconnected"});
         })
+    }
+
+    public requestUserId(socket, client){
+        console.log("request");
+        socket.to(client.id).emit("userId-request");
     }
 
     public finish(socket, client): void {
@@ -161,16 +184,6 @@ export class GameEventController{
             socket.to(item).emit("found-player-response", data);
         })
     }
-
-    private updateWaitingPlayers(socket): void {
-        let waitingPlayers: string[] = this.gameQueue.getWaitingPlayers();
-        const data = {
-            "number": waitingPlayers.length
-        }
-        waitingPlayers.forEach((item) => {
-            socket.to(item).emit("found-player-response", data);
-        })
-    } 
 
     public rollDice(socket, client, data): void {
         const result: boolean = data != null && data.firstDice != null && data.secondDice != null; // validation check
