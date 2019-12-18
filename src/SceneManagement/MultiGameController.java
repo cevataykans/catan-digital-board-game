@@ -1242,6 +1242,35 @@ public class MultiGameController extends SceneController {
         }
     }
 
+    public void finishTheGameForDisconnection()
+    {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Alert alert = new Alert( Alert.AlertType.INFORMATION);
+
+                // Showing player rankings
+                alert.setTitle( "Disconnected");
+                alert.setHeaderText("Player has disconnected! Please return to main menu");
+                alert.showAndWait();
+            }
+        });
+
+
+        FlowManager flowManager = new FlowManager();
+        if ( getLocalPlayer() == flowManager.getCurrentPlayer())
+        {
+            ServerHandler.getInstance().finishGame();
+        }
+
+        try
+        {
+            new FlowManager().terminateData(); // throws null pointer exception? dont know why
+            GameEngine.getInstance().setController(0); // may throw an error
+        }
+        catch ( Exception e) { System.out.println( e); }
+    }
+
     public MultiPlayerInfoController getInfoController() {
         return infoController;
     }

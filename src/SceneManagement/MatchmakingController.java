@@ -62,50 +62,49 @@ public class MatchmakingController extends SceneController{
         startMatchmaking = (Button) scene.lookup("#startMatchmaking");
         startMatchmaking.setOnMouseClicked(event ->
         {
-            try {
-                ServerHandler.getInstance().gameRequest();
-                FadeOut buttonOut = new FadeOut(startMatchmaking);
-                buttonOut.setSpeed(2);
-                buttonOut.setOnFinished(event2 -> {
-                    startMatchmaking.setVisible(false);
-                    loading.setVisible(true);
-                    foundPlayers.setVisible(true);
-                    totalPlayers.setVisible(true);
-                    searchLabel.setVisible(true);
-                    separator.setVisible(true);
-                    new FadeIn(loading).play();
-                    new FadeIn(foundPlayers).play();
-                    new FadeIn(totalPlayers).play();
-                    new FadeIn(searchLabel).play();
-                    new FadeIn(separator).play();
-                });
-                buttonOut.play();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
+            ServerHandler.getInstance().gameRequest();
+            FadeOut buttonOut = new FadeOut(startMatchmaking);
+            buttonOut.setSpeed(2);
+            buttonOut.setOnFinished(event2 -> {
+                startMatchmaking.setVisible(false);
+                loading.setVisible(true);
+                foundPlayers.setVisible(true);
+                totalPlayers.setVisible(true);
+                searchLabel.setVisible(true);
+                separator.setVisible(true);
+                new FadeIn(loading).play();
+                new FadeIn(foundPlayers).play();
+                new FadeIn(totalPlayers).play();
+                new FadeIn(searchLabel).play();
+                new FadeIn(separator).play();
+            });
+            buttonOut.play();
         });
 
         // Gets the "Go Back" button from the help's fxml file and adds the logic to going back to main menu.
         goBack = (ImageView) scene.lookup("#goBack");
         goBack.setOnMouseClicked(event ->
         {
-            // Initializing closing animation for help scene.
-            FadeOut animation2 = new FadeOut(root);
-            animation2.setSpeed(3.5);
-            animation2.setOnFinished(event1 ->
-            {
-                try
+            boolean result = ServerHandler.getInstance().logout();
+            if(result){
+                // Initializing closing animation for help scene.
+                FadeOut animation2 = new FadeOut(root);
+                animation2.setSpeed(3.5);
+                animation2.setOnFinished(event1 ->
                 {
-                    // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
-                    root.setVisible(false);
-                    GameEngine.getInstance().setController(4);
-                }
-                catch (IOException e)
-                {
-                    System.out.println(e);
-                }
-            });
-            animation2.play();
+                    try
+                    {
+                        // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
+                        root.setVisible(false);
+                        GameEngine.getInstance().setController(4);
+                    }
+                    catch (IOException e)
+                    {
+                        System.out.println(e);
+                    }
+                });
+                animation2.play();
+            }
         });
     }
 

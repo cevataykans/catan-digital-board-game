@@ -33,13 +33,17 @@ public class ServerHandler {
     private Status status;
     private Socket socket;
     private MultiGameController controller;
-    private int gameId;
+    private String token;
     private String userId;
+    private boolean connected;
 
     // Constructor
     private ServerHandler(){
         this.status = null;
         this.socket = null;
+        this.token = "";
+        this.connected = false;
+        this.userId = "";
     }
 
     public static ServerHandler getInstance(){
@@ -54,12 +58,19 @@ public class ServerHandler {
         String[] keys = new String[2];
         keys[0] = userId;
         keys[1] = password;
-        boolean result = sendPost(names, keys, "/api/user/login");
-        if ( result == true)
+        String result = sendPost(names, keys, "/api/user/login");
+        if ( result.equals("Failed") )
         {
-            this.userId = userId;
+            // Error message
+            return false;
         }
-        return result;
+        this.userId = userId;
+        System.out.println(result.split("token")[1]);
+        String token = result.split("token")[1].substring(3).split("\"")[0];
+        this.token = token;
+        System.out.println(token);
+        connect();
+        return true;
     }
 
 
@@ -68,25 +79,71 @@ public class ServerHandler {
         String[] keys = new String[2];
         keys[0] = userId;
         keys[1] = password;
-        return sendPost(names, keys, "/api/user/register");
+        String result = sendPost(names, keys, "/api/user/register");
+        if(result.equals("Failed"))
+            return false;
+        return true;
     }
 
-    public boolean changePassword(String userId, String oldPsw, String newPsw){
-        String[] names = {"userId", "oldPassword", "newPassword"};
+    public boolean changePassword(String oldPsw, String newPsw){
+        String[] names = {"userId", "oldPassword", "newPassword", "token"};
         String[] keys = new String[3];
-        keys[0] = userId;
+        keys[0] = this.userId;
         keys[1] = oldPsw;
         keys[2] = newPsw;
-        return sendPost(names, keys, "/api/user/changePassword");
+        keys[3] = this.token;
+        String result = sendPost(names, keys, "/api/user/changePassword");
+        if(result.equals("Failed"))
+            return false;
+        return true;
     }
 
-    private void connect() throws URISyntaxException{
-        this.socket = IO.socket(ADDRESS);
+    public boolean logout(){
+        String[] names = {"userId", "token"};
+        String[] keys = new String[2];
+        keys[0] = this.userId;
+        keys[1] = this.token;
+        String result = sendPost(names, keys, "/api/user/logout");
+        if(result.equals("Failed"))
+            return false;
+        this.token = "";
+        this.userId = "";
+        this.connected = false;
+        this.socket.disconnect();
+        return true;
+    }
+
+    private void connect(){
+        if(connected)
+            return;
+        try{
+            this.socket = IO.socket(ADDRESS);
+        } catch (URISyntaxException e){
+            e.printStackTrace();
+        }
         this.socket.connect();
         listenEvents();
     }
 
+    private void sendUserId(){
+        System.out.println("send");
+        String[] names = {"userId", "token"};
+        String[] keys = new String[2];
+        keys[0] = this.userId;
+        keys[1] = this.token;
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
+        this.socket.emit("userId-response", data);
+    }
+
     public void listenEvents() {
+        this.socket.on("userId-request", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                System.out.println("request");
+                sendUserId();
+            }
+        });
+
         this.socket.on("found-player-response", new Emitter.Listener() { // Start message from the server
             @Override
             public void call(Object... objects) {
@@ -110,7 +167,6 @@ public class ServerHandler {
                 try {
                     GameEngine.getInstance().setController(7);
                     controller = (MultiGameController) GameEngine.getInstance().getController();
-                    gameId = (int) obj.get("gameId");
                 }
                 catch (Exception e)
                 {
@@ -470,14 +526,13 @@ public class ServerHandler {
         this.socket.on("disconnect-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-                // Finish the game and return to matchmaking screen
+                controller.finishTheGameForDisconnection();
             }
         });
     }
 
 
-    public void gameRequest() throws URISyntaxException {
-        this.connect();
+    public void gameRequest(){
         String[] names = {"userId"};
         String[] keys = new String[1];
         keys[0] = this.userId;
@@ -528,7 +583,8 @@ public class ServerHandler {
     }
 
     public void endTurn(){
-        socket.emit("end-turn");
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
+        socket.emit("end-turn", data);
     }
 
     public void rollDice(int firstDice, int secondDice){
@@ -652,7 +708,8 @@ public class ServerHandler {
     }
 
     public void refreshInfos() {
-        socket.emit("refresh-infos", null);
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
+        socket.emit("refresh-infos", data);
     }
 
     public void sendMessage(String userId, String message){
@@ -664,7 +721,10 @@ public class ServerHandler {
         socket.emit("send-message", data);
     }
 
-    public void finishGame() { socket.emit("finish-game", null);}
+    public void finishGame() {
+        JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
+        socket.emit("finish-game", data);
+    }
 
     public Status getStatus(){
         return this.status;
@@ -678,18 +738,19 @@ public class ServerHandler {
         return userId;
     }
 
-    private boolean sendPost(String[] names, String[] keys, String apiURL){
+    private String sendPost(String[] names, String[] keys, String apiURL){
         Request request = ServerInformation.getInstance().buildRequest(names, keys, ADDRESS + apiURL);
-        boolean result = false;
         try (Response response = httpClient.newCall(request).execute()) {
             if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
-
-            // Get response body
-            result = response.isSuccessful();
+            return response.body().string();
         } catch(Exception e){
-            e.printStackTrace();
+            System.out.println("Failed");
+            return "Failed";
         }
-        System.out.println(result);
-        return result;
     }
+
+    public String getToken(){
+        return this.token;
+    }
+
 }
