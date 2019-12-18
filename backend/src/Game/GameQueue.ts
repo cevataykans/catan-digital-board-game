@@ -42,15 +42,16 @@ export class GameQueue{
 
     public deletePlayerFromQueue(socketId: string): boolean {
         console.log(this.queue)
+        let result: boolean = false;
         this.queue.forEach((item, index) => {
             if(item.socketId == socketId){
                 this.queue.splice(index, 1);
-                return true;
+                result = true;
             }
         });
         console.log("deleted");
         console.log(this.queue);
-        return false;
+        return result;
     }
 
     public getWaitingPlayers(): string[] {
