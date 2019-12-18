@@ -525,8 +525,10 @@ public class ServerHandler {
         this.socket.on("disconnect-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
-                controller.finishTheGameForDisconnection();
-                logout();
+                if(connected){
+                    logout();
+                    controller.finishTheGameForDisconnection();
+                }
             }
         });
     }
