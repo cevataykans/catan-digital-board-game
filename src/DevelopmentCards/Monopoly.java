@@ -13,7 +13,7 @@ public class Monopoly extends Card {
     public Monopoly()
     {
         setName("monopoly");
-        setInformation("This special card allows you to steal ALL of any one resource of your" +
+        setInformation("This development card allows you to steal ALL of any one resource of your" +
                 " choice from all other players.");
     }
 

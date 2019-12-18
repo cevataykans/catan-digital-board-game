@@ -17,7 +17,7 @@ public class PerfectlyBalanced extends Card {
     public PerfectlyBalanced()
     {
         setName("Perfectly-Balanced");
-        setInformation("This special card discards half of ALL players' resources.");
+        setInformation("This development card discards half of ALL players' resources.");
     }
 
     // Methods

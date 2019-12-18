@@ -282,7 +282,7 @@
       <children>
         <TextField fx:id="chatInput" layoutX="14.0" layoutY="123.0" prefWidth="573.0" />
         <Separator layoutX="14.0" layoutY="107.0" prefWidth="573.0" />
-        <TextArea fx:id="chatMessages" layoutX="14.0" layoutY="7.0" prefHeight="92.0" prefWidth="573.0" text="" wrapText="true" />
+        <TextArea fx:id="chatMessages" editable="false" layoutX="14.0" layoutY="7.0" prefHeight="92.0" prefWidth="573.0" text="" wrapText="true" />
       </children>
     </AnchorPane>
     <ImageView fx:id="chatHover" fitHeight="150.0" fitWidth="200.0" layoutX="619.0" layoutY="0.0" pickOnBounds="true" preserveRatio="true">

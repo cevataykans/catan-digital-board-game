@@ -13,7 +13,7 @@ public class YearOfPlenty extends Card {
     public YearOfPlenty()
     {
         setName("Year-of-Plenty");
-        setInformation("This special card allows you to gain 2 resources of your choice from the bank");
+        setInformation("This development card allows you to gain 2 of a resource of your choice.");
     }
 
     // Methods
