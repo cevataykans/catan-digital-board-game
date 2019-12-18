@@ -70,6 +70,7 @@ public class OpeningController extends SceneController{
         stage.setScene(scene);
         stage.setFullScreen(true);
         stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
+        stage.setResizable(false);
         stage.show();
     }
 
