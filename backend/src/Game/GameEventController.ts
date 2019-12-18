@@ -52,8 +52,10 @@ export class GameEventController{
         await this.userDBService.logout(user);
         // If diconnected player was waiting for a game, discard from the queue
         let result = this.gameQueue.deletePlayerFromQueue(client.id);
-        if(result)
+        if(result){
+            this.updateWaitingPlayers(socket);
             return;
+        }
         // If disconnected player was playing a game, finish the game
         const gameId = this.players[client.id];
         if(gameId == null) // Was not playing a game
