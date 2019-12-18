@@ -4,11 +4,11 @@ import { UserDBService } from "../User/UserDBService";
 
 export class GameEventController{
 
-    private gameQueue: GameQueue;
-    private games;
-    private players;
-    private userIds;
-    private freeGameIds: number[];
+    private gameQueue: GameQueue; 
+    private games; // game id to game
+    private players; // socket id to game id
+    private userIds; // socket id to user id
+    private freeGameIds: number[]; // free game list
     private userDBService: UserDBService;
 
     constructor(){
@@ -47,6 +47,7 @@ export class GameEventController{
             userId: this.userIds[client.id],
             password: ""
         };
+        delete this.userIds[client.id];
         console.log(user + " has disconnected!");
         await this.userDBService.logout(user);
         // If diconnected player was waiting for a game, discard from the queue
@@ -58,11 +59,12 @@ export class GameEventController{
         if(gameId == null) // Was not playing a game
             return;
         // Was playing a game
-        this.finishGame(gameId);
-        const players = this.games[gameId].getPlayersSockets(client.id);
+        const players = this.finishGame(client, gameId);
         players.forEach((item) => {
             socket.to(item).emit("disconnect-response", {"message": "Player has disconnected"});
-        })
+            delete this.players[item];
+        });
+        delete this.players[client.id];
     }
 
     public requestUserId(socket, client){
@@ -77,15 +79,21 @@ export class GameEventController{
             client.emit("no-game-error", {"message": "You are not in a game"});
             return;
         }
-        this.finishGame(gameId);
+        this.finishGame(client, gameId);
         const otherPlayers: string[] = this.findOtherPlayers(client.id);
         otherPlayers.forEach((item) => {
             socket.to(item).emit("finish-game-response");
         });
     }
 
-    public finishGame(gameId: number){
+    public finishGame(client, gameId: number){
+        let game: Game = this.games[gameId]; // find game
+        if(game == null)
+            return null;
+        const players = this.games[gameId].getPlayersSockets(client.id);
+        delete this.games[gameId];
         this.freeGameIds.push(gameId);
+        return players;
     }
 
     private shuffle(array){
@@ -134,6 +142,7 @@ export class GameEventController{
             for(let i = 0 ; i < shuffledPlayers.length ; i++){
                 playerIds.push(shuffledPlayers[i].userId);
                 socketIds.push(shuffledPlayers[i].socketId);
+                socket.to(socketIds[i]).emit("found-player-response", {"number": 4});
             }
             const gameId: number = this.setNewGame(socketIds);
             if(gameId < 0){
