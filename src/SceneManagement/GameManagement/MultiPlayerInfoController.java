@@ -115,6 +115,7 @@ public class MultiPlayerInfoController {
         // Get the UI representations of other players' containers from the player information controller's fxml file.
         localPlayerBox = (AnchorPane) scene.lookup("#currentPlayerInf");
         otherPlayerBox = (AnchorPane) scene.lookup("#otherBox");
+        currentPlayerBoxAnim = new Pulse(localPlayerBox);
 
         // Get the UI representations of other players' names from the player information controller's fxml file.
         localPlayerName = (Label) scene.lookup("#currentName");
@@ -249,10 +250,14 @@ public class MultiPlayerInfoController {
                 {
                     if ( controller.getLocalPlayer() == flowManager.getCurrentPlayer()) {
                         // Trade can be done only if player is in free turn
-                        //if ( new FlowManager().checkMust() == Response.MUST_FREE_TURN)
-                        //{
-                        showTradePopup(otherPlayer, finalI);
-                        //}
+                        if ( new FlowManager().checkMust() == Response.MUST_FREE_TURN)
+                        {
+                            showTradePopup(otherPlayer, finalI);
+                        }
+                        else
+                        {
+                            controller.getStatusController().informStatus(flowManager.checkMust());
+                        }
                     }
                 });
 
@@ -301,15 +306,13 @@ public class MultiPlayerInfoController {
 
             if ( controller.getLocalPlayer() == flowManager.getCurrentPlayer())
             {
-                currentPlayerBoxAnim = new Pulse(localPlayerBox);
                 currentPlayerBoxAnim.setSpeed(0.5);
                 currentPlayerBoxAnim.setCycleCount(AnimationFX.INDEFINITE);
                 currentPlayerBoxAnim.play();
             }
-            else if ( currentPlayerBoxAnim != null)
+            else
             {
                 currentPlayerBoxAnim.stop();
-                currentPlayerBoxAnim = null;
             }
 
             infoIn.setSpeed(3);

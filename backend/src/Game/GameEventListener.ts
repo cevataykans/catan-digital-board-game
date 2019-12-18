@@ -20,7 +20,7 @@ export class GameEventListener{
             catch(error){
                 console.log("Authentication Error");
             }
-            
+
         });
 
         client.on('roll-dice', data => {

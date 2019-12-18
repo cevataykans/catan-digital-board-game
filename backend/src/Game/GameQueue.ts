@@ -17,7 +17,7 @@ export class GameQueue{
 
         if(alreadyInQueue)
             return;
-            
+
         if(this.queue.length < this.NUMBER_OF_PLAYERS - 1){
             const player = {
                 "userId": name,

@@ -120,7 +120,7 @@ public class MultiHarborController
             // Setup the trade button so that harbor trade pop up will open. Player harbors are also checked here
             this.tradeGameButton.setOnMouseClicked(mouseEvent ->
             {
-                if ( controller.getLocalPlayer() == flowManager.getCurrentPlayer() ) {
+                if ( controller.getLocalPlayer() == flowManager.getCurrentPlayer() && flowManager.checkMust() == Response.MUST_FREE_TURN) {
                     FlowManager flow = new FlowManager();
                     Player curPlayer = flow.getCurrentPlayer();
 
@@ -164,6 +164,10 @@ public class MultiHarborController
 
                     // Show Trade
                     showTradePopup(tradeGameButton);
+                }
+                else
+                {
+                    controller.getStatusController().informStatus(flowManager.checkMust());
                 }
             });
 

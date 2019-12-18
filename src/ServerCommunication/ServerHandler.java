@@ -7,6 +7,7 @@ import GameFlow.Game;
 import GameFlow.ResourceManager;
 import Player.Player;
 import SceneManagement.GameEngine;
+import SceneManagement.MatchmakingController;
 import SceneManagement.MultiGameController;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -23,7 +24,7 @@ public class ServerHandler {
     public enum Status{
         RECEIVER, SENDER
     }
-    private final String ADDRESS = "http://localhost:3000";
+    private final String ADDRESS = "http://139.179.103.162:3000";
     private final OkHttpClient httpClient = new OkHttpClient();
 
     public static ServerHandler serverHandler;
@@ -117,6 +118,19 @@ public class ServerHandler {
     }
 
     public void listenEvents() {
+        this.socket.on("found-player-response", new Emitter.Listener() { // Start message from the server
+            @Override
+            public void call(Object... objects) {
+                JSONObject obj = (JSONObject) objects[0];
+                try {
+                    int count = obj.getInt("number");
+                    MatchmakingController controller = (MatchmakingController) GameEngine.getInstance().getController();
+                    controller.foundPlayerCount(count);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         this.socket.on("game-request-response", new Emitter.Listener() { // Start message from the server
             @Override
             public void call(Object... objects) {
@@ -455,6 +469,12 @@ public class ServerHandler {
 
             }
         });
+        this.socket.on("finish-game-response", new Emitter.Listener() {
+            @Override
+            public void call(Object... objects) {
+                controller.checkWinCondition();
+            }
+        });
         this.socket.on("turn-error-response", new Emitter.Listener() {
             @Override
             public void call(Object... objects) {
@@ -673,6 +693,8 @@ public class ServerHandler {
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory(names, keys);
         socket.emit("send-message", data);
     }
+
+    public void finishGame() { socket.emit("finish-game", null);}
 
     public Status getStatus(){
         return this.status;
