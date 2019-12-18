@@ -380,10 +380,10 @@ public class MultiGameController extends SceneController {
                             {
                                 try
                                 {
-                                    // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
+                                    // Make this scene invisible and change the controller to main menu from GameEngine.
                                     root.setVisible(false);
-                                    GameEngine.getInstance().setController(0);
                                     ServerHandler.getInstance().logout();
+                                    GameEngine.getInstance().setController(0);
                                 }
                                 catch (IOException e)
                                 {
