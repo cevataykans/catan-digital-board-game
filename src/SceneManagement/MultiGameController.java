@@ -355,9 +355,8 @@ public class MultiGameController extends SceneController {
          *  If you want to add a shortcut, add the key to the switch case with its functionality.
          */
         scene.setOnKeyPressed(event -> {
-            if (localPlayer == flowManager.getCurrentPlayer()) {
                 switch (event.getCode()) {
-                    case E: performEndTurnButtonEvent();
+                    case E: if (localPlayer == flowManager.getCurrentPlayer()) {performEndTurnButtonEvent();}
                         break;
                     case H: robber.setImage( new Image("/images/hakan.jpeg", 45, 70, false, false) );
                         break;
@@ -384,6 +383,7 @@ public class MultiGameController extends SceneController {
                                     // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
                                     root.setVisible(false);
                                     GameEngine.getInstance().setController(0);
+                                    ServerHandler.getInstance().logout();
                                 }
                                 catch (IOException e)
                                 {
@@ -400,7 +400,6 @@ public class MultiGameController extends SceneController {
                     default:
                         break;
                 }
-            }
         });
         Platform.runLater(new Runnable() {
             @Override
