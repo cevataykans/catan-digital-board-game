@@ -1,4 +1,3 @@
-import * as joi from '@hapi/joi';
 import {InvalidUserInformation} from "./InvalidUserInformation";
 import {Request} from "express";
 
@@ -13,5 +12,10 @@ export class UserValidation{
         if(!req.body.password)
             throw new InvalidUserInformation();
         
+    }
+    
+    public logout(req: Request): void {
+        if(!req.body.userId)
+            throw new InvalidUserInformation();
     }
 }

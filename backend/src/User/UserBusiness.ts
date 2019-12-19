@@ -40,4 +40,13 @@ export class UserBusiness {
             return new ErrorResponse(error);
         }
     }
+
+    public async logout(user: User): Promise<ResponseModel> {
+        try {
+            let result = await this.userDBService.logout(user);
+            return new SuccessResponse(result);
+        } catch (error) {
+            return new ErrorResponse(error);
+        }
+    }
 }

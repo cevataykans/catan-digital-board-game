@@ -1,6 +1,7 @@
 package SceneManagement;
 
 import Player.Player;
+import ServerCommunication.ServerHandler;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -58,7 +59,7 @@ public class GameEngine {
             temp.add(new Player("Rafi", Color.ORANGE));
             temp.add(new Player("Cevat", Color.BROWN));
             controller = new SingleGameController(primaryStage, temp);*/
-            controller = new LoginController(primaryStage);
+            controller = new OpeningController(primaryStage);
         }
         catch (IOException e)
         {

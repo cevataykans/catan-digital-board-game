@@ -11,30 +11,31 @@ export class TokenService{
     }
 
     checkToken(req: Request, res:Response, next:NextFunction){
-
         try {
-            const header = req.header('Authorization');
-            if (!header) {
+            const token = req.body.token;
+            if (!token)
                 throw new NoAccess();
-            }
-            const headerArr = header.split(' ');
-            if (headerArr.length < 2) {
-                throw new NoAccess();
-            }
-            const token = headerArr[1];
-            if (!token) {
-                throw new NoAccess();
-            }
-
             const secret_key = config.SECRET_KEY;
             const verified = jwt.verify(token, secret_key);
-            if ( (verified.userId !== req.body.userId) && (verified.userId !== req.params.userId) ) {
+            if (verified.userId !== req.body.userId)
                 throw new NoAccess();
-            }
             next();
         } catch(err){
             const errorResponse = new ErrorResponse(new NoAccess());
             res.status(errorResponse.status).send(errorResponse);
         }
+    }
+
+    checkTokenForGame(data): void{
+        if(data == null){
+            console.log("data is null");
+        }
+        const token = data.token;
+        if (!token)
+            throw new NoAccess();
+        const secret_key = config.SECRET_KEY;
+        const verified = jwt.verify(token, secret_key);
+        if (verified.userId !== data.userId)
+            throw new NoAccess();
     }
 }
