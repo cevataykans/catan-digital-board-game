@@ -1295,7 +1295,9 @@ public class MultiGameController extends SceneController {
                 // Showing player rankings
                 alert.setTitle( "Disconnected");
                 alert.setHeaderText("Player has disconnected! Please return to main menu");
-                alert.showAndWait();
+                if ( !alert.isShowing()) {
+                    alert.showAndWait();
+                }
             }
         });
 
