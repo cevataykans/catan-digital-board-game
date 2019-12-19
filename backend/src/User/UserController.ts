@@ -43,6 +43,18 @@ export class UserController{
         try{
             this.validation.changePasswordValidation(request);
             let result = await this.userBusiness.changePassword(userMapping.map(request.body));
+            response.status(result.status).send(result);
+        } catch(error){
+            const errorResponse = new ErrorResponse(error);
+            response.status(errorResponse.status).send(new ErrorResponse(error));
+        }
+    }
+
+    public async logout(request: Request, response: Response): Promise<void> {
+        try{
+            this.validation.logout(request);
+            let result = await this.userBusiness.logout(userMapping.map(request.body));
+            response.status(result.status).send(result);
         } catch(error){
             const errorResponse = new ErrorResponse(error);
             response.status(errorResponse.status).send(new ErrorResponse(error));

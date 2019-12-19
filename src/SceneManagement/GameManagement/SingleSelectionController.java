@@ -224,6 +224,7 @@ public class SingleSelectionController {
         }
         // After current player chooses a resource, play an out animation for the selection screen.
         new FadeInLeft(selectionBox).play();
+        selectionBox.toFront();
         selectionBox.setVisible(true);
     }
 
@@ -329,6 +330,7 @@ public class SingleSelectionController {
         }
         // After current player chooses a resource, play an out animation for the selection screen.
         new FadeInLeft(selectionBox).play();
+        selectionBox.toFront();
         selectionBox.setVisible(true);
     }
 }

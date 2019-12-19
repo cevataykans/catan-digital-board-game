@@ -7,16 +7,25 @@ import SceneManagement.SingleGameController;
 import animatefx.animation.FadeIn;
 import animatefx.animation.FadeOut;
 import javafx.animation.TranslateTransition;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
+import javafx.stage.PopupWindow;
 import javafx.util.Duration;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 import DevelopmentCards.*;
+import org.controlsfx.control.PopOver;
 
 /**
  * This controller manages all the development card logic. It has association with the Single-GameFlow.Game controller.
@@ -82,8 +91,6 @@ public class SingleDevCardController {
             ArrayList<ImageView> cardsInUI = new ArrayList<>();
             for (int i = 0; i < cards.size(); i++) {
                 // Get the card image corresponding to the current one in the player.
-                System.out.println(cards.get(i).getName());
-                System.out.println(cards.get(i).getInformation());
                 ImageView temp = new ImageView("/images/" + cards.get(i).getName() + ".png");
                 // Place the UI development card in the container.
                 if (i == 0) {
@@ -203,6 +210,22 @@ public class SingleDevCardController {
             }
         });
         cardBox.setOnMouseExited(event ->
+        {
+            // If the container is already shown and player's mouse exits the container, hide the container.
+            if ( cardBox.getTranslateY() == cardBoxShownLocation) {
+                TranslateTransition hoverTT = new TranslateTransition(Duration.millis(500), devCardsHover);
+                TranslateTransition boxTT = new TranslateTransition(Duration.millis(500), cardBox);
+                hoverTT.setByY(75);
+                boxTT.setByY(75);
+                hoverTT.play();
+                boxTT.play();
+                boxTT.setOnFinished(event1 ->
+                {
+                    cardBox.setTranslateY( 0);
+                });
+            }
+        });
+        devCardsHover.setOnMouseExited(event ->
         {
             // If the container is already shown and player's mouse exits the container, hide the container.
             if ( cardBox.getTranslateY() == cardBoxShownLocation) {

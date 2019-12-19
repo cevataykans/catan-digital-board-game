@@ -27,14 +27,12 @@ public class MatchmakingController extends SceneController{
     Label totalPlayers;
     Label searchLabel;
     Separator separator;
-    int playerCount;
 
     // Constructor
     public MatchmakingController(Stage stage) throws IOException
     {
         root = FXMLLoader.load(getClass().getResource("/UI/Matchmaking.fxml"));
         scene = stage.getScene();
-        playerCount = 1;
         initialize(stage);
     }
 
@@ -53,7 +51,7 @@ public class MatchmakingController extends SceneController{
 
         loading = (ProgressIndicator) scene.lookup("#loading");
         foundPlayers = (Label) scene.lookup("#foundPlayers");
-        foundPlayers.setText("" + playerCount);
+        foundPlayers.setText("" + 1);
         totalPlayers = (Label) scene.lookup("#totalLabel");
         searchLabel = (Label) scene.lookup("#searchLabel");
         searchLabel.setAlignment(Pos.CENTER);
@@ -62,50 +60,49 @@ public class MatchmakingController extends SceneController{
         startMatchmaking = (Button) scene.lookup("#startMatchmaking");
         startMatchmaking.setOnMouseClicked(event ->
         {
-            try {
-                ServerHandler.getInstance().gameRequest();
-                FadeOut buttonOut = new FadeOut(startMatchmaking);
-                buttonOut.setSpeed(2);
-                buttonOut.setOnFinished(event2 -> {
-                    startMatchmaking.setVisible(false);
-                    loading.setVisible(true);
-                    foundPlayers.setVisible(true);
-                    totalPlayers.setVisible(true);
-                    searchLabel.setVisible(true);
-                    separator.setVisible(true);
-                    new FadeIn(loading).play();
-                    new FadeIn(foundPlayers).play();
-                    new FadeIn(totalPlayers).play();
-                    new FadeIn(searchLabel).play();
-                    new FadeIn(separator).play();
-                });
-                buttonOut.play();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
+            ServerHandler.getInstance().gameRequest();
+            FadeOut buttonOut = new FadeOut(startMatchmaking);
+            buttonOut.setSpeed(2);
+            buttonOut.setOnFinished(event2 -> {
+                startMatchmaking.setVisible(false);
+                loading.setVisible(true);
+                foundPlayers.setVisible(true);
+                totalPlayers.setVisible(true);
+                searchLabel.setVisible(true);
+                separator.setVisible(true);
+                new FadeIn(loading).play();
+                new FadeIn(foundPlayers).play();
+                new FadeIn(totalPlayers).play();
+                new FadeIn(searchLabel).play();
+                new FadeIn(separator).play();
+            });
+            buttonOut.play();
         });
 
         // Gets the "Go Back" button from the help's fxml file and adds the logic to going back to main menu.
         goBack = (ImageView) scene.lookup("#goBack");
         goBack.setOnMouseClicked(event ->
         {
-            // Initializing closing animation for help scene.
-            FadeOut animation2 = new FadeOut(root);
-            animation2.setSpeed(3.5);
-            animation2.setOnFinished(event1 ->
-            {
-                try
+            boolean result = ServerHandler.getInstance().logout();
+            if(result){
+                // Initializing closing animation for help scene.
+                FadeOut animation2 = new FadeOut(root);
+                animation2.setSpeed(3.5);
+                animation2.setOnFinished(event1 ->
                 {
-                    // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
-                    root.setVisible(false);
-                    GameEngine.getInstance().setController(4);
-                }
-                catch (IOException e)
-                {
-                    System.out.println(e);
-                }
-            });
-            animation2.play();
+                    try
+                    {
+                        // Make this scene invisible and change the controller to main menu from SceneManagement.GameEngine.
+                        root.setVisible(false);
+                        GameEngine.getInstance().setController(4);
+                    }
+                    catch (IOException e)
+                    {
+                        System.out.println(e);
+                    }
+                });
+                animation2.play();
+            }
         });
     }
 
@@ -113,11 +110,11 @@ public class MatchmakingController extends SceneController{
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                if (playerCount < 4)
+                if (foundPlayerCount <= 4)
                 {
                     foundPlayers.setText("" + foundPlayerCount);
                 }
-                else
+                if ( foundPlayerCount == 4)
                 {
                     searchLabel.setText("Players found, game is starting...");
                 }

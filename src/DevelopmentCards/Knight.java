@@ -14,7 +14,7 @@ public class Knight extends Card{
     public Knight()
     {
         setName("knight");
-        setInformation("This special card allows you to change the position of the robber and steal" +
+        setInformation("This development card allows you to change the position of the robber and steal" +
                 " a card from a neighboring player.");
     }
 
