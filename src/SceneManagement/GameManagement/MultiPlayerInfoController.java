@@ -197,7 +197,12 @@ public class MultiPlayerInfoController {
         FlowManager flowManager = new FlowManager();
 
         // Clear the box that contains the progress representations.
-        otherInfoBox.getChildren().clear();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                otherInfoBox.getChildren().clear();
+            }
+        });
 
         // Initialize out animation for previous representation of other players with 3x the normal speed.
         FadeOut animation = new FadeOut(otherInfoBox);
@@ -264,7 +269,12 @@ public class MultiPlayerInfoController {
                 });
 
                 otherPlayerInfos.set(i, otherPlayer);
-                otherInfoBox.getChildren().add(otherPlayer);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        otherInfoBox.getChildren().add(otherPlayer);
+                    }
+                });
                 if ( otherPlayerOrders.get(i) == flowManager.getCurrentPlayer())
                 {
                     currentPlayerCircleAnim = new Pulse(otherPlayerInfos.get(i));
