@@ -158,7 +158,6 @@ public class ResourceManager
 		JSONObject obj = null;
 		if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER) {
 			obj = ServerInformation.getInstance().getInformation();
-			ServerInformation.getInstance().deleteInformation();
 		}
 		ArrayList<Integer> indexes = new ArrayList<>();
 		Game game = Game.getInstance();
@@ -200,7 +199,6 @@ public class ResourceManager
 
 		if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER){
 			JSONObject obj = ServerInformation.getInstance().getInformation();
-			ServerInformation.getInstance().deleteInformation();
 			try{
 				JSONArray discarded = obj.getJSONArray("discarded");
 				for(int i = 0 ; i < players.size() ; i++){

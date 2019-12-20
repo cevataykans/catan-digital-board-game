@@ -713,7 +713,6 @@ public class MultiGameController extends SceneController {
     {
         FlowManager flowManager = new FlowManager();
         JSONObject obj = ServerInformation.getInstance().getInformation();
-        ServerInformation.getInstance().deleteInformation();
         int hexIndex = 0;
         int tileIndex = 0;
         try {
@@ -811,7 +810,6 @@ public class MultiGameController extends SceneController {
 
 
         JSONObject obj = ServerInformation.getInstance().getInformation();
-        ServerInformation.getInstance().deleteInformation();
         int hexIndex = 0;
         int tileIndex = 0;
         try {
@@ -924,7 +922,6 @@ public class MultiGameController extends SceneController {
         FlowManager flowManager = new FlowManager();
 
         JSONObject obj = ServerInformation.getInstance().getInformation();
-        ServerInformation.getInstance().deleteInformation();
         int hexIndex = 0;
         int tileIndex = 0;
         try {

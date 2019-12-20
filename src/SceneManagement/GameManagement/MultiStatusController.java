@@ -144,7 +144,6 @@ public class MultiStatusController {
             else if(resultCode == Response.INFORM_REFUSE_TRADE)
             {
                 JSONObject obj = ServerInformation.getInstance().getInformation();
-                ServerInformation.getInstance().deleteInformation();
                 String otherPlayerName = "";
                 try{
                     otherPlayerName = obj.getString("otherPlayer");
@@ -156,7 +155,6 @@ public class MultiStatusController {
             else if(resultCode == Response.INFORM_ACCEPT_TRADE)
             {
                 JSONObject obj = ServerInformation.getInstance().getInformation();
-                ServerInformation.getInstance().deleteInformation();
                 String otherPlayerName = "";
                 try{
                     otherPlayerName = obj.getString("otherPlayer");

@@ -352,7 +352,6 @@ public class MultiHarborController
     {
         ResourceManager resMan = new ResourceManager();
         JSONObject obj = ServerInformation.getInstance().getInformation();
-        ServerInformation.getInstance().deleteInformation();
         try {
             int harborType = obj.getInt("harborType");
             int giveResIndex = obj.getInt("giveResIndex");
