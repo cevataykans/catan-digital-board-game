@@ -1,8 +1,6 @@
 package SceneManagement;
 
-import DevelopmentCards.Card;
-import DevelopmentCards.ChangeOfFortune;
-import DevelopmentCards.PerfectlyBalanced;
+import DevelopmentCards.*;
 import Player.Player;
 import SceneManagement.GameManagement.*;
 import animatefx.animation.*;
@@ -77,6 +75,12 @@ public class SingleGameController extends SceneController
         int[] temp = {0, 0, 0, 0 ,0};
         players.get(0).buyDevelopmentCard(temp, new PerfectlyBalanced());
         players.get(0).buyDevelopmentCard(temp, new ChangeOfFortune());
+        players.get(1).buyDevelopmentCard(temp, new Knight());
+        players.get(1).buyDevelopmentCard(temp, new YearOfPlenty());
+        players.get(2).buyDevelopmentCard(temp, new Monopoly());
+        players.get(2).buyDevelopmentCard(temp, new RoadBuilding());
+        players.get(3).buyDevelopmentCard(temp, new VictoryPoint());
+        players.get(3).buyDevelopmentCard(temp, new ChangeOfFortune());
         this.players = players;
         initialize(stage);
     }

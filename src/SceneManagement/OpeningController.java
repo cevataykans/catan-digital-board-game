@@ -52,7 +52,7 @@ public class OpeningController extends SceneController{
         // Initializing the fade out animation for the opening scene (or a single label in this case) with half the original
         // speed. This fade out animation will play 4 seconds after fade in animation plays.
         FadeOut animation2 = new FadeOut(root);
-        animation2.setDelay(new Duration(4000));
+        animation2.setDelay(new Duration(3700));
         animation2.setSpeed(0.5);
         animation2.play();
         animation2.setOnFinished(event ->
@@ -87,7 +87,7 @@ public class OpeningController extends SceneController{
             @Override
             protected Void call() throws Exception {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                 }
                 return null;
@@ -108,7 +108,7 @@ public class OpeningController extends SceneController{
 
         // Initializing and playing the closing animation for opening scene.
         FadeOut animation2 = new FadeOut(root);
-        animation2.setDelay(new Duration(4000));
+        animation2.setDelay(new Duration(3500));
         animation2.setSpeed(0.5);
         animation2.play();
         animation2.setOnFinished(event ->

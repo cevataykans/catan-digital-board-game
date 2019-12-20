@@ -19,7 +19,7 @@ class Socket{
             this.gameEventListener.listenEvents(this.socket, client);
         })
 
-        server.listen(PORT, "139.179.200.68", () => {
+        server.listen(PORT, "139.179.210.100", () => {
             console.log("Server is ready on " + PORT);
         })
     }

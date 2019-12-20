@@ -7,6 +7,7 @@ import GameFlow.Response;
 import SceneManagement.SingleGameController;
 import animatefx.animation.FadeInLeft;
 import animatefx.animation.FadeOutRight;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
