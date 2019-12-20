@@ -7,7 +7,7 @@ import GameFlow.Response;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class RoadBuilding extends Card {
+public class RoadBuilding extends Card implements Playable {
     // Properties
 
     // Constructor

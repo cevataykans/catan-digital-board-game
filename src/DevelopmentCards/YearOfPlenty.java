@@ -6,7 +6,7 @@ import GameFlow.Response;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class YearOfPlenty extends Card {
+public class YearOfPlenty extends Card implements Playable {
     // Properties
 
     // Constructor
