@@ -6,7 +6,7 @@ import GameFlow.Response;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class Monopoly extends Card {
+public class Monopoly extends Card implements Playable {
     // Properties
 
     // Constructor

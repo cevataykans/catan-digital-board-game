@@ -7,7 +7,7 @@ import GameFlow.TitleManager;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class Knight extends Card{
+public class Knight extends Card implements Playable{
     // Properties
 
     // Constructor

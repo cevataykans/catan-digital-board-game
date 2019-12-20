@@ -5,7 +5,7 @@ import GameFlow.Game;
 import SceneManagement.SoundManager;
 import org.controlsfx.dialog.Wizard;
 
-public class VictoryPoint extends Card {
+public class VictoryPoint extends Card implements Playable {
     // Properties
 
     // Constructor
