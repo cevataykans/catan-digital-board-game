@@ -143,7 +143,7 @@
             <Font size="10.0" fx:id="x4" />
           </font>
         </Label>
-        <Label font="$x4" layoutX="123.0" layoutY="59.0" text="Longest Army" />
+        <Label font="$x4" layoutX="122.0" layoutY="59.0" text="Largest Army" />
         <ImageView fx:id="otherLR" fitHeight="32.0" fitWidth="27.751604817708333" layoutX="37.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true">
           <image>
             <Image url="@../images/lr.png" />

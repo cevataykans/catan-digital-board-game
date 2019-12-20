@@ -120,10 +120,34 @@ public class PlayerSelectionController extends SceneController{
                     // names and colors. Then passing these players to SceneManagement.GameEngine to change and initialize the Single-GameFlow.Game
                     // controller and scene.
                     ArrayList<Player> players = new ArrayList<>();
-                    players.add(new Player(player1Name.getText(), Color.BLUE));
-                    players.add(new Player(player2Name.getText(), Color.WHITE));
-                    players.add(new Player(player3Name.getText(), Color.ORANGE));
-                    players.add(new Player(player4Name.getText(), Color.BROWN));
+                    if ( !player1Name.getText().equals( "") ) {
+                        players.add(new Player(player1Name.getText(), Color.BLUE));
+                    }
+                    else
+                    {
+                        players.add(new Player( "BLUE", Color.BLUE));
+                    }
+                    if ( !player2Name.getText().equals( "") ) {
+                        players.add(new Player(player2Name.getText(), Color.WHITE));
+                    }
+                    else
+                    {
+                        players.add(new Player( "WHITE", Color.WHITE));
+                    }
+                    if ( !player3Name.getText().equals( "") ) {
+                        players.add(new Player(player3Name.getText(), Color.ORANGE));
+                    }
+                    else
+                    {
+                        players.add(new Player( "ORANGE", Color.ORANGE));
+                    }
+                    if ( !player4Name.getText().equals( "") ) {
+                        players.add(new Player(player4Name.getText(), Color.BROWN));
+                    }
+                    else
+                    {
+                        players.add(new Player( "BROWN", Color.BROWN));
+                    }
                     GameEngine.getInstance().setPlayers(players);
                     GameEngine.getInstance().setController(3);
                 }

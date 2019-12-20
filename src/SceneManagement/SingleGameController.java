@@ -474,32 +474,32 @@ public class SingleGameController extends SceneController
                     else if ( i == 2 && j == 6)
                     {
                         harborImg = new ImageView( new Image( imgPath, 60, 60, false, false) );
-                        harborImg.setX( (j - 2) * 30 + 105);
-                        harborImg.setY( i * 30 - 5);
+                        harborImg.setX( (j - 2) * 30 + 30);
+                        harborImg.setY( i * 30 + 35);
                         gameBox.getChildren().add( harborImg);
                         harborImg.toFront();
                     }
                     else if ( i == 2 && j == 16)
                     {
                         harborImg = new ImageView( new Image( imgPath, 60, 60, false, false) );
-                        harborImg.setX( (j - 2) * 30 + 45); // 105
-                        harborImg.setY( i * 30 - 5);
+                        harborImg.setX( (j - 2) * 30 + 125); // 105
+                        harborImg.setY( i * 30 + 35);
                         gameBox.getChildren().add( harborImg);
                         harborImg.toFront();
                     }
                     else if ( i == 14 && j == 0)
                     {
                         harborImg = new ImageView( new Image( imgPath, 60, 60, false, false) );
-                        harborImg.setX( (j - 2) * 30 + 90);
-                        harborImg.setY( i * 30 - 30);
+                        harborImg.setX( (j - 2) * 30 + 80);
+                        harborImg.setY( i * 30 + 55);
                         gameBox.getChildren().add( harborImg);
                         harborImg.toFront();
                     }
                     else if ( i == 14 && j == 22)
                     {
                         harborImg = new ImageView( new Image( imgPath, 60, 60, false, false) );
-                        harborImg.setX( (j - 2) * 30 + 65);
-                        harborImg.setY( i * 30 - 25);
+                        harborImg.setX( (j - 2) * 30 + 70);
+                        harborImg.setY( i * 30 + 55);
                         gameBox.getChildren().add( harborImg);
                         harborImg.toFront();
                     }
@@ -952,20 +952,13 @@ public class SingleGameController extends SceneController
         {
             public int compare( Player a, Player b)
             {
-                if ( a.getScore() <= b.getScore() )
-                {
-                    return a.getScore();
-                }
-                else
-                {
-                    return b.getScore();
-                }
+                return a.getScore() - b.getScore();
             }
         }
 
         Player curPlayer = new FlowManager().getCurrentPlayer();
         // For test, you can decrease this to 2!
-        if ( curPlayer.getScore() >= 10)
+        if ( curPlayer.getScore() >= 5)
         {
             SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
             Alert alert = new Alert( Alert.AlertType.INFORMATION);
