@@ -316,6 +316,25 @@ public class MultiPlayerInfoController {
                 localPlayerResources.get(i).setText("" + logicLocalPlayerResources[i]);
             }
 
+            TitleManager titleMan = new TitleManager();
+            if ( flowManager.getCurrentPlayer() == titleMan.getLongestRoadPlayer() )
+            {
+                currentLR.setVisible( true);
+            }
+            else
+            {
+                currentLR.setVisible( false);
+            }
+
+            if ( flowManager.getCurrentPlayer() == titleMan.getLargestArmyPlayer() )
+            {
+                currentLA.setVisible( true);
+            }
+            else
+            {
+                currentLA.setVisible(  false);
+            }
+
             if ( controller.getLocalPlayer() == flowManager.getCurrentPlayer())
             {
                 currentPlayerBoxAnim.setSpeed(0.5);
@@ -509,7 +528,6 @@ public class MultiPlayerInfoController {
 
     public void receiveTradeOffer() {
         JSONObject obj = ServerInformation.getInstance().getInformation();
-        ServerInformation.getInstance().deleteInformation();
         String otherPlayerName = null;
         try {
             otherPlayerName = obj.getString("otherPlayer");

@@ -152,8 +152,6 @@ public class FlowManager {
         {
             if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER)
                 ServerHandler.getInstance().rollDice(firstDice, secondDice);
-            else if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER)
-                ServerInformation.getInstance().deleteInformation();
             ResourceDistributer.getInstance().collectResources( firstDice + secondDice, board.getRobber() );
         }
 

@@ -2,6 +2,7 @@ package GameFlow;
 
 import GameBoard.GameBoard;
 import Player.Player;
+import ServerCommunication.ServerHandler;
 
 import java.util.ArrayList;
 
@@ -37,27 +38,16 @@ public class TitleManager {
         Player longestRoadPlayer = game.getLongestRoadPlayer();
 
         int curRoadLength = board.longestRoadOfPlayer( player);
-        System.out.println( "******************* Road Title *************************");
-        System.out.println( "Cur longest road in game is: " + longestRoad );
-        System.out.println( player.getName() + "'s Longest Road is: " +  curRoadLength );
         player.setRoadLength( curRoadLength);
-        System.out.println( player.getName() + "'s Longest Road is: " +  player.getLongestRoadLength() );
         if( curRoadLength > longestRoad ){
 
             game.setLongestRoad( curRoadLength);
             if ( longestRoadPlayer != null )
             {
-                System.out.println( longestRoadPlayer.getName() + " has title: " + player.hasLongestRoad );
                 longestRoadPlayer.setLongestRoadTitle( false);
-                System.out.println( longestRoadPlayer.getName() + " has title: " + player.hasLongestRoad );
-
             }
             game.setLongestRoadPlayer( player);
             player.setLongestRoadTitle( true);
-
-            System.out.println( "New Longest Road Player name is: " + player.getName() );
-            System.out.println( "New Longest Road Player name is: " + this.getLongestRoadPlayer().getName() );
-            System.out.println( "New Longest Road Player has title: " + this.getLongestRoadPlayer().hasLongestRoad );
         }
     }
 

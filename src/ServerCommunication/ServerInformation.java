@@ -19,11 +19,11 @@ public class ServerInformation {
     private static ServerInformation serverInformation = null;
 
     // Properties
-    private Queue<JSONObject> information;
+    private JSONObject information;
 
     // Constructor
     private ServerInformation(){
-        this.information = new LinkedList<>();
+        this.information = null;
     }
 
     public static ServerInformation getInstance(){
@@ -33,15 +33,11 @@ public class ServerInformation {
     }
 
     public void addInformation(JSONObject object){
-        this.information.add(object);
+        this.information = object;
     }
 
     public JSONObject getInformation(){
-        return this.information.peek();
-    }
-
-    public void deleteInformation(){
-        this.information.remove();
+        return this.information;
     }
 
     public JSONObject JSONObjectFactory(String[] names, Object[] keys){

@@ -145,7 +145,6 @@ public class GameBoardBuilder
 				{
 					ports.add(Harbor.HarborType.values()[tempPort.getInt(i)]);
 				}
-				ServerInformation.getInstance().deleteInformation();
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
