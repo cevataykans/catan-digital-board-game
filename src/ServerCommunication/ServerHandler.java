@@ -110,6 +110,8 @@ public class ServerHandler {
         this.userId = "";
         this.connected = false;
         this.socket.disconnect();
+        this.status = null;
+        this.serverHandler = null;
         return true;
     }
 
@@ -403,6 +405,7 @@ public class ServerHandler {
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
+                ServerInformation.getInstance().addInformation(obj);
                 // Call related controller method
                 try{
                     String playerName = obj.getString("player");
@@ -528,7 +531,10 @@ public class ServerHandler {
             @Override
             public void call(Object... objects) {
                 if(connected){
-                    logout();
+                    System.out.println("disconnect response");
+                    boolean result = logout();
+                    if(result)
+                        System.out.println("logout successfully");
                     controller.finishTheGameForDisconnection();
                 }
             }
@@ -726,8 +732,18 @@ public class ServerHandler {
     }
 
     public void finishGame() {
+        System.out.println("outside if");
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
-        socket.emit("finish-game", data);
+        if(socket != null) {
+            socket.emit("finish", data);
+            System.out.println("inside if");
+        }
+    }
+
+    public void terminateServerHandler(){
+        if(connected){
+            logout();
+        }
     }
 
     public Status getStatus(){

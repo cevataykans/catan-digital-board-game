@@ -142,6 +142,9 @@ public class MultiDevCardController {
                                 cardBox.getChildren().remove(temp);
                                 cards.get(finalI).play();
                                 ServerHandler.getInstance().playCard(cards.get(finalI).getName(), finalI);
+                                setupDevelopmentCards();
+                                controller.getInfoController().setupCurrentPlayer();
+                                ServerHandler.getInstance().refreshInfos();
                                 if ( cards.get(finalI) instanceof VictoryPoint)
                                 {
                                     this.controller.checkWinCondition();
@@ -156,9 +159,6 @@ public class MultiDevCardController {
                                     controller.getSelectionController().showResourceSelectionForMonopoly();
                                 }
                                 cards.remove(cards.get(finalI));
-                                setupDevelopmentCards();
-                                controller.getInfoController().setupCurrentPlayer();
-                                ServerHandler.getInstance().refreshInfos();
                             } else {
                                 temp.setTranslateX(0);
                                 temp.setTranslateY(0);

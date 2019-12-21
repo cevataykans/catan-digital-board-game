@@ -274,18 +274,18 @@ public class SingleGameController extends SceneController
         buyDevelopmentCard = (Button) scene.lookup("#buyDevelopmentCard");
         buyDevelopmentCard.setOnMouseClicked(event ->
         {
-        	if ( flowManager.checkMust() == Response.MUST_FREE_TURN )
-        	{
-        	    if( resourceManager.hasEnoughResources(flowManager.getCurrentPlayer(), Card.REQUIREMENTS_FOR_CARD) ) {
+            if ( flowManager.checkMust() == Response.MUST_FREE_TURN )
+            {
+                if( resourceManager.hasEnoughResources(flowManager.getCurrentPlayer(), Card.REQUIREMENTS_FOR_CARD) ) {
                     cardManager.addDevelopmentCard();
                     devCardController.setupDevelopmentCards();
                     infoController.setupCurrentPlayer();
                 }
-        	    else
-        	        statusController.informStatus( Response.ERROR_NO_RESOURCE_FOR_CARD);
-			}
-        	else{
-        	    statusController.informStatus(flowManager.checkMust());
+                else
+                    statusController.informStatus( Response.ERROR_NO_RESOURCE_FOR_CARD);
+            }
+            else{
+                statusController.informStatus(flowManager.checkMust());
             }
         });
 
@@ -303,7 +303,7 @@ public class SingleGameController extends SceneController
          *  ---- PLANNED SHORTCUTS ----
          *  Key D or C -> Buy Development DevelopmentCards.Card
          *  If you want to add a shortcut, add the key to the switch case with its functionality.
-        */
+         */
         scene.setOnKeyPressed(event -> {
             switch (event.getCode()) {
                 case E: performEndTurnButtonEvent();
@@ -340,6 +340,7 @@ public class SingleGameController extends SceneController
                             }
                         });
                         animation2.play();
+                        flowManager.terminateData();
                     });
                     exitButton.setOnMouseClicked(event1 -> {
                         Platform.exit();
@@ -863,10 +864,10 @@ public class SingleGameController extends SceneController
     private void createDialog(  Response resultCode, int x, int y )
     {
         if(resultCode == Response.INFORM_SETTLEMENT_CAN_BE_BUILT ||
-            resultCode == Response.INFORM_ROAD_CAN_BE_BUILT ||
-            resultCode == Response.INFORM_CITY_CAN_BE_BUILT ||
-            resultCode == Response.INFORM_INSIDE_TILE ||
-            resultCode == Response.INFORM_SEA_TILE ||
+                resultCode == Response.INFORM_ROAD_CAN_BE_BUILT ||
+                resultCode == Response.INFORM_CITY_CAN_BE_BUILT ||
+                resultCode == Response.INFORM_INSIDE_TILE ||
+                resultCode == Response.INFORM_SEA_TILE ||
                 ( new FlowManager().checkMust() == Response.MUST_ROAD_BUILD &&
                         resultCode != Response.ERROR_NO_CONNECTION_FOR_ROAD &&
                         resultCode != Response.ERROR_OCCUPIED_BY ) ||
@@ -974,9 +975,9 @@ public class SingleGameController extends SceneController
             alert.setHeaderText("Player " + curPlayer.getName() + " has won!" + "\n\nPlayer scores:");
             Collections.sort( players, new SortByScore() );
             alert.setContentText("1-) " + players.get( 3).getName() + " - Score: " + players.get( 3).getScore()
-                                +"\n2-) " + players.get( 2).getName() + " - Score: " + players.get( 2).getScore()
-                                +"\n3-) " + players.get( 1).getName() + " - Score: " + players.get( 1).getScore()
-                                +"\n4-) " + players.get( 0).getName() + " - Score: " + players.get( 0).getScore()
+                    +"\n2-) " + players.get( 2).getName() + " - Score: " + players.get( 2).getScore()
+                    +"\n3-) " + players.get( 1).getName() + " - Score: " + players.get( 1).getScore()
+                    +"\n4-) " + players.get( 0).getName() + " - Score: " + players.get( 0).getScore()
             );
 
             alert.showAndWait();
