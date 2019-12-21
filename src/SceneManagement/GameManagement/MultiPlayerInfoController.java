@@ -317,7 +317,7 @@ public class MultiPlayerInfoController {
             }
 
             TitleManager titleMan = new TitleManager();
-            if ( flowManager.getCurrentPlayer() == titleMan.getLongestRoadPlayer() )
+            if ( controller.getLocalPlayer() == titleMan.getLongestRoadPlayer() )
             {
                 currentLR.setVisible( true);
             }
@@ -326,7 +326,7 @@ public class MultiPlayerInfoController {
                 currentLR.setVisible( false);
             }
 
-            if ( flowManager.getCurrentPlayer() == titleMan.getLargestArmyPlayer() )
+            if ( controller.getLocalPlayer() == titleMan.getLargestArmyPlayer() )
             {
                 currentLA.setVisible( true);
             }
