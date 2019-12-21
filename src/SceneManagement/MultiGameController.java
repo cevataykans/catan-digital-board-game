@@ -762,8 +762,8 @@ public class MultiGameController extends SceneController {
                     // Refresh current player information.
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
-                    checkWinCondition();
                     infoController.setupOtherPlayers();
+                    checkWinCondition();
                 }
         );
     }
@@ -851,8 +851,8 @@ public class MultiGameController extends SceneController {
                     // Refreshing current player information
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
-                    checkWinCondition();
                     infoController.setupOtherPlayers();
+                    checkWinCondition();
                 }
         );
     }
@@ -977,8 +977,8 @@ public class MultiGameController extends SceneController {
 
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
-                    checkWinCondition();
                     infoController.setupOtherPlayers();
+                    checkWinCondition();
                 }
         );
     }
