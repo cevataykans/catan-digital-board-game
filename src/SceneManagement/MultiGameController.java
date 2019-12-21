@@ -1208,7 +1208,7 @@ public class MultiGameController extends SceneController {
 
         Player curPlayer = new FlowManager().getCurrentPlayer();
         // For test, you can decrease this to 2!
-        if ( curPlayer.getScore() >= 3)
+        if ( curPlayer.getScore() >= 3) // **************** IT IS FOR TEST PURPOSE. AT THE END CHANGE IT TO 10
         {
             SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
             Alert alert = new Alert( Alert.AlertType.INFORMATION);
