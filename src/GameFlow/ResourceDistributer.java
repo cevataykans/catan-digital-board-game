@@ -79,7 +79,7 @@ public class ResourceDistributer
 			DistributionNode newNode = new DistributionNode();
 			newNode.player = player;
 			newNode.startPoint = startPoint;
-			newNode.amount = 10;
+			newNode.amount = 1;
 			resourceDistributionList[diceNumber - 2].add(newNode);
 		}
 	}
