@@ -40,9 +40,8 @@ public class Card
 
     // Attributes
     private String name;
-    private String information;
     private boolean isPlayable;
-    private Playable cardPlay;
+    private Playable cardPlay; // strategy design
 
     // Constructor
     public Card( Playable cardPlay, String name )
