@@ -1210,30 +1210,35 @@ public class MultiGameController extends SceneController {
         // For test, you can decrease this to 2!
         if ( curPlayer.getScore() >= 3) // **************** IT IS FOR TEST PURPOSE. AT THE END CHANGE IT TO 10
         {
-            SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
-            Alert alert = new Alert( Alert.AlertType.INFORMATION);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
+                    Alert alert = new Alert( Alert.AlertType.INFORMATION);
 
-            // Create a beautiful icon for catan dialog
-            ImageView icon = new ImageView("/images/catanIcon.png");
-            icon.setFitHeight(48);
-            icon.setFitWidth(48);
-            alert.getDialogPane().setGraphic( icon);
+                    // Create a beautiful icon for catan dialog
+                    ImageView icon = new ImageView("/images/catanIcon.png");
+                    icon.setFitHeight(48);
+                    icon.setFitWidth(48);
+                    alert.getDialogPane().setGraphic( icon);
 
-            // Showing player rankings
-            alert.setTitle( "Catan");
-            alert.setHeaderText("Player " + curPlayer.getName() + " has won!" + "\n\nPlayer scores:");
-            Collections.sort( players, new SortByScore() );
-            alert.setContentText("1-) " + players.get( 3).getName() + " - Score: " + players.get( 3).getScore()
-                    +"\n2-) " + players.get( 2).getName() + " - Score: " + players.get( 2).getScore()
-                    +"\n3-) " + players.get( 1).getName() + " - Score: " + players.get( 1).getScore()
-                    +"\n4-) " + players.get( 0).getName() + " - Score: " + players.get( 0).getScore()
-            );
+                    // Showing player rankings
+                    alert.setTitle( "Catan");
+                    alert.setHeaderText("Player " + curPlayer.getName() + " has won!" + "\n\nPlayer scores:");
+                    Collections.sort( players, new SortByScore() );
+                    alert.setContentText("1-) " + players.get( 3).getName() + " - Score: " + players.get( 3).getScore()
+                            +"\n2-) " + players.get( 2).getName() + " - Score: " + players.get( 2).getScore()
+                            +"\n3-) " + players.get( 1).getName() + " - Score: " + players.get( 1).getScore()
+                            +"\n4-) " + players.get( 0).getName() + " - Score: " + players.get( 0).getScore()
+                    );
+                    alert.showAndWait();
+                }
+            });
             FlowManager flowManager = new FlowManager();
             if ( getLocalPlayer() == flowManager.getCurrentPlayer())
             {
                 ServerHandler.getInstance().finishGame();
             }
-            alert.showAndWait();
             try
             {
                 new FlowManager().terminateData(); // throws null pointer exception? dont know why

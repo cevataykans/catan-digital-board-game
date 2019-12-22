@@ -330,6 +330,7 @@ public class ServerHandler {
                         case "knight":
                             new Knight().play();
                             flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            controller.checkWinCondition();
                             break;
                         case "monopoly":
                             new Monopoly().play();
@@ -342,6 +343,7 @@ public class ServerHandler {
                         case "Victory-Point":
                             new VictoryPoint().play();
                             flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            controller.checkWinCondition();
                             break;
                         case "Year-of-Plenty":
                             new YearOfPlenty().play();
@@ -656,7 +658,7 @@ public class ServerHandler {
         socket.emit("send-plenty", data);
     }
 
-    public void sendPerfectlyBalanced(ArrayList<Integer> indexes){
+    public void sendPerfectlyBalanced(ArrayList<ArrayList<Integer>> indexes){
         String[] names = {"indexes"};
         Object[] keys = new Object[1];
         keys[0] = indexes;

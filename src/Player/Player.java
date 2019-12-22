@@ -115,6 +115,7 @@ public class Player
 		resources[2] -= requirements[2];
 		resources[3] -= requirements[3];
 		resources[4] -= requirements[4];
+		totResources -= 3;
 		cards.add( card);
 	}
 

@@ -137,6 +137,7 @@ public class MultiDiceController {
                 }
                 else {
                     flowManager.collectResourcesForDice(results);
+                    controller.getInfoController().setupCurrentPlayer();
                 }
             }
             else
