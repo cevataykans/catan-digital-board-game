@@ -117,6 +117,12 @@ public class Game
                         case 4:
                             card = new Card(new VictoryPoint(), "Victory-Point");
                             break;
+                        case 5:
+                            card = new Card(new ChangeOfFortune(), "Change-of-Fortune");
+                            break;
+                        case 6:
+                            card = new Card(new PerfectlyBalanced(), "Perfectly-Balanced");
+                            break;
                         default:
                             card = null;
                     }

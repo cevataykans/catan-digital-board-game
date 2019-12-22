@@ -347,12 +347,15 @@ public class ServerHandler {
                             new YearOfPlenty().play();
                             flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
                             break;
-                        case "fortune":
+                        case "Change-of-Fortune":
+                            new ChangeOfFortune().play();
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
                             break;
-                        case "balanced":
+                        case "Perfectly-Balanced":
+                            new PerfectlyBalanced().play();
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
                             break;
                     }
-                    Game.getInstance().getCardStack().pop();
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -393,6 +396,7 @@ public class ServerHandler {
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
+                ServerInformation.getInstance().addInformation(obj);
                 // Call related controller method
                 try{
                     ResourceManager resourceManager = new ResourceManager();
