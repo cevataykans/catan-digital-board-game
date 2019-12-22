@@ -6,14 +6,12 @@ import GameFlow.Response;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class YearOfPlenty extends Card implements Playable {
+public class YearOfPlenty implements Playable {
     // Properties
 
     // Constructor
     public YearOfPlenty()
     {
-        setName("Year-of-Plenty");
-        setInformation("This development card allows you to gain 2 of a resource of your choice.");
     }
 
     // Methods

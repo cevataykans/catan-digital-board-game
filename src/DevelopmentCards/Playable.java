@@ -7,5 +7,5 @@ package DevelopmentCards;
  */
 public interface Playable {
     //play method to implement specific plays for each card
-    public void play();
+    void play();
 }

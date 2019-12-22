@@ -137,32 +137,37 @@ public class MultiDevCardController {
                                 playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY()) ||
                                 playAreaPosition.contains(rectanglePosition.getCenterX(), rectanglePosition.getCenterY() + rectanglePosition.getHeight()) ||
                                 playAreaPosition.contains(rectanglePosition.getCenterX() + rectanglePosition.getWidth(), rectanglePosition.getCenterY() + rectanglePosition.getHeight())) {
-                            if (cards.get(finalI).isPlayable()) {
-                                System.out.println("Current card playable and played");
-                                cardBox.getChildren().remove(temp);
-                                cards.get(finalI).play();
-                                ServerHandler.getInstance().playCard(cards.get(finalI).getName(), finalI);
-                                setupDevelopmentCards();
-                                controller.getInfoController().setupCurrentPlayer();
-                                ServerHandler.getInstance().refreshInfos();
-                                if ( cards.get(finalI) instanceof VictoryPoint)
-                                {
-                                    this.controller.checkWinCondition();
+                            if( flowManager.checkMust() == Response.MUST_FREE_TURN ) {
+                                if (cards.get(finalI).isPlayable()) {
+                                    System.out.println("Current card playable and played");
+                                    cardBox.getChildren().remove(temp);
+                                    cards.get(finalI).play();
+                                    ServerHandler.getInstance().playCard(cards.get(finalI).getName(), finalI);
+                                    setupDevelopmentCards();
+                                    controller.getInfoController().setupCurrentPlayer();
+                                    ServerHandler.getInstance().refreshInfos();
+                                    if (cards.get(finalI).getName().equals("Victory-Point")) {
+                                        this.controller.checkWinCondition();
+                                    }
+                                    if (cards.get(finalI).getName().equals("knight")) {
+                                        this.controller.checkWinCondition();
+                                    }
+                                    if (cards.get(finalI).getName().equals("Year-of-Plenty")) {
+                                        controller.getSelectionController().showResourceSelectionForPlenty();
+                                    } else if (cards.get(finalI).getName().equals("monopoly")) {
+                                        controller.getSelectionController().showResourceSelectionForMonopoly();
+                                    }
+                                    cards.remove(cards.get(finalI));
+                                } else {
+                                    temp.setTranslateX(0);
+                                    temp.setTranslateY(0);
+                                    controller.getStatusController().informStatus(Response.ERROR_CARD_NOT_PLAYABLE);
                                 }
-                                if ( cards.get(finalI) instanceof Knight)
-                                {
-                                    this.controller.checkWinCondition();
-                                }
-                                if (cards.get(finalI) instanceof YearOfPlenty) {
-                                    controller.getSelectionController().showResourceSelectionForPlenty();
-                                } else if (cards.get(finalI) instanceof Monopoly) {
-                                    controller.getSelectionController().showResourceSelectionForMonopoly();
-                                }
-                                cards.remove(cards.get(finalI));
-                            } else {
+                            }
+                            else{
                                 temp.setTranslateX(0);
                                 temp.setTranslateY(0);
-                                controller.getStatusController().informStatus(Response.ERROR_CARD_NOT_PLAYABLE);
+                                controller.getStatusController().informStatus(flowManager.checkMust());
                             }
                         } else {
                             temp.setTranslateX(0);

@@ -287,23 +287,25 @@ public class ServerHandler {
                     switch (cardName)
                     {
                         case "knight":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Knight());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new Knight(),"knight"));
                             break;
                         case "monopoly":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Monopoly());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new Monopoly(), "monopoly"));
                             break;
                         case "Road-Building":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new RoadBuilding());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new RoadBuilding(), "Road-Building"));
                             break;
                         case "Victory-Point":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new VictoryPoint());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new VictoryPoint(), "Victory-Point"));
                             break;
                         case "Year-of-Plenty":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new YearOfPlenty());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new YearOfPlenty(), "Year-of-Plenty"));
                             break;
-                        case "fortune":
+                        case "Change-of-Fortune":
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new ChangeOfFortune(), "Change-of-Fortune"));
                             break;
-                        case "balanced":
+                        case "Perfectly-Balanced":
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new ChangeOfFortune(), "Perfectly-Balanced"));
                             break;
                     }
                     Game.getInstance().getCardStack().pop();

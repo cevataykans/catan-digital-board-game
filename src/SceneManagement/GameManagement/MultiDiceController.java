@@ -162,7 +162,7 @@ public class MultiDiceController {
         ArrayList<Card> devCards = flowManager.getCurrentPlayer().getCards();
 
         for ( Card card : devCards) {
-            if ( card instanceof ChangeOfFortune) {
+            if ( card.getName().equals("Change-of-Fortune")) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initStyle(StageStyle.UTILITY);
 

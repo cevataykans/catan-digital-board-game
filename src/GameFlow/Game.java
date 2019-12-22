@@ -38,7 +38,7 @@ public class Game
     private Queue<Response> must;
 
     // Constants
-    private final int TOTAL_DEV_CARDS = 25;
+    private final int TOTAL_DEV_CARDS = 28;
     public static final int DICE_SEVEN = 7;
 
     // Attributes
@@ -77,15 +77,19 @@ public class Game
             for (int i = 0; i < TOTAL_DEV_CARDS; i++) {
                 Card card;
                 if (i < 14)
-                    card = new Knight();
+                    card = new Card(new Knight(),"knight");
                 else if (i < 16)
-                    card = new Monopoly();
+                    card = new Card(new Monopoly(), "monopoly");
                 else if (i < 18)
-                    card = new RoadBuilding();
+                    card = new Card(new RoadBuilding(), "Road-Building");
                 else if (i < 20)
-                    card = new YearOfPlenty();
+                    card = new Card(new YearOfPlenty(), "Year-of-Plenty");
+                else if (i < 25)
+                    card = new Card(new VictoryPoint(), "Victory-Point");
+                else if (i < 27)
+                    card = new Card(new ChangeOfFortune(), "Change-of-Fortune");
                 else
-                    card = new VictoryPoint();
+                    card = new Card(new PerfectlyBalanced(), "Perfectly-Balanced");
                 devCards.push(card);
             }
         }
@@ -96,22 +100,22 @@ public class Game
                 JSONArray tempCards = (JSONArray) obj.get("cards");
                 for ( int i = 0; i < tempCards.length(); i++)
                 {
-                    Card card = null;
+                    Card card;
                     switch (tempCards.getInt(i)) {
                         case 0:
-                            card = new Knight();
+                            card = new Card(new Knight(),"knight");
                             break;
                         case 1:
-                            card = new Monopoly();
+                            card = new Card(new Monopoly(), "monopoly");
                             break;
                         case 2:
-                            card = new RoadBuilding();
+                            card = new Card(new RoadBuilding(), "Road-Building");
                             break;
                         case 3:
-                            card = new YearOfPlenty();
+                            card = new Card(new YearOfPlenty(), "Year-of-Plenty");
                             break;
                         case 4:
-                            card = new VictoryPoint();
+                            card = new Card(new VictoryPoint(), "Victory-Point");
                             break;
                         default:
                             card = null;

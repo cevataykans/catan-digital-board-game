@@ -5,14 +5,12 @@ import GameFlow.Game;
 import SceneManagement.SoundManager;
 import org.controlsfx.dialog.Wizard;
 
-public class VictoryPoint extends Card implements Playable {
+public class VictoryPoint implements Playable {
     // Properties
 
     // Constructor
     public VictoryPoint()
     {
-        setName("Victory-Point");
-        setInformation("This special card increases your score by 1 point.");
     }
 
     // Methods

@@ -10,14 +10,12 @@ import ServerCommunication.ServerHandler;
 import java.util.ArrayList;
 import java.util.concurrent.Flow;
 
-public class PerfectlyBalanced extends Card implements Playable {
+public class PerfectlyBalanced implements Playable {
     // Properties
 
     // Constructor
     public PerfectlyBalanced()
     {
-        setName("Perfectly-Balanced");
-        setInformation("This development card discards half of ALL players' resources.");
     }
 
     // Methods

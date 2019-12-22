@@ -52,7 +52,7 @@ public class CardManager
 		// Iterate over each card to make it playable
 		for ( Card tempCard : cards)
 		{
-			if ( !(tempCard instanceof ChangeOfFortune)) {
+			if ( !(tempCard.getName().equals("Change-of-Fortune"))) {
 				tempCard.makePlayable();
 			}
 		}

@@ -161,9 +161,9 @@ export class GameEventController{
             resources = this.shuffle(resources);
             let ports = [0, 0, 0, 0, 1, 2, 3, 4, 5];
             ports = this.shuffle(ports);
-            const cardNumbers = [14, 2, 2, 2, 5];
+            const cardNumbers = [14, 2, 2, 2, 5, 2, 1];
             let cards = []
-            for(let i = 0 ; i < 25; i++){
+            for(let i = 0 ; i < 28; i++){
                 for(let j = 0; j < cardNumbers[i]; j++){
                     cards.push(i);
                 }
