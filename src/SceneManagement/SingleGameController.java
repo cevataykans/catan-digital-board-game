@@ -73,14 +73,14 @@ public class SingleGameController extends SceneController
         root = FXMLLoader.load(getClass().getResource("/UI/SingleGame.fxml"));
         scene = stage.getScene();
         int[] temp = {0, 0, 0, 0 ,0};
-        players.get(0).buyDevelopmentCard(temp, new PerfectlyBalanced());
-        players.get(0).buyDevelopmentCard(temp, new ChangeOfFortune());
-        players.get(1).buyDevelopmentCard(temp, new Knight());
-        players.get(1).buyDevelopmentCard(temp, new YearOfPlenty());
-        players.get(2).buyDevelopmentCard(temp, new Monopoly());
-        players.get(2).buyDevelopmentCard(temp, new RoadBuilding());
-        players.get(3).buyDevelopmentCard(temp, new VictoryPoint());
-        players.get(3).buyDevelopmentCard(temp, new ChangeOfFortune());
+        players.get(0).buyDevelopmentCard(temp, new Card(new PerfectlyBalanced(), "Perfectly-Balanced"));
+        players.get(0).buyDevelopmentCard(temp, new Card(new ChangeOfFortune(), "Change-of-Fortune"));
+        players.get(1).buyDevelopmentCard(temp, new Card(new Knight(),"knight"));
+        players.get(1).buyDevelopmentCard(temp, new Card(new YearOfPlenty(), "Year-of-Plenty"));
+        players.get(2).buyDevelopmentCard(temp, new Card(new Monopoly(), "monopoly"));
+        players.get(2).buyDevelopmentCard(temp, new Card(new RoadBuilding(), "Road-Building"));
+        players.get(3).buyDevelopmentCard(temp, new Card(new VictoryPoint(), "Victory-Point"));
+        players.get(3).buyDevelopmentCard(temp, new Card(new ChangeOfFortune(), "Change-of-Fortune"));
         this.players = players;
         initialize(stage);
     }

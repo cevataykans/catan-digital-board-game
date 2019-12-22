@@ -77,15 +77,15 @@ public class Game
             for (int i = 0; i < TOTAL_DEV_CARDS; i++) {
                 Card card;
                 if (i < 14)
-                    card = new Knight();
+                    card = new Card(new Knight(),"knight");
                 else if (i < 16)
-                    card = new Monopoly();
+                    card = new Card(new Monopoly(), "monopoly");
                 else if (i < 18)
-                    card = new RoadBuilding();
+                    card = new Card(new RoadBuilding(), "Road-Building");
                 else if (i < 20)
-                    card = new YearOfPlenty();
+                    card = new Card(new YearOfPlenty(), "Year-of-Plenty");
                 else
-                    card = new VictoryPoint();
+                    card = new Card(new VictoryPoint(), "Victory-Point");
                 devCards.push(card);
             }
         }
@@ -99,19 +99,19 @@ public class Game
                     Card card = null;
                     switch (tempCards.getInt(i)) {
                         case 0:
-                            card = new Knight();
+                            card = new Card(new Knight(),"knight");
                             break;
                         case 1:
-                            card = new Monopoly();
+                            card = new Card(new Monopoly(), "monopoly");
                             break;
                         case 2:
-                            card = new RoadBuilding();
+                            card = new Card(new RoadBuilding(), "Road-Building");
                             break;
                         case 3:
-                            card = new YearOfPlenty();
+                            card = new Card(new YearOfPlenty(), "Year-of-Plenty");
                             break;
                         case 4:
-                            card = new VictoryPoint();
+                            card = new Card(new VictoryPoint(), "Victory-Point");
                             break;
                         default:
                             card = null;

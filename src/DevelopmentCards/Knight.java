@@ -7,15 +7,12 @@ import GameFlow.TitleManager;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class Knight extends Card implements Playable{
+public class Knight implements Playable{
     // Properties
 
     // Constructor
     public Knight()
     {
-        setName("knight");
-        setInformation("This development card allows you to change the position of the robber and steal" +
-                " a card from a neighboring player.");
     }
 
     // Methods

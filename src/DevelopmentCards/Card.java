@@ -6,23 +6,56 @@ package DevelopmentCards;
  * @version 15.10.2019
  * Class is created and functions are implemented. Open to further implementation.
  */
-public abstract class Card
+public class Card
 {
     public static final int[] REQUIREMENTS_FOR_CARD = {0, 1, 1, 0, 1};
+
+
+    /*
+        setName("Perfectly-Balanced");
+        setInformation("This development card discards half of ALL players' resources.");
+
+        setName("Change-of-Fortune");
+        setInformation("This special card allows you to re-roll the dice after it is rolled, if you did not like the" +
+                " previous results");
+
+        setName("knight");
+        setInformation("This development card allows you to change the position of the robber and steal" +
+                " a card from a neighboring player.");
+
+        setName("monopoly");
+        setInformation("This development card allows you to steal ALL of any one resource of your" +
+                " choice from all other players.");
+
+        setName("Road-Building");
+        setInformation("This special card allows you to build 2 roads freely.");
+
+        setName("Victory-Point");
+        setInformation("This special card increases your score by 1 point.");
+
+        setName("Year-of-Plenty");
+        setInformation("This development card allows you to gain 2 of a resource of your choice.");
+     */
+
 
     // Attributes
     private String name;
     private String information;
     private boolean isPlayable;
+    private Playable cardPlay;
 
     // Constructor
-    public Card()
+    public Card( Playable cardPlay, String name )
     {
         isPlayable = false;
+        this.cardPlay = cardPlay;
+        this.name = name;
     }
 
     // Functions
-    public abstract void play();
+    public void play(){
+        cardPlay.play();
+    }
 
     /**
      * Gets the card's name.
@@ -30,30 +63,6 @@ public abstract class Card
      */
     public String getName() {
         return name;
-    }
-
-    /**
-     * Sets the card's name to the given name.
-     * @param name is card's name.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Gets the card's information.
-     * @return card's information.
-     */
-    public String getInformation() {
-        return information;
-    }
-
-    /**
-     * Sets the card's information to the given information.
-     * @param information is card's information.
-     */
-    public void setInformation(String information) {
-        this.information = information;
     }
 
     /**
