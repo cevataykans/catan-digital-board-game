@@ -1208,7 +1208,7 @@ public class MultiGameController extends SceneController {
 
         Player curPlayer = new FlowManager().getCurrentPlayer();
         // For test, you can decrease this to 2!
-        if ( curPlayer.getScore() >= 3) // **************** IT IS FOR TEST PURPOSE. AT THE END CHANGE IT TO 10
+        if ( curPlayer.getScore() >= 10) // **************** IT IS FOR TEST PURPOSE. AT THE END CHANGE IT TO 10
         {
             Platform.runLater(new Runnable() {
                 @Override

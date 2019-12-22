@@ -959,7 +959,7 @@ public class SingleGameController extends SceneController
 
         Player curPlayer = new FlowManager().getCurrentPlayer();
         // For test, you can decrease this to 2!
-        if ( curPlayer.getScore() >= 5)
+        if ( curPlayer.getScore() >= 10)
         {
             SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
             Alert alert = new Alert( Alert.AlertType.INFORMATION);
