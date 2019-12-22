@@ -71,7 +71,17 @@ public class ResourceManager
 			int leftToSteal = 1;
 			while ( leftToSteal > 0 )
 			{
-				int randomStealIndex = (int)(Math.random() * 5);
+				int randomStealIndex = -1;
+				if(ServerHandler.getInstance().getStatus() != ServerHandler.Status.RECEIVER)
+					randomStealIndex = (int)(Math.random() * 5);
+				else{
+					JSONObject obj = ServerInformation.getInstance().getInformation();
+					try {
+						randomStealIndex = obj.getInt("index");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
 				if ( otherPlResources[ randomStealIndex] > 0 ) // steal
 				{
 					// Adjust total resources

@@ -3,10 +3,11 @@ package DevelopmentCards;
 import GameFlow.FlowManager;
 import GameFlow.Game;
 import GameFlow.Response;
+import Player.Player;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class ChangeOfFortune extends Card {
+public class ChangeOfFortune extends Card implements Playable {
     // Properties
 
     // Constructor

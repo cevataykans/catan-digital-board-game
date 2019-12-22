@@ -10,7 +10,7 @@ import ServerCommunication.ServerHandler;
 import java.util.ArrayList;
 import java.util.concurrent.Flow;
 
-public class PerfectlyBalanced extends Card {
+public class PerfectlyBalanced extends Card implements Playable {
     // Properties
 
     // Constructor
