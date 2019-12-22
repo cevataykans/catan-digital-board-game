@@ -305,6 +305,7 @@ export class GameEventController{
         }
         
         otherPlayers.forEach((item) => {
+            console.log("Thanos arrived.");
             socket.to(item).emit("send-balanced-response", data);
         });
         

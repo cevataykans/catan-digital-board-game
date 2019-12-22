@@ -9,6 +9,7 @@ import Player.Player;
 import SceneManagement.GameEngine;
 import SceneManagement.MatchmakingController;
 import SceneManagement.MultiGameController;
+import SceneManagement.SoundManager;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -283,7 +284,6 @@ public class ServerHandler {
                 try{
                     String cardName = obj.getString("cardName");
                     FlowManager flowManager = new FlowManager();
-                    System.out.println("Receiver Card Bought");
                     switch (cardName)
                     {
                         case "knight":
@@ -305,7 +305,8 @@ public class ServerHandler {
                             flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new ChangeOfFortune(), "Change-of-Fortune"));
                             break;
                         case "Perfectly-Balanced":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new ChangeOfFortune(), "Perfectly-Balanced"));
+                            System.out.println("Perfectly balanced acquired for current player");
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new PerfectlyBalanced(), "Perfectly-Balanced"));
                             break;
                     }
                     Game.getInstance().getCardStack().pop();
@@ -324,7 +325,6 @@ public class ServerHandler {
                     String cardName = obj.getString("cardName");
                     Integer cardIndex = obj.getInt("cardIndex");
                     FlowManager flowManager = new FlowManager();
-                    System.out.println("Receiver Card");
                     switch (cardName)
                     {
                         case "knight":
@@ -352,7 +352,7 @@ public class ServerHandler {
                             flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
                             break;
                         case "Perfectly-Balanced":
-                            new PerfectlyBalanced().play();
+                            System.out.println("Perfectly balanced played");
                             flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
                             break;
                     }
@@ -624,7 +624,6 @@ public class ServerHandler {
 
     public void sendDevCard(String cardName)
     {
-        System.out.println("Sender Bought Card");
         String[] names = {"cardName"};
         String[] keys = new String[1];
         keys[0] = cardName;
@@ -633,7 +632,6 @@ public class ServerHandler {
     }
 
     public void playCard(String cardName, int cardIndex){
-        System.out.println("Sender Play Card");
         String[] names = {"cardName", "cardIndex"};
         Object[] keys = new Object[2];
         keys[0] = cardName;

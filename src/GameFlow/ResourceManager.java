@@ -2,6 +2,7 @@ package GameFlow;
 
 import GameBoard.Harbor;
 import Player.Player;
+import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 import ServerCommunication.ServerInformation;
 import org.json.JSONArray;
@@ -195,6 +196,7 @@ public class ResourceManager
 				}
 			}
 		}
+		SoundManager.getInstance().playEffect(SoundManager.Effect.PERFECTLY_BALANCED);
 		return indexes;
 	}
 

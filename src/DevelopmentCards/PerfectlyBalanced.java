@@ -29,7 +29,7 @@ public class PerfectlyBalanced implements Playable {
         ArrayList<Integer> indexes = resourceManager.discardHalfOfResourcesWithoutCondition();
         if (ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
             ServerHandler.getInstance().sendPerfectlyBalanced(indexes);
+            SoundManager.getInstance().playEffect(SoundManager.Effect.PERFECTLY_BALANCED);
         }
-        SoundManager.getInstance().playEffect(SoundManager.Effect.PERFECTLY_BALANCED);
     }
 }

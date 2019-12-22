@@ -179,9 +179,9 @@ public class MultiDiceController {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     card.play();
+                    ServerHandler.getInstance().playCard(card.getName(), devCards.indexOf(card));
                     devCards.remove(card);
                     controller.getDevCardController().setupDevelopmentCards();
-                    ServerHandler.getInstance().playCard(card.getName(), devCards.indexOf(card));
                     return true;
                 }
                 else
