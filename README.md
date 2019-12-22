@@ -20,10 +20,6 @@
 
 ## **Google Docs**
 
-### **Strategies**
-* [Meeting Logs](https://docs.google.com/document/d/1YEGElk27ZHa33cCEx46ROMKLR4PsSZnCwg8WuQudfV0/edit?usp=sharing)
-* [Scrum Table](https://docs.google.com/spreadsheets/d/115HN1STXjMm86rDx6S7wuDnutEHHgbMg2HYOdZIEgwY/edit?usp=sharing)
-
 ### **Iteration 1**
 * [Analysis Report](https://drive.google.com/file/d/1lChs5JGEpPjOdcbx_pfUOEZPQzpjT2E7/view?usp=sharing)
 * [Design Report](https://docs.google.com/document/d/1ENSQk3wdsQxmHv6eHtjSDhl6wFeL1WiFZxwjv5hoJDM/edit?usp=sharing)
