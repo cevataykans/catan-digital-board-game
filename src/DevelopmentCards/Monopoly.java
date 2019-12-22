@@ -6,15 +6,12 @@ import GameFlow.Response;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class Monopoly extends Card implements Playable {
+public class Monopoly implements Playable {
     // Properties
 
     // Constructor
     public Monopoly()
     {
-        setName("monopoly");
-        setInformation("This development card allows you to steal ALL of any one resource of your" +
-                " choice from all other players.");
     }
 
     // Methods

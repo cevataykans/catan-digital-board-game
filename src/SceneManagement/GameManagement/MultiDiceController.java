@@ -137,6 +137,7 @@ public class MultiDiceController {
                 }
                 else {
                     flowManager.collectResourcesForDice(results);
+                    controller.getInfoController().setupCurrentPlayer();
                 }
             }
             else
@@ -162,7 +163,7 @@ public class MultiDiceController {
         ArrayList<Card> devCards = flowManager.getCurrentPlayer().getCards();
 
         for ( Card card : devCards) {
-            if ( card instanceof ChangeOfFortune) {
+            if ( card.getName().equals("Change-of-Fortune")) {
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                 alert.initStyle(StageStyle.UTILITY);
 
@@ -179,9 +180,9 @@ public class MultiDiceController {
                 Optional<ButtonType> result = alert.showAndWait();
                 if (result.get() == ButtonType.OK) {
                     card.play();
+                    ServerHandler.getInstance().playCard(card.getName(), devCards.indexOf(card));
                     devCards.remove(card);
                     controller.getDevCardController().setupDevelopmentCards();
-                    ServerHandler.getInstance().playCard(card.getName(), devCards.indexOf(card));
                     return true;
                 }
                 else

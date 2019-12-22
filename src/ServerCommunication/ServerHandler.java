@@ -9,6 +9,7 @@ import Player.Player;
 import SceneManagement.GameEngine;
 import SceneManagement.MatchmakingController;
 import SceneManagement.MultiGameController;
+import SceneManagement.SoundManager;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
@@ -110,6 +111,8 @@ public class ServerHandler {
         this.userId = "";
         this.connected = false;
         this.socket.disconnect();
+        this.status = null;
+        this.serverHandler = null;
         return true;
     }
 
@@ -281,27 +284,29 @@ public class ServerHandler {
                 try{
                     String cardName = obj.getString("cardName");
                     FlowManager flowManager = new FlowManager();
-                    System.out.println("Receiver Card Bought");
                     switch (cardName)
                     {
                         case "knight":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Knight());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new Knight(),"knight"));
                             break;
                         case "monopoly":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Monopoly());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new Monopoly(), "monopoly"));
                             break;
                         case "Road-Building":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new RoadBuilding());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new RoadBuilding(), "Road-Building"));
                             break;
                         case "Victory-Point":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new VictoryPoint());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new VictoryPoint(), "Victory-Point"));
                             break;
                         case "Year-of-Plenty":
-                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new YearOfPlenty());
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new YearOfPlenty(), "Year-of-Plenty"));
                             break;
-                        case "fortune":
+                        case "Change-of-Fortune":
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new ChangeOfFortune(), "Change-of-Fortune"));
                             break;
-                        case "balanced":
+                        case "Perfectly-Balanced":
+                            System.out.println("Perfectly balanced acquired for current player");
+                            flowManager.getCurrentPlayer().buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, new Card(new PerfectlyBalanced(), "Perfectly-Balanced"));
                             break;
                     }
                     Game.getInstance().getCardStack().pop();
@@ -320,12 +325,12 @@ public class ServerHandler {
                     String cardName = obj.getString("cardName");
                     Integer cardIndex = obj.getInt("cardIndex");
                     FlowManager flowManager = new FlowManager();
-                    System.out.println("Receiver Card");
                     switch (cardName)
                     {
                         case "knight":
                             new Knight().play();
                             flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            controller.checkWinCondition();
                             break;
                         case "monopoly":
                             new Monopoly().play();
@@ -338,17 +343,21 @@ public class ServerHandler {
                         case "Victory-Point":
                             new VictoryPoint().play();
                             flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
+                            controller.checkWinCondition();
                             break;
                         case "Year-of-Plenty":
                             new YearOfPlenty().play();
                             flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
                             break;
-                        case "fortune":
+                        case "Change-of-Fortune":
+                            new ChangeOfFortune().play();
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
                             break;
-                        case "balanced":
+                        case "Perfectly-Balanced":
+                            System.out.println("Perfectly balanced played");
+                            flowManager.getCurrentPlayer().getCards().remove(flowManager.getCurrentPlayer().getCards().get(cardIndex));
                             break;
                     }
-                    Game.getInstance().getCardStack().pop();
                 }catch(Exception e){
                     e.printStackTrace();
                 }
@@ -389,6 +398,7 @@ public class ServerHandler {
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
+                ServerInformation.getInstance().addInformation(obj);
                 // Call related controller method
                 try{
                     ResourceManager resourceManager = new ResourceManager();
@@ -403,6 +413,7 @@ public class ServerHandler {
             public void call(Object... objects) {
                 setStatus(Status.RECEIVER); // Client acts as receiver. It receives message from the server
                 JSONObject obj = (JSONObject) objects[0];
+                ServerInformation.getInstance().addInformation(obj);
                 // Call related controller method
                 try{
                     String playerName = obj.getString("player");
@@ -528,7 +539,10 @@ public class ServerHandler {
             @Override
             public void call(Object... objects) {
                 if(connected){
-                    logout();
+                    System.out.println("disconnect response");
+                    boolean result = logout();
+                    if(result)
+                        System.out.println("logout successfully");
                     controller.finishTheGameForDisconnection();
                 }
             }
@@ -612,7 +626,6 @@ public class ServerHandler {
 
     public void sendDevCard(String cardName)
     {
-        System.out.println("Sender Bought Card");
         String[] names = {"cardName"};
         String[] keys = new String[1];
         keys[0] = cardName;
@@ -621,7 +634,6 @@ public class ServerHandler {
     }
 
     public void playCard(String cardName, int cardIndex){
-        System.out.println("Sender Play Card");
         String[] names = {"cardName", "cardIndex"};
         Object[] keys = new Object[2];
         keys[0] = cardName;
@@ -646,7 +658,7 @@ public class ServerHandler {
         socket.emit("send-plenty", data);
     }
 
-    public void sendPerfectlyBalanced(ArrayList<Integer> indexes){
+    public void sendPerfectlyBalanced(ArrayList<ArrayList<Integer>> indexes){
         String[] names = {"indexes"};
         Object[] keys = new Object[1];
         keys[0] = indexes;
@@ -726,8 +738,18 @@ public class ServerHandler {
     }
 
     public void finishGame() {
+        System.out.println("outside if");
         JSONObject data = ServerInformation.getInstance().JSONObjectFactory();
-        socket.emit("finish-game", data);
+        if(socket != null) {
+            socket.emit("finish", data);
+            System.out.println("inside if");
+        }
+    }
+
+    public void terminateServerHandler(){
+        if(connected){
+            logout();
+        }
     }
 
     public Status getStatus(){

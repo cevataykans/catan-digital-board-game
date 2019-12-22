@@ -10,14 +10,12 @@ import ServerCommunication.ServerHandler;
 import java.util.ArrayList;
 import java.util.concurrent.Flow;
 
-public class PerfectlyBalanced extends Card implements Playable {
+public class PerfectlyBalanced implements Playable {
     // Properties
 
     // Constructor
     public PerfectlyBalanced()
     {
-        setName("Perfectly-Balanced");
-        setInformation("This development card discards half of ALL players' resources.");
     }
 
     // Methods
@@ -28,10 +26,10 @@ public class PerfectlyBalanced extends Card implements Playable {
     public void play() {
         ResourceManager resourceManager = new ResourceManager();
 
-        ArrayList<Integer> indexes = resourceManager.discardHalfOfResourcesWithoutCondition();
+        ArrayList<ArrayList<Integer>> playerIndexes = resourceManager.discardHalfOfResourcesWithoutCondition();
         if (ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
-            ServerHandler.getInstance().sendPerfectlyBalanced(indexes);
+            ServerHandler.getInstance().sendPerfectlyBalanced(playerIndexes);
+            SoundManager.getInstance().playEffect(SoundManager.Effect.PERFECTLY_BALANCED);
         }
-        SoundManager.getInstance().playEffect(SoundManager.Effect.PERFECTLY_BALANCED);
     }
 }

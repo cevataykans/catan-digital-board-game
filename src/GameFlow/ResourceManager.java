@@ -2,6 +2,7 @@ package GameFlow;
 
 import GameBoard.Harbor;
 import Player.Player;
+import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 import ServerCommunication.ServerInformation;
 import org.json.JSONArray;
@@ -71,7 +72,17 @@ public class ResourceManager
 			int leftToSteal = 1;
 			while ( leftToSteal > 0 )
 			{
-				int randomStealIndex = (int)(Math.random() * 5);
+				int randomStealIndex = -1;
+				if(ServerHandler.getInstance().getStatus() != ServerHandler.Status.RECEIVER)
+					randomStealIndex = (int)(Math.random() * 5);
+				else{
+					JSONObject obj = ServerInformation.getInstance().getInformation();
+					try {
+						randomStealIndex = obj.getInt("index");
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+				}
 				if ( otherPlResources[ randomStealIndex] > 0 ) // steal
 				{
 					// Adjust total resources
@@ -129,6 +140,7 @@ public class ResourceManager
 	 */
 	public ArrayList<Integer> discardHalfOfResources( Player player)
 	{
+		System.out.println("discard half of resources");
 		ArrayList<Integer> discardedIndexes = new ArrayList<>();
 		int totResources = player.getTotalResCount();
 
@@ -141,6 +153,7 @@ public class ResourceManager
 			{
 				// Find a valid random index to discard resource
 				int discardIndex = ( int)( Math.random() * 5);
+				System.out.println("discardIndex" + discardIndex);
 				if ( resources[ discardIndex] > 0)
 				{
 					player.discardMaterial( discardIndex, 1);
@@ -153,17 +166,32 @@ public class ResourceManager
 		return discardedIndexes; // will be implemented
 	}
 
-	public ArrayList<Integer> discardHalfOfResourcesWithoutCondition()
+	public ArrayList<ArrayList<Integer>> discardHalfOfResourcesWithoutCondition()
 	{
-		JSONObject obj = null;
+		JSONArray playerIndexesFromServer = null;
 		if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER) {
-			obj = ServerInformation.getInstance().getInformation();
+			JSONObject obj = ServerInformation.getInstance().getInformation();
+			try{
+				playerIndexesFromServer = obj.getJSONArray("indexes");
+			} catch(Exception e){
+				e.printStackTrace();
+			}
 		}
-		ArrayList<Integer> indexes = new ArrayList<>();
+		ArrayList<ArrayList<Integer>> playerIndexes = new ArrayList<>();
 		Game game = Game.getInstance();
 		ArrayList<Player> players = game.getPlayers();
 
+		int playerIndex = 0;
 		for ( Player player : players ) {
+			JSONArray indexesFromServer = null;
+			if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER){
+				try {
+					indexesFromServer = playerIndexesFromServer.getJSONArray(playerIndex);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+			ArrayList<Integer> indexes = new ArrayList<>();
 			int totResources = player.getTotalResCount();
 
 			int discardCount = totResources / 2; // take the floor to discard
@@ -173,7 +201,8 @@ public class ResourceManager
 				// Find a valid random index to discard resource
 				if ( ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER) {
 					try {
-						discardIndex = obj.getJSONArray("indexes").getInt(obj.getJSONArray("indexes").length() - discardCount);
+						discardIndex = indexesFromServer.getInt(indexesFromServer.length() - discardCount);
+						System.out.println(discardIndex);
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
@@ -184,8 +213,11 @@ public class ResourceManager
 					discardCount--;
 				}
 			}
+			playerIndexes.add(indexes);
+			playerIndex++;
 		}
-		return indexes;
+		SoundManager.getInstance().playEffect(SoundManager.Effect.PERFECTLY_BALANCED);
+		return playerIndexes;
 	}
 
 	/**

@@ -103,6 +103,7 @@ public class FlowManager {
      * @return dice numbers for both dice
      */
     public ArrayList<Integer> rollDice() {
+        System.out.println("Roll dice start");
         int firstDice = 0;
         int secondDice = 0;
         if (ServerHandler.getInstance().getStatus() == ServerHandler.Status.RECEIVER) {
@@ -122,11 +123,12 @@ public class FlowManager {
         ret.add(firstDice);
         ret.add(secondDice);
 
-
+        System.out.println("Roll dice end");
         return ret;
     }
 
     public void collectResourcesForDice(ArrayList<Integer> results) {
+        System.out.println("Collect resource start");
         // Get the related data
         Game game = Game.getInstance();
         GameBoard board = game.getGameBoard();
@@ -139,6 +141,7 @@ public class FlowManager {
         // bought development cards!
         if( firstDice + secondDice == 7 )
         {
+            System.out.println("7");
             ArrayList<Integer>[] discarded = new ResourceManager().discardHalfOfResources();
             if(ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER)
                 ServerHandler.getInstance().rollDice(firstDice, secondDice, discarded);
@@ -154,6 +157,7 @@ public class FlowManager {
                 ServerHandler.getInstance().rollDice(firstDice, secondDice);
             ResourceDistributer.getInstance().collectResources( firstDice + secondDice, board.getRobber() );
         }
+        System.out.println("Collect resource end");
 
         new CardManager().makeCardsPlayable();
     }

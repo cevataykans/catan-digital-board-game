@@ -355,51 +355,52 @@ public class MultiGameController extends SceneController {
          *  If you want to add a shortcut, add the key to the switch case with its functionality.
          */
         scene.setOnKeyPressed(event -> {
-                switch (event.getCode()) {
-                    case E: if (localPlayer == flowManager.getCurrentPlayer()) {performEndTurnButtonEvent();}
-                        break;
-                    case H: robber.setImage( new Image("/images/hakan.jpeg", 45, 70, false, false) );
-                        break;
-                    case G: robber.setImage( new Image("/images/goose.png", 45, 70, false, false) );
-                        break;
-                    case ESCAPE:
-                        if ( escPopup.isVisible()) {
-                            escPopup.setVisible(false);
-                        }
-                        else {
-                            escPopup.setVisible(true);
-                        }
-                        continueButton.setOnMouseClicked(event1 -> {
-                            escPopup.setVisible(false);
-                        });
-                        mainMenuButton.setOnMouseClicked(event1 -> {
-                            // Initializing closing animation for game scene.
-                            FadeOut animation2 = new FadeOut(root);
-                            animation2.setSpeed(3.5);
-                            animation2.setOnFinished(event2 ->
+            switch (event.getCode()) {
+                case E: if (localPlayer == flowManager.getCurrentPlayer()) {performEndTurnButtonEvent();}
+                    break;
+                case H: robber.setImage( new Image("/images/hakan.jpeg", 45, 70, false, false) );
+                    break;
+                case G: robber.setImage( new Image("/images/goose.png", 45, 70, false, false) );
+                    break;
+                case ESCAPE:
+                    if ( escPopup.isVisible()) {
+                        escPopup.setVisible(false);
+                    }
+                    else {
+                        escPopup.setVisible(true);
+                    }
+                    continueButton.setOnMouseClicked(event1 -> {
+                        escPopup.setVisible(false);
+                    });
+                    mainMenuButton.setOnMouseClicked(event1 -> {
+                        // Initializing closing animation for game scene.
+                        FadeOut animation2 = new FadeOut(root);
+                        animation2.setSpeed(3.5);
+                        animation2.setOnFinished(event2 ->
+                        {
+                            try
                             {
-                                try
-                                {
-                                    // Make this scene invisible and change the controller to main menu from GameEngine.
-                                    root.setVisible(false);
-                                    ServerHandler.getInstance().logout();
-                                    GameEngine.getInstance().setController(0);
-                                }
-                                catch (IOException e)
-                                {
-                                    System.out.println(e);
-                                }
-                            });
-                            animation2.play();
+                                // Make this scene invisible and change the controller to main menu from GameEngine.
+                                root.setVisible(false);
+                                ServerHandler.getInstance().logout();
+                                GameEngine.getInstance().setController(0);
+                            }
+                            catch (IOException e)
+                            {
+                                System.out.println(e);
+                            }
                         });
-                        exitButton.setOnMouseClicked(event1 -> {
-                            Platform.exit();
-                            System.exit(0);
-                        });
-                        break;
-                    default:
-                        break;
-                }
+                        animation2.play();
+                        flowManager.terminateData();
+                    });
+                    exitButton.setOnMouseClicked(event1 -> {
+                        Platform.exit();
+                        System.exit(0);
+                    });
+                    break;
+                default:
+                    break;
+            }
         });
         Platform.runLater(new Runnable() {
             @Override
@@ -614,30 +615,28 @@ public class MultiGameController extends SceneController {
         // Check if user has put the robber onto a valid position
         robber.setOnMouseReleased(e ->
         {
-            if(localPlayer == flowManager.getCurrentPlayer()){
-                // Create a board manager
-                BoardManager boardManager = new BoardManager();
+            if(localPlayer == flowManager.getCurrentPlayer()) {
+                if (flowManager.checkMust() == Response.MUST_INSIDE_TILE_SELECTION) {
+                    // Create a board manager
+                    BoardManager boardManager = new BoardManager();
 
-                // Get the coordinate and process it (processing and checking tile couldbe made in one line!)
-                int movedX = PixelProcessor.processX( e.getX() );
-                int movedY = PixelProcessor.processY( e.getY() );
-                System.out.println("MovedX: " + movedX + " MovedY: " + movedY); /***********************************************/
+                    // Get the coordinate and process it (processing and checking tile couldbe made in one line!)
+                    int movedX = PixelProcessor.processX(e.getX());
+                    int movedY = PixelProcessor.processY(e.getY());
 
-                Response resultCode = boardManager.checkTile( movedX, movedY);
-                if ( resultCode != Response.INFORM_INSIDE_TILE) // Inside tile
-                {
-                    System.out.println("Not inside tile"); /***********************************************/
-                    //robber.setTranslateX(0);
-                    //robber.setTranslateY(0);
-                    robber.setX( initialRobX );
-                    robber.setY( initialRobY );
-                    statusController.informStatus( resultCode);
+                    Response resultCode = boardManager.checkTile(movedX, movedY);
+                    if (resultCode != Response.INFORM_INSIDE_TILE) // Inside tile
+                    {
+                        robber.setX(initialRobX);
+                        robber.setY(initialRobY);
+                        statusController.informStatus(resultCode);
+                    } else // SUCCESSFUL
+                    {
+                        changeRobber(e.getX(), e.getY());
+                    }
+                } else {
+                    statusController.informStatus(flowManager.checkMust());
                 }
-                else // SUCCESSFUL
-                {
-                    changeRobber(e.getX(), e.getY());
-                }
-
             }
         });
     }
@@ -763,6 +762,7 @@ public class MultiGameController extends SceneController {
                     // Refresh current player information.
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.SETTLEMENT_BUILT);
+                    infoController.setupOtherPlayers();
                     checkWinCondition();
                 }
         );
@@ -851,6 +851,7 @@ public class MultiGameController extends SceneController {
                     // Refreshing current player information
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.ROAD_BUILD);
+                    infoController.setupOtherPlayers();
                     checkWinCondition();
                 }
         );
@@ -976,6 +977,7 @@ public class MultiGameController extends SceneController {
 
                     infoController.setupCurrentPlayer();
                     SoundManager.getInstance().playEffect(SoundManager.Effect.CITY_BUILD);
+                    infoController.setupOtherPlayers();
                     checkWinCondition();
                 }
         );
@@ -1206,38 +1208,44 @@ public class MultiGameController extends SceneController {
 
         Player curPlayer = new FlowManager().getCurrentPlayer();
         // For test, you can decrease this to 2!
-        if ( curPlayer.getScore() >= 10)
+        if ( curPlayer.getScore() >= 10) // **************** IT IS FOR TEST PURPOSE. AT THE END CHANGE IT TO 10
         {
-            SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
-            Alert alert = new Alert( Alert.AlertType.INFORMATION);
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    SoundManager.getInstance().playEffect(SoundManager.Effect.VICTORY);
+                    Alert alert = new Alert( Alert.AlertType.INFORMATION);
 
-            // Create a beautiful icon for catan dialog
-            ImageView icon = new ImageView("/images/catanIcon.png");
-            icon.setFitHeight(48);
-            icon.setFitWidth(48);
-            alert.getDialogPane().setGraphic( icon);
+                    // Create a beautiful icon for catan dialog
+                    ImageView icon = new ImageView("/images/catanIcon.png");
+                    icon.setFitHeight(48);
+                    icon.setFitWidth(48);
+                    alert.getDialogPane().setGraphic( icon);
 
-            // Showing player rankings
-            alert.setTitle( "Catan");
-            alert.setHeaderText("Player " + curPlayer.getName() + " has won!" + "\n\nPlayer scores:");
-            Collections.sort( players, new SortByScore() );
-            alert.setContentText("1-) " + players.get( 3).getName() + " - Score: " + players.get( 3).getScore()
-                    +"\n2-) " + players.get( 2).getName() + " - Score: " + players.get( 2).getScore()
-                    +"\n3-) " + players.get( 1).getName() + " - Score: " + players.get( 1).getScore()
-                    +"\n4-) " + players.get( 0).getName() + " - Score: " + players.get( 0).getScore()
-            );
+                    // Showing player rankings
+                    alert.setTitle( "Catan");
+                    alert.setHeaderText("Player " + curPlayer.getName() + " has won!" + "\n\nPlayer scores:");
+                    Collections.sort( players, new SortByScore() );
+                    alert.setContentText("1-) " + players.get( 3).getName() + " - Score: " + players.get( 3).getScore()
+                            +"\n2-) " + players.get( 2).getName() + " - Score: " + players.get( 2).getScore()
+                            +"\n3-) " + players.get( 1).getName() + " - Score: " + players.get( 1).getScore()
+                            +"\n4-) " + players.get( 0).getName() + " - Score: " + players.get( 0).getScore()
+                    );
+                    alert.showAndWait();
+                }
+            });
             FlowManager flowManager = new FlowManager();
             if ( getLocalPlayer() == flowManager.getCurrentPlayer())
             {
                 ServerHandler.getInstance().finishGame();
             }
-            alert.showAndWait();
             try
             {
                 new FlowManager().terminateData(); // throws null pointer exception? dont know why
                 GameEngine.getInstance().setController(0); // may throw an error
             }
             catch ( Exception e) { System.out.println( e); }
+            ServerHandler.getInstance().terminateServerHandler();
         }
     }
 

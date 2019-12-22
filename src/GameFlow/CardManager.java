@@ -27,16 +27,16 @@ public class CardManager
 		FlowManager flowManager = new FlowManager();
 		Player current = flowManager.getCurrentPlayer();
 		Stack<Card> devCards = game.getCardStack();
-		TitleManager titleManager = new TitleManager();
 
-		// Get the top of the card
-		Card top = devCards.peek();
-		devCards.pop();
+		if ( devCards.size() > 0) {
+			// Get the top of the card
+			Card top = devCards.peek();
+			devCards.pop();
 
-		current.buyDevelopmentCard( Card.REQUIREMENTS_FOR_CARD , top);
-		if (ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER)
-		{
-			ServerHandler.getInstance().sendDevCard(top.getName());
+			current.buyDevelopmentCard(Card.REQUIREMENTS_FOR_CARD, top);
+			if (ServerHandler.getInstance().getStatus() == ServerHandler.Status.SENDER) {
+				ServerHandler.getInstance().sendDevCard(top.getName());
+			}
 		}
 	}
 
@@ -52,7 +52,7 @@ public class CardManager
 		// Iterate over each card to make it playable
 		for ( Card tempCard : cards)
 		{
-			if ( !(tempCard instanceof ChangeOfFortune)) {
+			if ( !(tempCard.getName().equals("Change-of-Fortune"))) {
 				tempCard.makePlayable();
 			}
 		}

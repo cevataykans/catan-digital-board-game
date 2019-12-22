@@ -191,7 +191,7 @@ public class SingleSelectionController {
                     brick.setOnMousePressed(e -> {
                         new FadeOutRight(selectionBox).play();
                         selectionBox.setVisible(false);
-                        cardManager.playYearOfPlenty(ResourceManager.GRAIN);
+                        cardManager.playYearOfPlenty(ResourceManager.BRICK);
                         if ( flowManager.checkMust() == Response.MUST_RESOURCE_SELECTION_PLENTY)
                         {
                             flowManager.doneMust();

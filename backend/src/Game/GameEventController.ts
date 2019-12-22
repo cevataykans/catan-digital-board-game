@@ -62,11 +62,14 @@ export class GameEventController{
             return;
         // Was playing a game
         const players = this.finishGame(client, gameId);
+        delete this.players[client.id];
+        if ( players == null) {
+            return;
+        }
         players.forEach((item) => {
             socket.to(item).emit("disconnect-response", {"message": "Player has disconnected"});
             delete this.players[item];
         });
-        delete this.players[client.id];
     }
 
     public requestUserId(socket, client){
@@ -161,9 +164,9 @@ export class GameEventController{
             resources = this.shuffle(resources);
             let ports = [0, 0, 0, 0, 1, 2, 3, 4, 5];
             ports = this.shuffle(ports);
-            const cardNumbers = [14, 2, 2, 2, 5];
+            const cardNumbers = [14, 2, 2, 2, 5, 2, 1];
             let cards = []
-            for(let i = 0 ; i < 25; i++){
+            for(let i = 0 ; i < 28; i++){
                 for(let j = 0; j < cardNumbers[i]; j++){
                     cards.push(i);
                 }
@@ -305,6 +308,7 @@ export class GameEventController{
         }
         
         otherPlayers.forEach((item) => {
+            console.log("Thanos arrived.");
             socket.to(item).emit("send-balanced-response", data);
         });
         

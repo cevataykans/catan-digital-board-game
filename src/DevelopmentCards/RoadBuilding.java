@@ -7,14 +7,12 @@ import GameFlow.Response;
 import SceneManagement.SoundManager;
 import ServerCommunication.ServerHandler;
 
-public class RoadBuilding extends Card implements Playable {
+public class RoadBuilding implements Playable {
     // Properties
 
     // Constructor
     public RoadBuilding()
     {
-        setName("Road-Building");
-        setInformation("This special card allows you to build 2 roads freely.");
     }
 
     // Methods
