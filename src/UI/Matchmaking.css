@@ -1,0 +1,45 @@
+.anchor {
+    -fx-background-image: url("/images/game_background.jpg");
+    -fx-background-repeat: no-repeat;
+    -fx-background-size: cover, auto;
+}
+
+.button{
+    -fx-background-color: #ffeb75;
+    -fx-border-width: 3px;
+    -fx-border-color: purple;
+    -fx-border-style: dashed;
+    -fx-border-radius: 3px;
+    -fx-font-family: MinionPro-Bold;
+    -fx-font-size: 30px;
+}
+
+.button:hover {
+    -fx-background-color: #ffd581;
+    -fx-border-width: 3px;
+    -fx-border-color: #800051;
+    -fx-border-style: solid;
+    -fx-border-radius: 3px;
+}
+
+.button:pressed {
+    -fx-background-color: #6800ff;
+    -fx-border-width: 3px;
+    -fx-border-color: #800034;
+    -fx-border-style: solid;
+    -fx-border-radius: 3px;
+    -fx-translate-y: 10px;
+}
+
+#loading {
+    -fx-min-width: 350px;
+    -fx-min-height: 290px;
+}
+
+#goBack {
+    -fx-opacity: 0.5;
+}
+
+#goBack:hover {
+    -fx-opacity: 1;
+}

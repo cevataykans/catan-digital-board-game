@@ -17,60 +17,93 @@
     <Label layoutX="134.0" layoutY="65.0" text="Offering:" textFill="WHITE" />
     <Label layoutX="135.0" layoutY="170.0" text="Wanted:" textFill="WHITE" />
     <Button fx:id="tradeButton" layoutX="70.0" layoutY="277.0" mnemonicParsing="false" text="Trade" />
-    <Label layoutX="39.0" layoutY="14.0" text="Offerer" textFill="WHITE" underline="true" />
-    <Label layoutX="233.0" layoutY="14.0" text="Offeree" textFill="WHITE" underline="true" />
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="25.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+    <Label id="offerer" layoutX="39.0" layoutY="14.0" text="Offerer" textFill="WHITE" underline="true" />
+    <Label id="offeree" layoutX="233.0" layoutY="14.0" text="Offeree" textFill="WHITE" underline="true" />
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="20.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/Lumber.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="92.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+    <Spinner fx:id="cLumberSpin" layoutX="5.0" layoutY="125.0" maxWidth="55" >
+    </Spinner>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="85.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/Wool.png" />
       </image>
     </ImageView>
+    <Spinner fx:id="cWoolSpin" layoutX="70.0" layoutY="125.0" maxWidth="55" >
+    </Spinner>
     <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="150.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/grain.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="205.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
+    <Spinner fx:id="cGrainSpin" layoutX="135.0" layoutY="125.0" maxWidth="55" >
+    </Spinner>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="215.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/Brick.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="270.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
+    <Spinner fx:id="cBrickSpin" layoutX="200.0" layoutY="125.0" maxWidth="55" >
+    </Spinner>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="280.0" layoutY="100.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/Ore.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="25.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
+    <Spinner fx:id="cOreSpin" layoutX="265.0" layoutY="125.0" maxWidth="55" >
+    </Spinner>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="20.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/Lumber.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="92.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
+    <Spinner fx:id="oLumberSpin" layoutX="5.0" layoutY="233.0" maxWidth="55" >
+      <valueFactory>
+        <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="9"/>
+      </valueFactory>
+    </Spinner>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="85.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/Wool.png" />
       </image>
     </ImageView>
+    <Spinner fx:id="oWoolSpin" layoutX="70.0" layoutY="233.0" maxWidth="55" >
+      <valueFactory>
+        <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="9"/>
+      </valueFactory>
+    </Spinner>
     <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="150.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/grain.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="205.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
+    <Spinner fx:id="oGrainSpin" layoutX="135.0" layoutY="233.0" maxWidth="55" >
+      <valueFactory>
+        <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="9"/>
+      </valueFactory>
+    </Spinner>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="215.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/Brick.png" />
       </image>
     </ImageView>
-    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="270.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
+    <Spinner fx:id="oBrickSpin" layoutX="200.0" layoutY="233.0" maxWidth="55" >
+      <valueFactory>
+        <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="9"/>
+      </valueFactory>
+    </Spinner>
+    <ImageView fitHeight="18.27587890625" fitWidth="27.894762815843198" layoutX="280.0" layoutY="208.0" pickOnBounds="true" preserveRatio="true">
       <image>
         <Image url="/images/Ore.png" />
       </image>
     </ImageView>
-    <Label fx:id="offeror" layoutX="39.0" layoutY="38.0" text="Label" textFill="WHITE" />
-    <Label fx:id="offeree" layoutX="233.0" layoutY="38.0" text="Label" textFill="WHITE" />
+    <Spinner fx:id="oOreSpin" layoutX="265.0" layoutY="233.0" maxWidth="55" >
+      <valueFactory>
+        <SpinnerValueFactory.IntegerSpinnerValueFactory min="0" max="9"/>
+      </valueFactory>
+    </Spinner>
     <Button fx:id="cancel" layoutX="192.0" layoutY="277.0" mnemonicParsing="false" text="Cancel" />
   </children>
 </AnchorPane>

@@ -10,11 +10,6 @@
 
 <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="824.0" prefWidth="1536.0" styleClass="anchor" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2">
   <children>
-    <ImageView fitHeight="1025.0" fitWidth="1537.0" layoutX="1.0" layoutY="1.0" pickOnBounds="true" preserveRatio="true" x="-1.0" y="-1.0">
-      <image>
-        <Image url="@../images/dark-red.jpg" />
-      </image>
-    </ImageView>
     <Label fx:id="title" layoutX="545.0" text="How To Play CATAN" wrapText="false" AnchorPane.topAnchor="11.0">
       <font>
         <Font size="50.0" />
@@ -46,7 +41,7 @@
     </Label>
     <ImageView fitHeight="27.00000374892687" fitWidth="41.21052932739258" layoutX="105.0" layoutY="231.0" pickOnBounds="true" preserveRatio="true">
       <image>
-        <Image url="@../images/Lumber.png" />
+        <Image url="@../images/Wool.png" />
       </image>
     </ImageView>
     <ImageView fitHeight="40.60231399536133" fitWidth="27.780531333537436" layoutX="112.0" layoutY="320.0" pickOnBounds="true" preserveRatio="true">
@@ -109,5 +104,73 @@
     <Label font="$x6" layoutX="50.0" layoutY="487.0" text="Used for building cities and buying cards" textFill="WHITE" />
     <Label font="$x2" layoutX="97.0" layoutY="637.0" prefWidth="193.0" text="How to Win" textFill="#8f00ff" underline="true" />
     <Text fill="WHITE" font="$x6" layoutX="32.0" layoutY="718.0" strokeType="OUTSIDE" strokeWidth="0.0" text="You need 10 points to win the game. The ways to get points are: Settlement-1 point, City-2 points, Victory Point-1 point, Largest Army-2 points and Longest Road-2 points" wrappingWidth="500.0" />
+    <ImageView fitHeight="83.16001335656765" fitWidth="54.00000762939453" layoutX="1218.0" layoutY="148.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/knight.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="83.16001335656765" fitWidth="54.00000762939453" layoutX="1218.0" layoutY="237.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/monopoly.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="83.16001335656765" fitWidth="54.00000762939453" layoutX="1218.0" layoutY="329.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/Year-of-Plenty.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="83.16001335656765" fitWidth="54.00000762939453" layoutX="1218.0" layoutY="425.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/Road-Building.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="83.16001335656765" fitWidth="54.00000762939453" layoutX="1218.0" layoutY="520.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/Victory-Point.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="83.16001335656765" fitWidth="54.00000762939453" layoutX="1218.0" layoutY="612.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/Change-of-Fortune.png" />
+      </image>
+    </ImageView>
+    <ImageView fitHeight="83.16001335656765" fitWidth="54.00000762939453" layoutX="1218.0" layoutY="708.0" pickOnBounds="true" preserveRatio="true">
+      <image>
+        <Image url="@../images/Perfectly-Balanced.png" />
+      </image>
+    </ImageView>
+    <Label layoutX="1362.0" layoutY="146.0" text="Knight" textFill="WHITE">
+      <font>
+        <Font name="System Bold" size="15.0" fx:id="x7" />
+      </font>
+    </Label>
+    <Text font="$x5" layoutX="1282.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This development card allows you to change the position of the robber and steal a card from a neighboring player." wrappingWidth="250.0" />
+    <Label font="$x7" layoutX="1350.0" layoutY="238.0" text="Monopoly" textFill="WHITE" />
+    <Text font="$x5" layoutX="1282.0" layoutY="274.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This development card allows you to steal ALL of any one resource of your choice from all other players." wrappingWidth="250.0" />
+    <Label font="$x7" layoutX="1343.0" layoutY="330.0" text="Year of Plenty" textFill="WHITE" />
+    <Text font="$x5" layoutX="1282.0" layoutY="365.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This development card allows you to gain 2 of a resource of your choice." wrappingWidth="250.0" />
+    <Label font="$x7" layoutX="1337.0" layoutY="422.0" text="Road Building" textFill="WHITE" />
+    <Text font="$x5" layoutX="1282.0" layoutY="457.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This developmentcard allows you to build 2 roads freely." wrappingWidth="250.0" />
+    <Label font="$x7" layoutX="1340.0" layoutY="522.0" text="Victory Point" textFill="WHITE" />
+    <Text font="$x5" layoutX="1282.0" layoutY="557.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This development card increases your score by 1 point." wrappingWidth="250.0" />
+    <Label font="$x7" layoutX="1321.0" layoutY="612.0" text="Change of Fortune" textFill="WHITE" />
+    <Text font="$x5" layoutX="1282.0" layoutY="648.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This development card allows you to re-roll the dice after it is rolled, if you did not like the previous results" wrappingWidth="250.0" />
+    <Label font="$x7" layoutX="1321.0" layoutY="715.0" text="Perfectly Balanced" textFill="WHITE" />
+    <Text font="$x5" layoutX="1282.0" layoutY="750.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This development card discards half of ALL players' resources." wrappingWidth="250.0" />
+    <Separator layoutX="1202.0" layoutY="233.0" prefWidth="320.0" />
+    <Separator layoutX="1202.0" layoutY="325.0" prefWidth="320.0" />
+    <Separator layoutX="610.0" layoutY="341.0" prefWidth="310.0" />
+    <Separator layoutX="1202.0" layoutY="512.0" prefWidth="320.0" />
+    <Separator layoutX="1202.0" layoutY="607.0" prefWidth="320.0" />
+    <Separator layoutX="1202.0" layoutY="703.0" prefWidth="320.0" />
+    <Separator layoutX="1202.0" layoutY="799.0" prefWidth="320.0" />
+    <Separator layoutX="610.0" layoutY="608.0" prefWidth="310.0" />
+    <Separator layoutX="610.0" layoutY="810.0" prefWidth="310.0" />
+    <Separator layoutX="1202.0" layoutY="417.0" prefWidth="320.0" />
+    <Separator layoutX="50.0" layoutY="226.0" prefWidth="360.0" />
+    <Separator layoutX="50.0" layoutY="313.0" prefWidth="360.0" />
+    <Separator layoutX="50.0" layoutY="415.0" prefWidth="360.0" />
+    <Separator layoutX="50.0" layoutY="532.0" prefWidth="360.0" />
+    <Separator layoutX="50.0" layoutY="635.0" prefWidth="360.0" />
   </children>
 </AnchorPane>
